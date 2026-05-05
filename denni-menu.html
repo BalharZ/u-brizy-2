@@ -11,6 +11,7 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="nav.js"></script>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -203,67 +204,6 @@ function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
       stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" {...rest}>
       {ICONS[name]}
     </svg>
-  );
-}
-
-/* ─────────────────────────────────────────
-   HEADER
-   ───────────────────────────────────────── */
-function Header() {
-  const links = [
-    { l: 'Domů', h: 'index.html' },
-    { l: 'Denní menu', h: 'denni-menu.html', active: true },
-    { l: 'Stálé menu', h: 'index.html#menu' },
-    { l: 'Rozvoz jídel', h: 'https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy' },
-    { l: 'Voucher', h: 'index.html#voucher' },
-    { l: 'O nás', h: 'index.html#o-nas' },
-    { l: 'Kontakt', h: 'index.html#kontakt' },
-  ];
-  return (
-    <header style={{
-      position: 'sticky', top: 0, zIndex: 50,
-      background: 'var(--cream)',
-      borderBottom: '1px solid rgba(15,44,31,0.1)',
-      backdropFilter: 'blur(8px)',
-    }}>
-      <div style={{
-        maxWidth: 1400, margin: '0 auto',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        height: 88, padding: '0 52px',
-      }}>
-        <a href="index.html" style={{ display: 'flex', alignItems: 'center', gap: 16, textDecoration: 'none' }}>
-          <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="Logo" style={{ height: 60, display: 'block' }} />
-        </a>
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-          {links.map(({ l, h, active }) => (
-            <a key={l} href={h} style={{
-              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
-              color: active ? 'var(--gold)' : 'var(--wood)',
-              textDecoration: 'none',
-              borderBottom: active ? '2px solid var(--gold)' : '2px solid transparent',
-              paddingBottom: 4,
-              transition: 'color 0.2s, border-color 0.2s',
-            }}
-            onMouseEnter={e => { if (!active) e.currentTarget.style.color = 'var(--gold)'; }}
-            onMouseLeave={e => { if (!active) e.currentTarget.style.color = 'var(--wood)'; }}>
-              {l}
-            </a>
-          ))}
-          <a href="index.html#rezervace" style={{
-            background: 'var(--gold)', color: 'var(--wood)',
-            padding: '12px 22px',
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-            textDecoration: 'none', transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
-            Rezervace
-          </a>
-        </nav>
-      </div>
-    </header>
   );
 }
 
@@ -780,7 +720,8 @@ function Footer() {
 function App() {
   return (
     <>
-      <Header />
+      <SiteNav activePage="Denní menu" />
+      <div style={{ height: 72 }} />
       <MenuHero />
       <DayTabs />
       <DeliveryStrip />
