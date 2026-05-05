@@ -17,16 +17,28 @@
 html { scroll-behavior: smooth; }
 
 :root {
-  --wood:      #1F3A29;
-  --wood-lt:   #2C4A36;
+  /* Olive theme — sRGB hex fallbacks */
+  --wood:      #0F2C1F;
+  --wood-lt:   #234A35;
   --gold:      #C8960C;
   --gold-lt:   #D4A828;
   --cream:     #F4F1E8;
   --sand:      #E2DDC9;
-  --mid:       #5C7064;
+  --mid:       #406954;
   --text-dark: #EFE8D5;
-  --text-mid:  #BFC9B8;
-  --ink:       #0F1F16;
+  --text-mid:  #B1C7B8;
+  --ink:       #0B2318;
+}
+
+/* Use OKLCH on browsers that support it for richer color */
+@supports (color: oklch(0.5 0.1 155)) {
+  :root {
+    --wood:      oklch(0.22 0.07 155);
+    --wood-lt:   oklch(0.32 0.08 155);
+    --mid:       oklch(0.42 0.09 155);
+    --text-mid:  oklch(0.78 0.04 155);
+    --ink:       oklch(0.18 0.05 155);
+  }
 }
 
 body {
@@ -39,6 +51,18 @@ body {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--sand); }
 ::-webkit-scrollbar-thumb { background: var(--wood-lt); }
+
+/* Restore original size for dish.co reservation widget */
+#hors-hydra-0011i000002k2VtAAI iframe {
+  display: block;
+}
+/* Compact the time-picker scroller inside the widget */
+#hors-hydra-0011i000002k2VtAAI [class*="time"],
+#hors-hydra-0011i000002k2VtAAI [class*="Time"],
+#hors-hydra-0011i000002k2VtAAI [class*="picker"],
+#hors-hydra-0011i000002k2VtAAI [class*="Picker"] {
+  max-height: 220px !important;
+}
 
 .pf { font-family: 'Playfair Display', serif; }
 
@@ -148,7 +172,7 @@ function Nav() {
     {
       l: 'Jídelní menu',
       children: [
-        { l: 'Denní menu',      h: 'http://balounovarestauraceubrizy.eu/denni-menu/' },
+        { l: 'Denní menu',      h: 'denni-menu.html' },
         { l: 'Stálé menu',      h: 'http://balounovarestauraceubrizy.eu/stale-menu' },
         { l: 'Nápojový lístek', h: '#napojovy-listek' },
       ],
@@ -345,15 +369,7 @@ function loadDishWidget(buttonBg, buttonFg) {
 
 function ReservationCard() {
   React.useEffect(() => {
-    // initial load
-    loadDishWidget('#C8960C', '#1F3A29');
-    // listen for theme changes
-    const onTheme = (e) => {
-      const { buttonBg, buttonFg } = e.detail;
-      loadDishWidget(buttonBg, buttonFg);
-    };
-    window.addEventListener('themechange', onTheme);
-    return () => window.removeEventListener('themechange', onTheme);
+    loadDishWidget('#C8960C', '#1A2C24');
   }, []);
 
   return (
@@ -362,7 +378,7 @@ function ReservationCard() {
       top: '50%',
       right: 140,
       transform: 'translateY(-50%)',
-      width: 440,
+      width: 400,
       background: 'var(--cream)',
       boxShadow: '0 24px 60px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.2)',
       zIndex: 3,
@@ -391,168 +407,11 @@ function ReservationCard() {
       </div>
       {/* Widget body */}
       <div style={{
-        padding: '20px 24px 16px',
+        padding: '16px 20px 14px',
         background: 'var(--cream)',
       }}>
-        <div id={WIDGET_TAG}></div>
+        <div id={WIDGET_TAG} style={{ minHeight: 280 }}></div>
       </div>
-    </div>
-  );
-}
-
-/* ── THEME SWITCHER ── */
-const THEMES = {
-  forest: {
-    name: 'Forest',
-    sub: 'Současné',
-    swatch: '#1F3A29',
-    btnBg: '#C8960C', btnFg: '#1F3A29',
-    vars: {
-      '--wood': '#1F3A29',
-      '--wood-lt': '#2C4A36',
-      '--gold': '#C8960C',
-      '--gold-lt': '#D4A828',
-      '--cream': '#F4F1E8',
-      '--sand': '#E2DDC9',
-      '--mid': '#5C7064',
-      '--text-dark': '#EFE8D5',
-      '--text-mid': '#BFC9B8',
-      '--ink': '#0F1F16',
-    },
-  },
-  oklch: {
-    name: 'Olive OKLCH',
-    sub: 'Tlumená olivová',
-    swatch: 'oklch(0.32 0.08 155)',
-    btnBg: '#C8960C', btnFg: '#1F3A29',
-    vars: {
-      '--wood': 'oklch(0.22 0.07 155)',
-      '--wood-lt': 'oklch(0.32 0.08 155)',
-      '--gold': '#C8960C',
-      '--gold-lt': '#D4A828',
-      '--cream': '#F4F1E8',
-      '--sand': '#E2DDC9',
-      '--mid': 'oklch(0.42 0.09 155)',
-      '--text-dark': '#EFE8D5',
-      '--text-mid': 'oklch(0.78 0.04 155)',
-      '--ink': 'oklch(0.18 0.05 155)',
-    },
-  },
-  brand: {
-    name: 'Logo Brand',
-    sub: 'Tmavá + logo zelená',
-    swatch: '#211717',
-    btnBg: '#069040', btnFg: '#FFFFFF',
-    vars: {
-      '--wood': '#211717',
-      '--wood-lt': '#2E2020',
-      '--gold': '#069040',
-      '--gold-lt': '#0AB350',
-      '--cream': '#F4F1E8',
-      '--sand': '#E2DDC9',
-      '--mid': '#5C5050',
-      '--text-dark': '#EFE8D5',
-      '--text-mid': '#BFB5B0',
-      '--ink': '#1A1010',
-    },
-  },
-};
-
-function ThemeSwitcher() {
-  const [active, setActive] = useState('forest');
-  const [open, setOpen] = useState(false);
-
-  const apply = (key) => {
-    const t = THEMES[key];
-    if (!t) return;
-    Object.entries(t.vars).forEach(([k, v]) => {
-      document.documentElement.style.setProperty(k, v);
-    });
-    setActive(key);
-    window.dispatchEvent(new CustomEvent('themechange', {
-      detail: { buttonBg: t.btnBg, buttonFg: t.btnFg },
-    }));
-  };
-
-  return (
-    <div style={{
-      position: 'fixed',
-      bottom: 24,
-      left: 24,
-      zIndex: 999,
-      fontFamily: 'Lato',
-    }}>
-      {open && (
-        <div style={{
-          background: 'rgba(15,31,22,0.96)',
-          backdropFilter: 'blur(12px)',
-          padding: '18px 18px 14px',
-          marginBottom: 10,
-          width: 240,
-          border: '1px solid rgba(200,150,12,0.3)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
-        }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.22em',
-            textTransform: 'uppercase', color: 'rgba(200,150,12,0.9)',
-            marginBottom: 14, paddingBottom: 10,
-            borderBottom: '1px solid rgba(200,150,12,0.2)',
-          }}>
-            Barevné téma
-          </div>
-          {Object.entries(THEMES).map(([key, t]) => (
-            <button key={key}
-              onClick={() => apply(key)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                width: '100%', padding: '10px 8px',
-                background: active === key ? 'rgba(200,150,12,0.12)' : 'transparent',
-                border: 'none', cursor: 'pointer', textAlign: 'left',
-                marginBottom: 4,
-                borderLeft: active === key ? '2px solid #C8960C' : '2px solid transparent',
-                transition: 'background 0.15s',
-              }}>
-              <span style={{
-                width: 28, height: 28,
-                background: t.swatch,
-                border: '1px solid rgba(255,255,255,0.15)',
-                flexShrink: 0,
-              }} />
-              <span>
-                <div style={{
-                  fontSize: 12, fontWeight: 700, color: '#EFE8D5',
-                  letterSpacing: '0.04em',
-                }}>{t.name}</div>
-                <div style={{
-                  fontSize: 10, color: 'rgba(239,232,213,0.55)',
-                  letterSpacing: '0.05em', marginTop: 2,
-                }}>{t.sub}</div>
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
-      <button onClick={() => setOpen(!open)} style={{
-        background: 'rgba(15,31,22,0.92)',
-        backdropFilter: 'blur(12px)',
-        color: 'rgba(200,150,12,0.95)',
-        border: '1px solid rgba(200,150,12,0.4)',
-        padding: '12px 18px',
-        cursor: 'pointer',
-        fontSize: 10, fontWeight: 700,
-        letterSpacing: '0.22em', textTransform: 'uppercase',
-        fontFamily: 'Lato',
-        display: 'flex', alignItems: 'center', gap: 10,
-        boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-      }}>
-        <span style={{
-          width: 14, height: 14,
-          background: THEMES[active].swatch,
-          border: '1px solid rgba(255,255,255,0.2)',
-        }} />
-        {THEMES[active].name}
-        <span style={{ fontSize: 8, marginLeft: 4 }}>{open ? '▼' : '▲'}</span>
-      </button>
     </div>
   );
 }
@@ -671,18 +530,37 @@ function Hero() {
         </div>
 
         {/* Phone bottom */}
-        <div style={{ marginTop: 44, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 20, height: 1, background: 'rgba(200,150,12,0.5)' }} />
-          <a href="tel:+420272766782" style={{
-            color: 'rgba(191,201,184,0.6)',
-            textDecoration: 'none', fontSize: 13, letterSpacing: '0.06em',
-            transition: 'color 0.2s',
-          }}
-          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-          onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.6)'}>
-            272 76 67 82
-          </a>
-        </div>
+        <a href="tel:+420272766782" style={{
+          marginTop: 44, display: 'inline-flex', alignItems: 'center', gap: 14,
+          color: 'var(--text-dark)',
+          textDecoration: 'none',
+          transition: 'color 0.2s',
+          alignSelf: 'flex-start',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-dark)'}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 38, height: 38,
+            border: '1px solid var(--gold)',
+            color: 'var(--gold)',
+            flexShrink: 0,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+          </span>
+          <span className="pf" style={{
+            fontSize: 26, fontWeight: 700, fontStyle: 'italic',
+            letterSpacing: '0.02em',
+            lineHeight: 1,
+            display: 'inline-block',
+            transform: 'translateY(-2px)',
+          }}>
+            +420 272 76 67 82
+          </span>
+        </a>
       </div>
 
       {/* Right: photo collage */}
@@ -884,16 +762,42 @@ function MenuSection() {
   const [hov, setHov] = useState(null);
   const cards = [
     {
-      n: '01', t: 'Denní menu', d: 'Polední menu připravené šéfkuchařem každý den ze sezónních surovin.',
-      h: 'http://balounovarestauraceubrizy.eu/denni-menu/', dark: false,
+      t: 'Denní menu', d: 'Polední menu připravené šéfkuchařem každý den ze sezónních surovin.',
+      h: 'denni-menu.html', tone: 'lite',
+      icon: (
+        <>
+          <path d="M3 4h18v2H3z" />
+          <path d="M5 6v14h14V6" />
+          <line x1="9" y1="10" x2="15" y2="10" />
+          <line x1="9" y1="14" x2="15" y2="14" />
+          <line x1="9" y1="18" x2="13" y2="18" />
+        </>
+      ),
     },
     {
-      n: '02', t: 'Stálé menu', d: 'Naše klasická česká jídla, která se těší stálé oblibě našich hostů.',
-      h: 'http://balounovarestauraceubrizy.eu/stale-menu', dark: true,
+      t: 'Stálé menu', d: 'Naše klasická česká jídla, která se těší stálé oblibě našich hostů.',
+      h: 'http://balounovarestauraceubrizy.eu/stale-menu', tone: 'dark',
+      icon: (
+        <>
+          <path d="M3 11h18" />
+          <path d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4" />
+          <path d="M5 11v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-6" />
+          <line x1="12" y1="3" x2="12" y2="5" />
+          <line x1="9" y1="3" x2="9" y2="5" />
+          <line x1="15" y1="3" x2="15" y2="5" />
+        </>
+      ),
     },
     {
-      n: '03', t: 'Nápojový lístek', d: 'Tanková Plzeň, výběr vín, nealko i míchané nápoje.',
-      h: 'http://balounovarestauraceubrizy.eu/napojovy-listek/', dark: false,
+      t: 'Nápojový lístek', d: 'Tanková Plzeň, výběr vín, nealko i míchané nápoje.',
+      h: 'http://balounovarestauraceubrizy.eu/napojovy-listek/', tone: 'lite',
+      icon: (
+        <>
+          <path d="M8 2h8l-1 9a4 4 0 0 1-3 4 4 4 0 0 1-3-4z" />
+          <line x1="12" y1="15" x2="12" y2="22" />
+          <line x1="8" y1="22" x2="16" y2="22" />
+        </>
+      ),
     },
   ];
 
@@ -919,12 +823,14 @@ function MenuSection() {
               onMouseLeave={() => setHov(null)}
               style={{
                 display: 'block',
-                background: c.dark ? 'var(--wood)' : hov === i ? 'var(--sand)' : 'var(--cream)',
-                border: c.dark ? 'none' : '1px solid rgba(92,112,100,0.15)',
-                padding: '40px 36px',
+                background: c.tone === 'dark' ? 'var(--wood)' : 'var(--wood-lt)',
+                border: 'none',
+                padding: '48px 36px 40px',
                 textDecoration: 'none',
                 transition: 'all 0.3s',
                 position: 'relative', overflow: 'hidden',
+                transform: hov === i ? 'translateY(-4px)' : 'translateY(0)',
+                boxShadow: hov === i ? '0 14px 32px rgba(0,0,0,0.25)' : 'none',
               }}>
               {/* Gold top bar */}
               <div style={{
@@ -933,23 +839,42 @@ function MenuSection() {
                 background: 'var(--gold)',
               }} />
 
-              {/* Number */}
-              <div className="pf" style={{
-                fontSize: 48, fontWeight: 700,
-                color: c.dark ? 'rgba(200,150,12,0.2)' : 'rgba(31,58,41,0.08)',
-                lineHeight: 1, marginBottom: 20,
-                fontStyle: 'italic',
-              }}>{c.n}</div>
+              {/* Icon */}
+              <div style={{
+                width: 64, height: 64,
+                border: '1px solid var(--gold)',
+                background: hov === i ? 'rgba(200,150,12,0.16)' : 'rgba(200,150,12,0.08)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--gold)',
+                marginBottom: 24,
+                transition: 'all 0.25s',
+                transform: hov === i ? 'rotate(-4deg)' : 'rotate(0deg)',
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  {c.icon}
+                </svg>
+              </div>
 
               <h3 className="pf" style={{
-                fontSize: 28, fontWeight: 700,
-                color: c.dark ? 'var(--text-dark)' : 'var(--wood)',
-                marginBottom: 16, lineHeight: 1.2,
+                fontSize: 30, fontWeight: 700,
+                color: 'var(--text-dark)',
+                marginBottom: 14, lineHeight: 1.2,
               }}>{c.t}</h3>
+
+              {/* Gold rule */}
+              <div style={{
+                width: 32, height: 1,
+                background: 'var(--gold)',
+                marginBottom: 18,
+                transition: 'width 0.25s',
+                transformOrigin: 'left',
+                ...(hov === i ? { width: 56 } : {}),
+              }} />
 
               <p style={{
                 fontFamily: 'Lato', fontSize: 14, fontWeight: 300, lineHeight: 1.8,
-                color: c.dark ? 'var(--text-mid)' : 'var(--mid)',
+                color: 'var(--text-mid)',
                 marginBottom: 32,
               }}>{c.d}</p>
 
@@ -1152,27 +1077,35 @@ function Hours() {
           ].map((r, i) => (
             <div key={i} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '18px 0',
+              padding: '22px 0',
               borderBottom: '1px solid rgba(200,150,12,0.15)',
             }}>
               <span style={{
-                fontFamily: 'Lato', fontSize: 14, fontWeight: 300,
-                color: 'var(--text-mid)',
+                fontFamily: 'Lato', fontSize: 18, fontWeight: 400,
+                color: 'var(--text-dark)',
+                letterSpacing: '0.02em',
               }}>{r.d}</span>
               <span className="pf" style={{
-                fontSize: 22, fontWeight: r.accent ? 700 : 400,
+                fontSize: 28, fontWeight: r.accent ? 700 : 400,
                 fontStyle: r.accent ? 'italic' : 'normal',
                 color: r.accent ? 'var(--gold)' : 'var(--text-dark)',
               }}>{r.t}</span>
             </div>
           ))}
 
-          <div style={{ marginTop: 36 }}>
+          <div style={{ marginTop: 36, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <span style={{ color: 'var(--gold)', flexShrink: 0, marginTop: 2 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </span>
             <p style={{
-              fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-              color: 'rgba(191,201,184,0.6)', lineHeight: 1.7,
+              fontFamily: 'Lato', fontSize: 15, fontWeight: 300,
+              color: 'var(--text-mid)', lineHeight: 1.7,
             }}>
-              Jižní IX, 141 00 Praha 4 – Starý Spořilov
+              Jižní IX, 141 00 Praha 4<br/>Starý Spořilov
             </p>
           </div>
         </div>
@@ -1182,63 +1115,172 @@ function Hours() {
           <div style={{
             fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
             letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: 'var(--gold)', marginBottom: 12,
-          }}>Kontakt & rezervace</div>
+            color: 'var(--gold)', marginBottom: 20,
+          }}>Kontakt</div>
 
-          <a href="tel:+420272766782" className="pf" style={{
-            fontSize: 'clamp(32px, 3.5vw, 52px)', fontWeight: 400,
-            color: 'var(--text-dark)', textDecoration: 'none',
-            display: 'block', marginBottom: 6, lineHeight: 1.1,
+          {/* Phone */}
+          <a href="tel:+420272766782" style={{
+            display: 'flex', alignItems: 'center', gap: 18,
+            textDecoration: 'none', marginBottom: 28,
             transition: 'color 0.2s',
+            color: 'var(--text-dark)',
           }}
-          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-          onMouseLeave={e => e.target.style.color = 'var(--text-dark)'}>
-            272 76 67 82
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-dark)'}>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: 48, height: 48,
+              border: '1px solid var(--gold)',
+              color: 'var(--gold)',
+              flexShrink: 0,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+            </span>
+            <span className="pf" style={{
+              fontSize: 'clamp(28px, 2.6vw, 36px)', fontWeight: 700, fontStyle: 'italic',
+              letterSpacing: '0.01em', lineHeight: 1,
+              display: 'inline-block',
+              transform: 'translateY(-3px)',
+            }}>
+              +420 272 76 67 82
+            </span>
           </a>
 
+          {/* Email */}
           <a href="mailto:restauraceubrizy@seznam.cz" style={{
-            fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-            color: 'rgba(191,201,184,0.6)', textDecoration: 'none',
-            marginBottom: 40, display: 'block', transition: 'color 0.2s',
+            display: 'flex', alignItems: 'center', gap: 18,
+            textDecoration: 'none', marginBottom: 44,
+            transition: 'color 0.2s',
+            color: 'var(--text-dark)',
           }}
-          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-          onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.6)'}>
-            restauraceubrizy@seznam.cz
-          </a>
-
-          <a href="#rezervace" style={{
-            display: 'inline-block', alignSelf: 'flex-start',
-            background: 'var(--gold)', color: 'var(--wood)',
-            padding: '14px 36px', textDecoration: 'none',
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.16em', textTransform: 'uppercase',
-            transition: 'background 0.2s',
-            marginBottom: 36,
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
-            Rezervovat stůl
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-dark)'}>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: 48, height: 48,
+              border: '1px solid var(--gold)',
+              color: 'var(--gold)',
+              flexShrink: 0,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </span>
+            <span style={{
+              fontFamily: 'Lato', fontSize: 18, fontWeight: 400,
+              letterSpacing: '0.02em', wordBreak: 'break-all',
+            }}>
+              restauraceubrizy@seznam.cz
+            </span>
           </a>
 
           {/* Socials */}
-          <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 16,
+          }}>Sledujte nás</div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             {[
-              { l: 'Facebook',  h: 'https://m.facebook.com/restauraceubrizy/' },
-              { l: 'Instagram', h: 'https://www.instagram.com/restauraceubrizy/' },
-              { l: 'Bolt Food', h: 'https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy' },
-            ].map(({ l, h }) => (
-              <a key={l} href={h} style={{
-                fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-                letterSpacing: '0.1em',
-                color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
-                transition: 'color 0.2s',
-              }}
-              onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-              onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
+              {
+                l: 'Facebook', h: 'https://m.facebook.com/restauraceubrizy/',
+                svg: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />,
+              },
+              {
+                l: 'Instagram', h: 'https://www.instagram.com/restauraceubrizy/',
+                svg: <>
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </>,
+              },
+              {
+                l: 'Bolt Food', h: 'https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy',
+                svg: <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />,
+              },
+            ].map(({ l, h, svg }) => (
+              <a key={l} href={h} target="_blank" rel="noopener"
+                title={l}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  padding: '8px 12px',
+                  border: '1px solid rgba(200,150,12,0.4)',
+                  color: 'var(--text-mid)',
+                  textDecoration: 'none',
+                  fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+                  letterSpacing: '0.14em', textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = 'var(--gold)';
+                  e.currentTarget.style.color = 'var(--gold)';
+                  e.currentTarget.style.background = 'rgba(200,150,12,0.06)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'rgba(200,150,12,0.4)';
+                  e.currentTarget.style.color = 'var(--text-mid)';
+                  e.currentTarget.style.background = 'transparent';
+                }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  {svg}
+                </svg>
                 {l}
               </a>
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── MAP SECTION ── */
+function MapSection() {
+  // Coordinates for Jižní IX, 141 00 Praha 4 (Spořilov)
+  const lat = 50.0436;
+  const lng = 14.4727;
+  const mapsUrl = 'https://www.google.com/maps/place/Ji%C5%BEn%C3%AD+IX,+141+00+Praha-Sta%C5%99%C3%BD+Spo%C5%99ilov';
+  return (
+    <section id="kde-jsme" className="paper-sand" style={{
+      padding: '90px 64px 100px',
+      borderTop: '1px solid rgba(92,112,100,0.2)',
+    }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <SectionLabel center>Najdete nás</SectionLabel>
+          <h2 className="pf" style={{
+            fontSize: 'clamp(36px, 4vw, 54px)', fontWeight: 400,
+            color: 'var(--wood)',
+          }}>
+            Kde nás <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--gold)' }}>najdete</em>
+          </h2>
+          <p style={{
+            fontFamily: 'Lato', fontSize: 15, color: 'var(--mid)',
+            marginTop: 14, letterSpacing: '0.04em',
+          }}>
+            Jižní IX · 141 00 Praha 4 · Starý Spořilov
+          </p>
+        </div>
+
+        <div style={{
+          position: 'relative',
+          border: '2px solid var(--gold)',
+          height: 520,
+          overflow: 'hidden',
+          background: 'var(--wood)',
+        }}>
+          <iframe
+            title="Restaurace U Břízy – mapa"
+            src="https://maps.google.com/maps?q=Balounova+Restaurace+U+B%C5%99%C3%ADzy,+Ji%C5%BEn%C3%AD+IX,+Praha+4&hl=cs&z=16&output=embed"
+            width="100%" height="100%" style={{ border: 0, display: 'block' }}
+            loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
         </div>
       </div>
     </section>
@@ -1576,10 +1618,9 @@ function App() {
       <FoodGallery />
       <OrnDivider text="Navštivte nás" bg="var(--wood)" />
       <Hours />
-      <Reservation />
+      <MapSection />
       <Footer />
       <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
-      <ThemeSwitcher />
     </>
   );
 }
