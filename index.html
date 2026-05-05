@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balounova Restaurace U Břízy — Praha 4, Spořilov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --wood:      #4A2E1F;
+  --wood-lt:   #5C3A28;
+  --gold:      #C8960C;
+  --gold-lt:   #D4A828;
+  --cream:     #F9F3EB;
+  --sand:      #E8DDD0;
+  --mid:       #8B7355;
+  --text-dark: #F5E6D3;
+  --text-mid:  #D4B896;
+  --ink:       #2E1D10;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+::selection { background: rgba(200,150,12,0.25); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--sand); }
+::-webkit-scrollbar-thumb { background: var(--wood-lt); }
+
+.pf { font-family: 'Playfair Display', serif; }
+
+/* Warm paper texture via SVG noise */
+.paper {
+  background-color: var(--cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+.paper-sand {
+  background-color: var(--sand);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* Ornamental rule */
+.orn-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--gold);
+}
+.orn-rule::before,
+.orn-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#C8960C",
+  "showReservation": true,
+  "heroVariant": "typo"
+}/*EDITMODE-END*/;
+
+/* photos */
+const P = {
+  tartare:  'uploads/631929916_18088359938466839_3056274861272261209_n.webp',
+  drink:    'uploads/622942115_18120953545569660_1549582751083998235_n.webp',
+  terrace:  'uploads/654471504_18092799032466839_1646720218766627181_n.webp',
+  chicken:  'uploads/681432642_18097038170466839_1108650510409752952_n.webp',
+  lamb:     'uploads/671831403_18095663009466839_442929347581517431_n.webp',
+  burger:   'uploads/652032802_18091952030466839_8157565361304455486_n.webp',
+  sliders:  'uploads/645909322_18090631292466839_3359962209916537780_n.webp',
+};
+
+/* ── tiny helpers ── */
+function GoldRule({ my = 0, mx = 'auto', maxW = 80 }) {
+  return <div style={{ width: maxW, height: 1, background: 'var(--gold)', margin: `${my}px ${mx}` }} />;
+}
+
+function SectionLabel({ children, center = false, light = false }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 12,
+      justifyContent: center ? 'center' : 'flex-start',
+      marginBottom: 16,
+    }}>
+      <span style={{ display: 'block', width: 28, height: 1, background: 'var(--gold)', flexShrink: 0 }} />
+      <span style={{
+        fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+        letterSpacing: '0.22em', textTransform: 'uppercase',
+        color: light ? 'var(--text-mid)' : 'var(--gold)',
+        whiteSpace: 'nowrap',
+      }}>{children}</span>
+      {center && <span style={{ display: 'block', width: 28, height: 1, background: 'var(--gold)', flexShrink: 0 }} />}
+    </div>
+  );
+}
+
+/* ── NAV ── */
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    let raf;
+    const tick = () => {
+      setScrolled((window.pageYOffset || document.documentElement.scrollTop || 0) > 70);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const links = [
+    { l: 'Domů',          h: '#' },
+    { l: 'Denní menu',    h: 'http://balounovarestauraceubrizy.eu/denni-menu/' },
+    { l: 'Stálé menu',    h: 'http://balounovarestauraceubrizy.eu/stale-menu' },
+    { l: 'Rozvoz jídel',  h: 'https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy' },
+    { l: 'Voucher',       h: '#voucher' },
+    { l: 'O nás',         h: '#o-nas' },
+    { l: 'Kontakt',       h: '#kontakt' },
+  ];
+
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300,
+      height: scrolled ? 72 : 124,
+      background: scrolled ? 'rgba(249,243,235,0.97)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(12px)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(139,115,85,0.2)' : 'none',
+      transition: 'all 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+      display: 'flex', alignItems: 'center',
+      padding: '0 52px',
+    }}>
+      {/* Logo */}
+      <a href="#" style={{
+        display: 'flex', alignItems: 'center',
+        marginRight: 'auto', textDecoration: 'none',
+      }}>
+        <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="U Břízy"
+          style={{
+            height: scrolled ? 52 : 96,
+            width: 'auto',
+            display: 'block',
+            filter: scrolled
+              ? 'none'
+              : 'drop-shadow(0 2px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 14px rgba(0,0,0,0.35))',
+            transition: 'all 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+          }} />
+      </a>
+
+      {/* Links */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 4,
+        background: scrolled ? 'transparent' : 'rgba(20,12,6,0.6)',
+        backdropFilter: scrolled ? 'none' : 'blur(14px) saturate(140%)',
+        WebkitBackdropFilter: scrolled ? 'none' : 'blur(14px) saturate(140%)',
+        border: scrolled ? '1px solid transparent' : '1px solid rgba(255,255,255,0.12)',
+        borderRadius: 0,
+        padding: scrolled ? 0 : '6px 8px 6px 20px',
+        transition: 'all 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}>
+        {links.map(({ l, h }) => (
+          <a key={l} href={h} style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.16em', textTransform: 'uppercase',
+            color: scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)',
+            textDecoration: 'none', transition: 'color 0.2s',
+            padding: scrolled ? '0 14px' : '0 12px',
+            whiteSpace: 'nowrap',
+            position: 'relative',
+          }}
+          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+          onMouseLeave={e => e.target.style.color = scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)'}>
+            {l}
+          </a>
+        ))}
+        <a href="#rezervace" style={{
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          color: scrolled ? 'var(--gold)' : '#fff',
+          background: scrolled ? 'transparent' : 'var(--gold)',
+          textDecoration: 'none',
+          border: scrolled ? '1px solid var(--gold)' : '1px solid var(--gold)',
+          padding: '10px 22px',
+          marginLeft: scrolled ? 16 : 8,
+          borderRadius: 0,
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = scrolled ? 'var(--gold)' : '#a87a08'; e.currentTarget.style.color = '#fff'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = scrolled ? 'transparent' : 'var(--gold)'; e.currentTarget.style.color = scrolled ? 'var(--gold)' : '#fff'; }}>
+          Rezervace
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+/* ── HERO ── */
+function Hero() {
+  return (
+    <section style={{
+      background: 'var(--wood)',
+      minHeight: '100vh',
+      display: 'grid',
+      gridTemplateColumns: '0.8fr 1.2fr',
+      overflow: 'hidden',
+      position: 'relative',
+    }}>
+      {/* Left: typographic panel */}
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '110px 64px 80px 140px',
+        position: 'relative', zIndex: 2,
+      }}>
+        {/* Subtle wood grain lines */}
+        {[0,1,2,3,4].map(i => (
+          <div key={i} style={{
+            position: 'absolute',
+            top: `${15 + i * 18}%`, left: 0, right: 0,
+            height: 1,
+            background: `rgba(255,255,255,${0.015 + i * 0.008})`,
+            transform: `rotate(${-1 + i * 0.5}deg)`,
+            pointerEvents: 'none',
+          }} />
+        ))}
+
+        {/* Label */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24,
+        }}>
+          <span style={{ color: 'var(--gold)', fontSize: 18, lineHeight: 1 }}>✦</span>
+          <span style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.22em', textTransform: 'uppercase',
+            color: 'var(--text-mid)',
+          }}>Od roku 1994</span>
+          <span style={{ color: 'var(--gold)', fontSize: 18, lineHeight: 1 }}>✦</span>
+        </div>
+
+        {/* Main headline */}
+        <h1 className="pf" style={{
+          fontSize: 'clamp(42px, 5vw, 72px)',
+          fontWeight: 400,
+          color: 'var(--text-dark)',
+          lineHeight: 1.12,
+          marginBottom: 4,
+          letterSpacing: '0.01em',
+        }}>
+          Balounova<br />Restaurace
+        </h1>
+        <h1 className="pf" style={{
+          fontSize: 'clamp(56px, 7vw, 96px)',
+          fontWeight: 700,
+          fontStyle: 'italic',
+          color: 'var(--gold)',
+          lineHeight: 1.0,
+          marginBottom: 24,
+          letterSpacing: '-0.01em',
+        }}>
+          U Břízy
+        </h1>
+
+        {/* Gold rule */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 22 }}>
+          <div style={{ width: 48, height: 1, background: 'var(--gold)' }} />
+          <span style={{ color: 'var(--gold)', fontSize: 20 }}>❧</span>
+          <div style={{ width: 48, height: 1, background: 'var(--gold)' }} />
+        </div>
+
+        <p style={{
+          fontFamily: 'Lato', fontSize: 16, fontWeight: 300, lineHeight: 1.7,
+          color: 'var(--text-mid)', maxWidth: 400, marginBottom: 36,
+        }}>
+          Rodinná restaurace v srdci Spořilova.<br />
+          Česká kuchyně, čerstvé pivo z tanku<br />a nezapomenutelná atmosféra.
+        </p>
+
+        {/* CTAs */}
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <a href="#rezervace" style={{
+            background: 'var(--gold)',
+            color: 'var(--wood)',
+            padding: '14px 40px',
+            textDecoration: 'none',
+            fontFamily: 'Lato',
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
+            transition: 'background 0.2s',
+            display: 'inline-block',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
+            Rezervovat stůl
+          </a>
+          <a href="#menu" style={{
+            border: '1px solid rgba(200,150,12,0.4)',
+            color: 'var(--text-mid)',
+            padding: '14px 40px',
+            textDecoration: 'none',
+            fontFamily: 'Lato',
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(200,150,12,0.4)'; e.currentTarget.style.color = 'var(--text-mid)'; }}>
+            Naše menu
+          </a>
+        </div>
+
+        {/* Phone bottom */}
+        <div style={{ marginTop: 44, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 20, height: 1, background: 'rgba(200,150,12,0.5)' }} />
+          <a href="tel:+420272766782" style={{
+            color: 'rgba(212,184,150,0.6)',
+            textDecoration: 'none', fontSize: 13, letterSpacing: '0.06em',
+            transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+          onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.6)'}>
+            272 76 67 82
+          </a>
+        </div>
+      </div>
+
+      {/* Right: photo collage */}
+      <div style={{
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Main large photo */}
+        <img src={P.terrace} alt="Zahrádka"
+          style={{
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center',
+            display: 'block',
+            opacity: 0.75,
+          }} />
+
+        {/* Dark overlay on left to blend */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to right, var(--wood) 0%, rgba(74,46,31,0.3) 35%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Bottom overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to top, rgba(74,46,31,0.8) 0%, transparent 40%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Small food photo inset — bottom right */}
+        <div style={{
+          position: 'absolute', bottom: 36, right: 36,
+          width: 160, height: 160,
+          border: '2px solid var(--gold)',
+          overflow: 'hidden',
+        }}>
+          <img src={P.burger} alt="Burger"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+
+        {/* Praha 4 badge */}
+        <div style={{
+          position: 'absolute', top: 100, right: 36,
+          textAlign: 'center',
+        }}>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+            letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 4,
+          }}>Praha 4</div>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 10, fontWeight: 400,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            color: 'rgba(212,184,150,0.6)',
+          }}>Starý Spořilov</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── STATS ── */
+function Stats() {
+  const items = [
+    { val: '30+',  lab: 'Let tradice' },
+    { val: '170+', lab: 'Míst k sezení' },
+    { val: '200',  lab: 'Zahrádka' },
+    { val: '50',   lab: 'Salonek' },
+  ];
+  return (
+    <div className="paper-sand" style={{
+      display: 'grid', gridTemplateColumns: 'repeat(4,1fr)',
+      borderBottom: '1px solid rgba(139,115,85,0.2)',
+    }}>
+      {items.map((s, i) => (
+        <div key={i} style={{
+          padding: '44px 32px',
+          textAlign: 'center',
+          borderLeft: i > 0 ? '1px solid rgba(139,115,85,0.18)' : 'none',
+        }}>
+          <div className="pf" style={{
+            fontSize: 52, fontWeight: 700,
+            color: 'var(--wood)', lineHeight: 1, marginBottom: 8,
+          }}>{s.val}</div>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: 'var(--mid)',
+          }}>{s.lab}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ── ABOUT ── */
+function About() {
+  return (
+    <section id="o-nas" className="paper" style={{ padding: '100px 0', overflow: 'hidden' }}>
+      <div style={{
+        maxWidth: 1240, margin: '0 auto',
+        display: 'grid', gridTemplateColumns: '1fr 1fr',
+        gap: 0, padding: '0 64px',
+        alignItems: 'center',
+      }}>
+        {/* Left: photo */}
+        <div style={{ position: 'relative', paddingRight: 64 }}>
+          {/* Main photo */}
+          <div style={{
+            borderRadius: 4,
+            overflow: 'hidden',
+            aspectRatio: '4/5',
+            maxHeight: 580,
+          }}>
+            <img src={P.sliders} alt="Hostina"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          </div>
+          {/* Offset inset photo */}
+          <div style={{
+            position: 'absolute', bottom: -32, right: 24,
+            width: 180, height: 220,
+            border: '4px solid var(--cream)',
+            borderRadius: 4, overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(74,46,31,0.25)',
+          }}>
+            <img src={P.drink} alt="Nápoj"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          </div>
+          {/* Gold frame accent */}
+          <div style={{
+            position: 'absolute', top: -16, left: -16,
+            width: 80, height: 80,
+            borderTop: '2px solid var(--gold)',
+            borderLeft: '2px solid var(--gold)',
+            pointerEvents: 'none',
+          }} />
+        </div>
+
+        {/* Right: text */}
+        <div style={{ paddingLeft: 32, paddingBottom: 32 }}>
+          <SectionLabel>O naší restauraci</SectionLabel>
+
+          <h2 className="pf" style={{
+            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontWeight: 400, lineHeight: 1.15,
+            color: 'var(--wood)', marginBottom: 10,
+          }}>
+            Rodinná atmosféra
+          </h2>
+          <h2 className="pf" style={{
+            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontWeight: 700, fontStyle: 'italic',
+            lineHeight: 1.15,
+            color: 'var(--wood)', marginBottom: 36,
+          }}>
+            od roku <span style={{ color: 'var(--gold)' }}>1994</span>
+          </h2>
+
+          <GoldRule my={0} mx="0" maxW={56} />
+          <div style={{ marginTop: 28 }} />
+
+          <p style={{
+            fontFamily: 'Lato', fontSize: 15, fontWeight: 300, lineHeight: 1.9,
+            color: 'var(--mid)', marginBottom: 20, maxWidth: 460,
+          }}>
+            Nacházíme se na Starém Spořilově — klidné vilové čtvrti Prahy 4. Od roku 1994 tady vaříme poctivou českou kuchyni s láskou a péčí, která se předává z generace na generaci.
+          </p>
+          <p style={{
+            fontFamily: 'Lato', fontSize: 15, fontWeight: 300, lineHeight: 1.9,
+            color: 'var(--mid)', marginBottom: 48, maxWidth: 460,
+          }}>
+            Ať přijdete s rodinou, přáteli nebo obchodními partnery — u nás se vždy najde správné místo. Velká zahrádka, útulný salonek i prostorný interiér na vás čekají.
+          </p>
+
+          <a href="#kontakt" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            color: 'var(--wood)',
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            textDecoration: 'none',
+            borderBottom: '1px solid var(--gold)',
+            paddingBottom: 4,
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = 'var(--gold)'; e.currentTarget.style.gap = '16px'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'var(--wood)'; e.currentTarget.style.gap = '10px'; }}>
+            Více o nás <span>→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── ORNAMENT DIVIDER ── */
+function OrnDivider({ text, bg = 'var(--cream)' }) {
+  return (
+    <div className="orn-rule" style={{
+      padding: '0 64px',
+      background: bg,
+    }}>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, transparent, var(--gold))' }} />
+      <span className="pf" style={{
+        fontStyle: 'italic', fontSize: 18,
+        color: 'var(--gold)', letterSpacing: '0.05em',
+        whiteSpace: 'nowrap',
+        padding: '20px 0',
+        display: 'block',
+      }}>
+        ✦ {text} ✦
+      </span>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(to left, transparent, var(--gold))' }} />
+    </div>
+  );
+}
+
+/* ── MENU SECTION ── */
+function MenuSection() {
+  const [hov, setHov] = useState(null);
+  const cards = [
+    {
+      n: '01', t: 'Denní menu', d: 'Polední menu připravené šéfkuchařem každý den ze sezónních surovin.',
+      h: 'http://balounovarestauraceubrizy.eu/denni-menu/', dark: false,
+    },
+    {
+      n: '02', t: 'Stálé menu', d: 'Naše klasická česká jídla, která se těší stálé oblibě našich hostů.',
+      h: 'http://balounovarestauraceubrizy.eu/stale-menu', dark: true,
+    },
+    {
+      n: '03', t: 'Nápojový lístek', d: 'Tanková Plzeň, výběr vín, nealko i míchané nápoje.',
+      h: 'http://balounovarestauraceubrizy.eu/napojovy-listek/', dark: false,
+    },
+  ];
+
+  return (
+    <section id="menu" className="paper" style={{ padding: '80px 64px 100px' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <SectionLabel center>Jídelní &amp; nápojový lístek</SectionLabel>
+          <h2 className="pf" style={{
+            fontSize: 'clamp(36px, 4vw, 54px)', fontWeight: 400,
+            color: 'var(--wood)', lineHeight: 1.15,
+          }}>
+            Co pro vás <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--gold)' }}>připravujeme</em>
+          </h2>
+        </div>
+
+        {/* Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 2 }}>
+          {cards.map((c, i) => (
+            <a key={i} href={c.h}
+              onMouseEnter={() => setHov(i)}
+              onMouseLeave={() => setHov(null)}
+              style={{
+                display: 'block',
+                background: c.dark ? 'var(--wood)' : hov === i ? 'var(--sand)' : 'var(--cream)',
+                border: c.dark ? 'none' : '1px solid rgba(139,115,85,0.15)',
+                padding: '40px 36px',
+                textDecoration: 'none',
+                transition: 'all 0.3s',
+                position: 'relative', overflow: 'hidden',
+              }}>
+              {/* Gold top bar */}
+              <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0,
+                height: 3,
+                background: 'var(--gold)',
+              }} />
+
+              {/* Number */}
+              <div className="pf" style={{
+                fontSize: 48, fontWeight: 700,
+                color: c.dark ? 'rgba(200,150,12,0.2)' : 'rgba(74,46,31,0.08)',
+                lineHeight: 1, marginBottom: 20,
+                fontStyle: 'italic',
+              }}>{c.n}</div>
+
+              <h3 className="pf" style={{
+                fontSize: 28, fontWeight: 700,
+                color: c.dark ? 'var(--text-dark)' : 'var(--wood)',
+                marginBottom: 16, lineHeight: 1.2,
+              }}>{c.t}</h3>
+
+              <p style={{
+                fontFamily: 'Lato', fontSize: 14, fontWeight: 300, lineHeight: 1.8,
+                color: c.dark ? 'var(--text-mid)' : 'var(--mid)',
+                marginBottom: 32,
+              }}>{c.d}</p>
+
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.16em', textTransform: 'uppercase',
+                color: 'var(--gold)',
+              }}>
+                <span>Zobrazit</span>
+                <span style={{
+                  transform: hov === i ? 'translateX(6px)' : 'translateX(0)',
+                  transition: 'transform 0.2s',
+                  display: 'inline-block',
+                }}>→</span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* Extra menu links */}
+        <div style={{
+          display: 'flex', justifyContent: 'center', gap: 40,
+          marginTop: 32, flexWrap: 'wrap',
+        }}>
+          {[
+            { l: 'Týdenní nabídka', h: 'http://balounovarestauraceubrizy.eu/tydenni-nabidka/' },
+            { l: 'Pivní lístek',    h: 'http://balounovarestauraceubrizy.eu/pivni-listek/' },
+            { l: 'Alergeny',        h: 'http://balounovarestauraceubrizy.eu/alergeny' },
+          ].map(({ l, h }) => (
+            <a key={l} href={h} style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.16em', textTransform: 'uppercase',
+              color: 'var(--mid)', textDecoration: 'none',
+              borderBottom: '1px solid rgba(139,115,85,0.3)',
+              paddingBottom: 3, transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+            onMouseLeave={e => e.target.style.color = 'var(--mid)'}>
+              {l}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FOOD GALLERY ── */
+function FoodGallery() {
+  const [hov, setHov] = useState(null);
+  const photos = [
+    { src: P.tartare, label: 'Hovězí tatarák' },
+    { src: P.lamb,    label: 'Jehněčí nožička' },
+    { src: P.chicken, label: 'Grilovaná drůbež' },
+    { src: P.drink,   label: 'Koktejl' },
+    { src: P.burger,  label: 'Domácí burger' },
+  ];
+
+  return (
+    <section style={{ background: 'var(--wood)', padding: '0' }}>
+      {/* Header */}
+      <div style={{
+        textAlign: 'center', padding: '72px 64px 48px',
+        borderBottom: '1px solid rgba(200,150,12,0.2)',
+      }}>
+        <SectionLabel center light>Z naší kuchyně</SectionLabel>
+        <h2 className="pf" style={{
+          fontSize: 'clamp(32px, 3.5vw, 48px)',
+          fontWeight: 400, color: 'var(--text-dark)',
+          fontStyle: 'italic',
+        }}>
+          Jídla, která milujeme připravovat
+        </h2>
+      </div>
+
+      {/* Asymmetric photo grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1.6fr 1fr 1fr',
+        gridTemplateRows: '340px 340px',
+      }}>
+        {/* Big left — spans 2 rows */}
+        <div
+          onMouseEnter={() => setHov(0)}
+          onMouseLeave={() => setHov(null)}
+          style={{
+            gridRow: 'span 2',
+            position: 'relative', overflow: 'hidden',
+            borderRight: '3px solid var(--wood)',
+          }}>
+          <img src={photos[0].src} alt={photos[0].label}
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+              transform: hov === 0 ? 'scale(1.05)' : 'scale(1)',
+              transition: 'transform 0.7s ease',
+            }} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to top, rgba(74,46,31,0.75) 0%, transparent 50%)',
+          }} />
+          <div style={{ position: 'absolute', bottom: 28, left: 32 }}>
+            <div style={{ width: 28, height: 1, background: 'var(--gold)', marginBottom: 10 }} />
+            <span className="pf" style={{
+              color: '#fff', fontSize: 24, fontStyle: 'italic',
+            }}>{photos[0].label}</span>
+          </div>
+        </div>
+
+        {/* Right 4 cells */}
+        {photos.slice(1).map((p, i) => (
+          <div key={i}
+            onMouseEnter={() => setHov(i + 1)}
+            onMouseLeave={() => setHov(null)}
+            style={{
+              position: 'relative', overflow: 'hidden',
+              borderBottom: i < 2 ? '3px solid var(--wood)' : 'none',
+              borderLeft: i % 2 === 1 ? '3px solid var(--wood)' : 'none',
+            }}>
+            <img src={p.src} alt={p.label}
+              style={{
+                width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                transform: hov === i + 1 ? 'scale(1.07)' : 'scale(1)',
+                transition: 'transform 0.6s ease',
+              }} />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: hov === i + 1 ? 'rgba(74,46,31,0.55)' : 'rgba(74,46,31,0.15)',
+              transition: 'background 0.35s',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span className="pf" style={{
+                color: '#fff', fontSize: 20, fontStyle: 'italic',
+                opacity: hov === i + 1 ? 1 : 0,
+                transform: `translateY(${hov === i + 1 ? 0 : 6}px)`,
+                transition: 'all 0.3s',
+              }}>{p.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Link to gallery */}
+      <div style={{ textAlign: 'center', padding: '40px' }}>
+        <a href="http://balounovarestauraceubrizy.eu/fotogalerie/" style={{
+          color: 'var(--gold)',
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          textDecoration: 'none',
+          border: '1px solid rgba(200,150,12,0.4)',
+          padding: '12px 32px',
+          display: 'inline-block',
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.color = 'var(--wood)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--gold)'; }}>
+          Celá fotogalerie →
+        </a>
+      </div>
+    </section>
+  );
+}
+
+/* ── HOURS + CONTACT ── */
+function Hours() {
+  return (
+    <section id="kontakt" style={{ background: 'var(--wood)' }}>
+      {/* Section title */}
+      <div style={{
+        textAlign: 'center', padding: '72px 64px 48px',
+        borderBottom: '1px solid rgba(200,150,12,0.18)',
+      }}>
+        <SectionLabel center light>Navštivte nás</SectionLabel>
+        <h2 className="pf" style={{
+          fontSize: 'clamp(32px, 4vw, 52px)',
+          fontWeight: 400, fontStyle: 'italic',
+          color: 'var(--text-dark)',
+        }}>Otevřeno každý den od 11:00</h2>
+      </div>
+
+      {/* Two columns */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr',
+        maxWidth: 1000, margin: '0 auto',
+        padding: '64px 64px 80px',
+        gap: 0,
+      }}>
+        {/* Left: hours */}
+        <div style={{ paddingRight: 64, borderRight: '1px solid var(--gold)' }}>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 32,
+          }}>Otevírací hodiny</div>
+
+          {[
+            { d: 'Pondělí – Čtvrtek', t: '11:00 – 24:00' },
+            { d: 'Pátek',             t: '11:00 – 01:00', accent: true },
+            { d: 'Sobota – Neděle',   t: '11:00 – 24:00' },
+          ].map((r, i) => (
+            <div key={i} style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '18px 0',
+              borderBottom: '1px solid rgba(200,150,12,0.15)',
+            }}>
+              <span style={{
+                fontFamily: 'Lato', fontSize: 14, fontWeight: 300,
+                color: 'var(--text-mid)',
+              }}>{r.d}</span>
+              <span className="pf" style={{
+                fontSize: 22, fontWeight: r.accent ? 700 : 400,
+                fontStyle: r.accent ? 'italic' : 'normal',
+                color: r.accent ? 'var(--gold)' : 'var(--text-dark)',
+              }}>{r.t}</span>
+            </div>
+          ))}
+
+          <div style={{ marginTop: 36 }}>
+            <p style={{
+              fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+              color: 'rgba(212,184,150,0.6)', lineHeight: 1.7,
+            }}>
+              Jižní IX, 141 00 Praha 4 – Starý Spořilov
+            </p>
+          </div>
+        </div>
+
+        {/* Right: contact + CTA */}
+        <div style={{ paddingLeft: 64, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 12,
+          }}>Kontakt & rezervace</div>
+
+          <a href="tel:+420272766782" className="pf" style={{
+            fontSize: 'clamp(32px, 3.5vw, 52px)', fontWeight: 400,
+            color: 'var(--text-dark)', textDecoration: 'none',
+            display: 'block', marginBottom: 6, lineHeight: 1.1,
+            transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+          onMouseLeave={e => e.target.style.color = 'var(--text-dark)'}>
+            272 76 67 82
+          </a>
+
+          <a href="mailto:restauraceubrizy@seznam.cz" style={{
+            fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+            color: 'rgba(212,184,150,0.6)', textDecoration: 'none',
+            marginBottom: 40, display: 'block', transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+          onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.6)'}>
+            restauraceubrizy@seznam.cz
+          </a>
+
+          <a href="#rezervace" style={{
+            display: 'inline-block', alignSelf: 'flex-start',
+            background: 'var(--gold)', color: 'var(--wood)',
+            padding: '14px 36px', textDecoration: 'none',
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.16em', textTransform: 'uppercase',
+            transition: 'background 0.2s',
+            marginBottom: 36,
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
+            Rezervovat stůl
+          </a>
+
+          {/* Socials */}
+          <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+            {[
+              { l: 'Facebook',  h: 'https://m.facebook.com/restauraceubrizy/' },
+              { l: 'Instagram', h: 'https://www.instagram.com/restauraceubrizy/' },
+              { l: 'Bolt Food', h: 'https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy' },
+            ].map(({ l, h }) => (
+              <a key={l} href={h} style={{
+                fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.1em',
+                color: 'rgba(212,184,150,0.5)', textDecoration: 'none',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+              onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.5)'}>
+                {l}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── RESERVATION ── */
+function Reservation() {
+  const [form, setForm] = useState({ name: '', phone: '', date: '', guests: '2', note: '' });
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState({});
+
+  const submit = ev => {
+    ev.preventDefault();
+    const e = {};
+    if (!form.name.trim()) e.name = true;
+    if (!form.phone.trim()) e.phone = true;
+    if (!form.date) e.date = true;
+    if (Object.keys(e).length) { setErr(e); return; }
+    setSent(true);
+  };
+
+  const inp = (error) => ({
+    width: '100%', padding: '13px 16px',
+    background: 'transparent',
+    border: `1px solid ${error ? '#c0392b' : 'rgba(139,115,85,0.3)'}`,
+    color: 'var(--ink)', fontSize: 15,
+    fontFamily: 'Lato', outline: 'none',
+    transition: 'border-color 0.2s',
+  });
+
+  return (
+    <section id="rezervace" className="paper-sand" style={{
+      padding: '100px 64px',
+      borderTop: '1px solid rgba(139,115,85,0.2)',
+    }}>
+      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <SectionLabel center>Rezervace</SectionLabel>
+          <h2 className="pf" style={{
+            fontSize: 'clamp(36px, 4vw, 54px)', fontWeight: 400,
+            color: 'var(--wood)',
+          }}>
+            Rezervujte si <em style={{ fontStyle: 'italic', fontWeight: 700 }}>stůl</em>
+          </h2>
+          <p style={{
+            fontFamily: 'Lato', fontSize: 14, color: 'var(--mid)',
+            marginTop: 12,
+          }}>
+            Nebo zavolejte: <a href="tel:+420272766782" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}>272 76 67 82</a>
+          </p>
+        </div>
+
+        {sent ? (
+          <div style={{
+            textAlign: 'center', padding: '60px 40px',
+            border: '1px solid var(--gold)',
+            background: 'rgba(200,150,12,0.06)',
+          }}>
+            <span style={{ color: 'var(--gold)', fontSize: 40, display: 'block', marginBottom: 16 }}>✦</span>
+            <h3 className="pf" style={{ fontSize: 40, fontWeight: 400, color: 'var(--wood)', marginBottom: 12, fontStyle: 'italic' }}>
+              Děkujeme!
+            </h3>
+            <p style={{ color: 'var(--mid)', fontSize: 15, lineHeight: 1.8 }}>
+              Vaši rezervaci jsme přijali. Brzy se vám ozveme na zadaném čísle.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {[
+                { k: 'name',  l: 'Jméno *',  t: 'text', ph: 'Jan Novák' },
+                { k: 'phone', l: 'Telefon *', t: 'tel',  ph: '+420 123 456 789' },
+                { k: 'date',  l: 'Datum *',   t: 'date', ph: '' },
+              ].map(({ k, l, t, ph }) => (
+                <div key={k}>
+                  <label style={{
+                    display: 'block', fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                    letterSpacing: '0.15em', textTransform: 'uppercase',
+                    color: 'var(--mid)', marginBottom: 8,
+                  }}>{l}</label>
+                  <input type={t} placeholder={ph} value={form[k]}
+                    onChange={e => { setForm({...form, [k]: e.target.value}); setErr({...err, [k]: false}); }}
+                    style={inp(err[k])}
+                    onFocus={e => e.target.style.borderColor = 'var(--gold)'}
+                    onBlur={e => e.target.style.borderColor = err[k] ? '#c0392b' : 'rgba(139,115,85,0.3)'} />
+                </div>
+              ))}
+              <div>
+                <label style={{
+                  display: 'block', fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.15em', textTransform: 'uppercase',
+                  color: 'var(--mid)', marginBottom: 8,
+                }}>Počet osob</label>
+                <select value={form.guests} onChange={e => setForm({...form, guests: e.target.value})}
+                  style={{ ...inp(false), appearance: 'none', cursor: 'pointer', background: 'var(--sand)' }}>
+                  {[1,2,3,4,5,6,7,8,9,'10+'].map(n => (
+                    <option key={n} value={n}>{n} {n===1?'osoba':n==='10+'?'a více osob':n<=4?'osoby':'osob'}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{
+                display: 'block', fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.15em', textTransform: 'uppercase',
+                color: 'var(--mid)', marginBottom: 8,
+              }}>Poznámka</label>
+              <textarea placeholder="Speciální požadavky, alergeny, příležitost…"
+                value={form.note} onChange={e => setForm({...form, note: e.target.value})}
+                rows={4} style={{ ...inp(false), resize: 'vertical' }}
+                onFocus={e => e.target.style.borderColor = 'var(--gold)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(139,115,85,0.3)'} />
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <button type="submit" style={{
+                background: 'var(--wood)', color: 'var(--gold)',
+                border: 'none', cursor: 'pointer',
+                padding: '16px 64px',
+                fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => e.target.style.background = 'var(--wood-lt)'}
+              onMouseLeave={e => e.target.style.background = 'var(--wood)'}>
+                Odeslat rezervaci
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ── FOOTER ── */
+function Footer() {
+  return (
+    <footer style={{
+      background: 'var(--ink)',
+      borderTop: '2px solid var(--gold)',
+      padding: '56px 64px 36px',
+    }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        {/* Top: logo + links */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '2fr 1fr 1fr',
+          gap: 48, paddingBottom: 48,
+          borderBottom: '1px solid rgba(200,150,12,0.2)',
+          marginBottom: 28,
+        }}>
+          <div>
+            <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="Logo"
+              style={{
+                height: 84, display: 'block', marginBottom: 20,
+              }} />
+            <p style={{
+              fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+              color: 'rgba(212,184,150,0.55)', lineHeight: 1.8, maxWidth: 300,
+            }}>
+              Rodinná restaurace na Starém Spořilově. Česká kuchyně, čerstvé pivo a přátelská atmosféra od roku 1994.
+            </p>
+          </div>
+
+          <div>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 20,
+            }}>Navigace</div>
+            {['Domů','Menu','O nás','Fotogalerie','Kontakt','Rezervace'].map(l => (
+              <a key={l} href="#" style={{
+                display: 'block', fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+                color: 'rgba(212,184,150,0.5)', textDecoration: 'none',
+                marginBottom: 10, transition: 'color 0.2s',
+              }}
+              onMouseEnter={e => e.target.style.color = '#fff'}
+              onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.5)'}>
+                {l}
+              </a>
+            ))}
+          </div>
+
+          <div>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 20,
+            }}>Kontakt</div>
+            <p style={{
+              fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+              color: 'rgba(212,184,150,0.55)', lineHeight: 1.9, marginBottom: 12,
+            }}>
+              Jižní IX<br />141 00 Praha 4<br />Starý Spořilov
+            </p>
+            <a href="tel:+420272766782" style={{
+              display: 'block', color: 'var(--gold)', textDecoration: 'none',
+              fontSize: 14, fontWeight: 700, marginBottom: 6, transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={e => e.target.style.opacity='0.7'}
+            onMouseLeave={e => e.target.style.opacity='1'}>
+              +420 272 76 67 82
+            </a>
+            <a href="mailto:restauraceubrizy@seznam.cz" style={{
+              color: 'rgba(212,184,150,0.45)', textDecoration: 'none',
+              fontSize: 12, transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => e.target.style.color='#fff'}
+            onMouseLeave={e => e.target.style.color='rgba(212,184,150,0.45)'}>
+              restauraceubrizy@seznam.cz
+            </a>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          flexWrap: 'wrap', gap: 12,
+        }}>
+          <span style={{ fontFamily: 'Lato', fontSize: 12, color: 'rgba(212,184,150,0.3)' }}>
+            © 2024 Balounova Restaurace U Břízy — Praha 4, Starý Spořilov
+          </span>
+          <div style={{ display: 'flex', gap: 20 }}>
+            {[
+              { l: 'Facebook',  h: 'https://m.facebook.com/restauraceubrizy/' },
+              { l: 'Instagram', h: 'https://www.instagram.com/restauraceubrizy/' },
+              { l: 'Google Maps', h: '#' },
+            ].map(({ l, h }) => (
+              <a key={l} href={h} style={{
+                fontFamily: 'Lato', fontSize: 11, color: 'var(--gold)',
+                textDecoration: 'none', fontWeight: 700,
+                letterSpacing: '0.06em', transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => e.target.style.opacity='0.6'}
+              onMouseLeave={e => e.target.style.opacity='1'}>
+                {l}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ── TWEAKS ── */
+function TweaksPanel({ tweaks, setTweaks, visible }) {
+  if (!visible) return null;
+  const upd = (k, v) => {
+    const n = {...tweaks, [k]: v};
+    setTweaks(n);
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: n }, '*');
+  };
+  const swatches = [
+    { c: '#C8960C', l: 'Zlatá' },
+    { c: '#A07830', l: 'Bronzová' },
+    { c: '#7A9E6A', l: 'Olivová' },
+    { c: '#9E7A4A', l: 'Medová' },
+  ];
+
+  return (
+    <div style={{
+      position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
+      background: 'var(--wood)',
+      border: '1px solid rgba(200,150,12,0.3)',
+      padding: 24, width: 260,
+      boxShadow: '0 12px 48px rgba(0,0,0,0.5)',
+      fontFamily: 'Lato',
+    }}>
+      <div style={{
+        color: 'var(--gold)', fontSize: 11, fontWeight: 700,
+        letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 20,
+      }}>Tweaks</div>
+
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 10, color: 'rgba(212,184,150,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+          Akcentová barva
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {swatches.map(({ c, l }) => (
+            <div key={c} title={l} onClick={() => upd('accentColor', c)} style={{
+              width: 30, height: 30, background: c, cursor: 'pointer',
+              border: tweaks.accentColor === c ? '2px solid #fff' : '2px solid transparent',
+              transition: 'border 0.2s',
+            }} />
+          ))}
+        </div>
+      </div>
+
+      <button onClick={() => window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*')}
+        style={{
+          background: 'transparent', border: '1px solid rgba(200,150,12,0.3)',
+          color: 'rgba(212,184,150,0.5)', fontSize: 10, padding: '6px 14px',
+          cursor: 'pointer', letterSpacing: '0.1em', textTransform: 'uppercase',
+          fontFamily: 'Lato',
+        }}>Zavřít</button>
+    </div>
+  );
+}
+
+/* ── APP ── */
+function App() {
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [tweaksVisible, setTweaksVisible] = useState(false);
+
+  useEffect(() => {
+    const h = e => {
+      if (e.data?.type === '__activate_edit_mode')   setTweaksVisible(true);
+      if (e.data?.type === '__deactivate_edit_mode') setTweaksVisible(false);
+    };
+    window.addEventListener('message', h);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', h);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--gold', tweaks.accentColor);
+  }, [tweaks.accentColor]);
+
+  return (
+    <>
+      <style>{`
+        input::placeholder, textarea::placeholder { color: rgba(139,115,85,0.5); }
+        input[type=date]::-webkit-calendar-picker-indicator { opacity: 0.4; cursor: pointer; }
+        select option { background: #E8DDD0; color: #2E1D10; }
+      `}</style>
+      <Nav />
+      <Hero />
+      <Stats />
+      <About />
+      <OrnDivider text="Naše nabídka" />
+      <MenuSection />
+      <FoodGallery />
+      <OrnDivider text="Navštivte nás" bg="var(--wood)" />
+      <Hours />
+      <Reservation />
+      <Footer />
+      <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
