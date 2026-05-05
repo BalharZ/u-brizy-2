@@ -59,15 +59,15 @@ body {
   display: block;
 }
 /* Compact the time slot list in the dish widget */
-#hors-hydra-0011i000002k2VtAAI .slot-group {
-  max-height: 110px !important;
-  overflow: hidden !important;
-}
-#hors-hydra-0011i000002k2VtAAI .slot-group select,
-#hors-hydra-0011i000002k2VtAAI .slot-group [class*="slot"] {
-  height: 100px !important;
+#hors-hydra-0011i000002k2VtAAI .slot-group,
+#hors-hydra-0011i000002k2VtAAI .slot-data .form-group {
   max-height: 100px !important;
   overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+#hors-hydra-0011i000002k2VtAAI .slot-group select {
+  height: 100px !important;
+  max-height: 100px !important;
 }
 
 .pf { font-family: 'Playfair Display', serif; }
@@ -184,13 +184,14 @@ function ReservationCard() {
   React.useEffect(() => {
     loadDishWidget('#C8960C', '#1A2C24');
 
-    // Wait for dish widget to render, then cap the time-slot select to 4 visible rows
+    // Wait for dish widget to render, then cap the time-slot list to ~4 rows
     const host = document.getElementById(WIDGET_TAG);
     const obs = new MutationObserver(() => {
-      const sel = host && host.querySelector('.slot-group select');
-      if (sel) {
-        sel.size = 4;
-        sel.style.cssText += 'height:100px!important;max-height:100px!important;';
+      const slotGroup = host && host.querySelector('.slot-group');
+      if (slotGroup) {
+        slotGroup.style.cssText += 'max-height:100px!important;overflow-y:auto!important;overflow-x:hidden!important;';
+        const sel = slotGroup.querySelector('select');
+        if (sel) { sel.size = 4; sel.style.cssText += 'height:100px!important;'; }
         obs.disconnect();
       }
     });
