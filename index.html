@@ -58,12 +58,16 @@ body {
 #hors-hydra-0011i000002k2VtAAI iframe {
   display: block;
 }
-/* Compact the time-picker scroller inside the widget */
-#hors-hydra-0011i000002k2VtAAI [class*="time"],
-#hors-hydra-0011i000002k2VtAAI [class*="Time"],
-#hors-hydra-0011i000002k2VtAAI [class*="picker"],
-#hors-hydra-0011i000002k2VtAAI [class*="Picker"] {
-  max-height: 220px !important;
+/* Compact the time slot list in the dish widget */
+#hors-hydra-0011i000002k2VtAAI .slot-group {
+  max-height: 110px !important;
+  overflow: hidden !important;
+}
+#hors-hydra-0011i000002k2VtAAI .slot-group select,
+#hors-hydra-0011i000002k2VtAAI .slot-group [class*="slot"] {
+  height: 100px !important;
+  max-height: 100px !important;
+  overflow-y: auto !important;
 }
 
 .pf { font-family: 'Playfair Display', serif; }
@@ -187,7 +191,7 @@ function ReservationCard() {
       top: '50%',
       right: 140,
       transform: 'translateY(-50%)',
-      width: 400,
+      width: 360,
       background: 'var(--cream)',
       boxShadow: '0 24px 60px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.2)',
       zIndex: 3,
@@ -219,7 +223,7 @@ function ReservationCard() {
         padding: '16px 20px 14px',
         background: 'var(--cream)',
       }}>
-        <div id={WIDGET_TAG} style={{ minHeight: 280 }}></div>
+        <div id={WIDGET_TAG} style={{ minHeight: 200 }}></div>
       </div>
     </div>
   );
