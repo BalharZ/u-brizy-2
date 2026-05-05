@@ -12,6 +12,7 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel" src="nav.js"></script>
+<script type="text/babel" src="footer.js"></script>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -509,7 +510,7 @@ function MenuItem({ weight, name, desc, price, dark = false }) {
         </div>
         {desc && (
           <div style={{
-            fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+            fontFamily: 'Lato', fontSize: 16, fontWeight: 300,
             color: dark ? 'var(--text-mid)' : 'var(--mid)',
             marginTop: 6,
             lineHeight: 1.6,
@@ -590,14 +591,6 @@ function MenuSection({ section, idx }) {
             </div>
           </div>
 
-          {/* Item count */}
-          <div className="cg" style={{
-            fontSize: 56, fontStyle: 'italic', fontWeight: 400,
-            color: dark ? 'rgba(200,150,12,0.3)' : 'rgba(200,150,12,0.25)',
-            lineHeight: 1, paddingTop: 4,
-          }}>
-            {String(idx + 1).padStart(2, '0')}
-          </div>
         </div>
 
         {/* Items */}
@@ -611,108 +604,6 @@ function MenuSection({ section, idx }) {
   );
 }
 
-/* ─────────────────────────────────────────
-   FOOTER NOTE
-   ───────────────────────────────────────── */
-function FooterNote() {
-  return (
-    <section className="paper" style={{
-      padding: '64px 64px 88px',
-      borderTop: '1px solid rgba(15,44,31,0.08)',
-    }}>
-      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 14,
-          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.24em', textTransform: 'uppercase',
-          color: 'var(--gold)', marginBottom: 22,
-        }}>
-          <span style={{ width: 24, height: 1, background: 'var(--gold)' }} />
-          Dobrou chuť
-          <span style={{ width: 24, height: 1, background: 'var(--gold)' }} />
-        </div>
-        <p className="cg" style={{
-          fontSize: 24, fontStyle: 'italic', fontWeight: 400,
-          color: 'var(--mid)', lineHeight: 1.5,
-          marginBottom: 32,
-        }}>
-          Všechna jídla připravujeme čerstvě každý den ze sezónních surovin.
-          Pro alergiky a speciální požadavky neváhejte zavolat.
-        </p>
-        <div style={{
-          display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap',
-        }}>
-          <a href="index.html#rezervace" style={{
-            background: 'var(--gold)', color: 'var(--wood)',
-            padding: '14px 28px',
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-            textDecoration: 'none', transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
-            Rezervovat stůl
-          </a>
-          <a href="index.html" style={{
-            background: 'transparent', color: 'var(--wood)',
-            padding: '14px 28px',
-            border: '1px solid rgba(15,44,31,0.25)',
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-            textDecoration: 'none', transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.25)'; e.currentTarget.style.color = 'var(--wood)'; }}>
-            Zpět na úvod
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────
-   FOOTER
-   ───────────────────────────────────────── */
-function Footer() {
-  return (
-    <footer style={{
-      background: 'var(--wood)',
-      color: 'var(--text-mid)',
-      padding: '64px 52px 32px',
-    }}>
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: 24,
-          paddingBottom: 32,
-          borderBottom: '1px solid rgba(200,150,12,0.18)',
-        }}>
-          <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="Logo"
-            style={{ height: 64, filter: 'brightness(0) invert(1)', opacity: 0.85 }} />
-          <div style={{
-            display: 'flex', gap: 28,
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-          }}>
-            <a href="index.html" style={{ color: 'var(--text-mid)', textDecoration: 'none' }}>Domů</a>
-            <a href="index.html#menu" style={{ color: 'var(--text-mid)', textDecoration: 'none' }}>Stálé menu</a>
-            <a href="index.html#rezervace" style={{ color: 'var(--text-mid)', textDecoration: 'none' }}>Rezervace</a>
-            <a href="index.html#kontakt" style={{ color: 'var(--text-mid)', textDecoration: 'none' }}>Kontakt</a>
-          </div>
-        </div>
-        <div style={{
-          marginTop: 24,
-          display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
-          fontFamily: 'Lato', fontSize: 12, color: 'var(--text-mid)', opacity: 0.7,
-        }}>
-          <span>© {new Date().getFullYear()} Balounova Restaurace U Břízy</span>
-          <span>Jižní IX · 141 00 Praha 4 · +420 272 76 67 82</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 /* ─────────────────────────────────────────
    APP
@@ -728,8 +619,7 @@ function App() {
       {SECTIONS.map((s, i) => (
         <MenuSection key={s.id} section={s} idx={i} />
       ))}
-      <FooterNote />
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

@@ -5,10 +5,9 @@
      <SiteNav activePage="Denní menu" /> — highlight active item
 */
 function SiteNav({ isHome = false, activePage = null }) {
-  const [scrolled, setScrolled] = React.useState(!isHome);
+  const [scrolled, setScrolled] = React.useState(false);
 
   React.useEffect(() => {
-    if (!isHome) return;
     let raf;
     const tick = () => {
       setScrolled((window.pageYOffset || document.documentElement.scrollTop || 0) > 70);
@@ -36,7 +35,7 @@ function SiteNav({ isHome = false, activePage = null }) {
       l: 'Jídelní menu',
       children: [
         { l: 'Denní menu',      h: 'denni-menu.html' },
-        { l: 'Stálé menu',      h: 'http://balounovarestauraceubrizy.eu/stale-menu' },
+        { l: 'Stálé menu',      h: 'stale-menu.html' },
         { l: 'Nápojový lístek', h: `${base}#napojovy-listek` },
       ],
     },

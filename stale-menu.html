@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stálý jídelní lístek — Balounova Restaurace U Břízy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="nav.js"></script>
+<script type="text/babel" src="footer.js"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --wood:      #0F2C1F;
+  --wood-lt:   #234A35;
+  --gold:      #C8960C;
+  --gold-lt:   #D4A828;
+  --cream:     #F4F1E8;
+  --sand:      #E2DDC9;
+  --mid:       #406954;
+  --text-dark: #EFE8D5;
+  --text-mid:  #B1C7B8;
+  --ink:       #0B2318;
+}
+
+@supports (color: oklch(0.5 0.1 155)) {
+  :root {
+    --wood:      oklch(0.22 0.07 155);
+    --wood-lt:   oklch(0.32 0.08 155);
+    --mid:       oklch(0.42 0.09 155);
+    --text-mid:  oklch(0.78 0.04 155);
+    --ink:       oklch(0.18 0.05 155);
+  }
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+::selection { background: rgba(200,150,12,0.25); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--sand); }
+::-webkit-scrollbar-thumb { background: var(--wood-lt); }
+
+.cg { font-family: 'Cormorant Garamond', serif; }
+
+.paper {
+  background-color: var(--cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+.paper-sand {
+  background-color: var(--sand);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+.menu-item { transition: background 0.2s; }
+.menu-item:hover { background: rgba(200,150,12,0.05); }
+
+@media print {
+  header, footer, .no-print { display: none !important; }
+  body { background: white; }
+  section { page-break-inside: avoid; padding: 24px 0 !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ─────────────────────────────────────────
+   MENU DATA
+   ───────────────────────────────────────── */
+const SECTIONS = [
+  {
+    id: 'polevky', title: 'Polévky', sub: 'Soups', icon: 'soup',
+    items: [
+      { name: 'Hovězí vývar s játrovými knedlíčky, zeleninou a nudlemi', allergens: '1,3,7,9', price: 89 },
+      { name: 'Dle denní nabídky', price: 75 },
+    ],
+  },
+  {
+    id: 'studene', title: 'Studené předkrmy', sub: 'Cold starters', icon: 'leaf',
+    items: [
+      { weight: '150 g', name: 'Tataráček z hovězí roštěné', desc: '5 ks topinek, česnek', allergens: '1,3,7', price: 249 },
+      { weight: '100 g', name: 'Tlačenka s cibulkou a octem', desc: 'čerstvý chléb', allergens: '1,3,7', price: 95 },
+      { weight: '120 g', name: 'Naložený hermelín s cibulkou, feferonky', desc: '4 ks topinek / chléb', allergens: '1,3,7', price: 149 },
+      { weight: '200 g', name: 'Tortilla nachos s chedarovou sýrovou omáčkou a tomatovou salsou', allergens: '1,3,7', price: 110 },
+    ],
+  },
+  {
+    id: 'teple', title: 'Teplé předkrmy', sub: 'Hot starters', icon: 'fire',
+    items: [
+      { weight: '120 g', name: 'Grilované krevety s česnekovou rozpečenou bagetkou', price: 215 },
+      { weight: '150 g', name: 'Ďábelská topinka s masovou směsí sypaná sýrem', desc: 'salátek z polníčku', allergens: '1,3,7', price: 175 },
+      { weight: '200 g', name: 'Čertovská klobása na grilu', desc: 'hořčice, křen, čerstvý chléb', price: 150 },
+      { weight: '150 g', name: 'Buřty na černém pivu s pikantní zeleninou', desc: 'čerstvý chléb', allergens: '1,3,6,7', price: 145 },
+      { weight: '3 ks', name: 'Smažené jalapeňos papričky v sýrové krustě', desc: 'rukolový salátek, zakysaná smetana', allergens: '1,3,7', price: 150 },
+    ],
+  },
+  {
+    id: 'hlavni', title: 'Hlavní jídla', sub: 'Main courses', icon: 'plate',
+    items: [
+      { weight: '150 g', name: 'CMUNDA PO KAPLICKU', desc: 'domácí bramborák, uzená vepřová plec, bílé zelí, smažená cibulka', allergens: '1,3,7,9', price: 240 },
+      { weight: '180 g', name: 'Svíčková na smetaně s hovězím masem', desc: 'brusinkový terč, houskové knedlíky', allergens: '1,3,7,9', price: 265 },
+      { weight: '200 g', name: 'Kuřecí / vepřový smažený řízek', desc: 'vařené brambory, kyselá okurka, citrón', allergens: '1,3,7', price: 260 },
+      { weight: '500 g', name: 'Kuřecí pečená BBQ křídla', desc: 'salát, coleslaw, zeleninové špalíčky, rozpečená bageta, česnekový dip', allergens: '1,3,7', price: 245 },
+      { weight: '150 g', name: 'Anglický hovězí ROASTBEEF s tatarskou omáčkou', desc: 'domácí hranolky', allergens: '1,3,7,10', price: 250 },
+      { weight: '800 g', name: 'Marinovaná vepřová žebírka', desc: 'hořčice, křen, okurka, zelný salát, beraní rohy, čerstvý chléb', allergens: '1,3,7', price: 330 },
+      { weight: '1000 g', name: 'Pečené vepřové koleno na plzeňském pivu', desc: 'hořčice, křen, nakládané cibulky, okurka, zelný salát, čerstvý chléb', allergens: '1,3,7', price: 370 },
+      { weight: '120 g', name: 'Smažený sýr eidam', desc: 'vařené brambory, domácí tatarská omáčka', allergens: '1,3,7,10', price: 240 },
+      { weight: '250 g', name: 'Kuřecí stripsy smažené v kukuřičných lupínkách', desc: 'tatarská omáčka', allergens: '1,3,7', price: 290 },
+    ],
+  },
+  {
+    id: 'steaky', title: 'Steaky', sub: 'Steaks', icon: 'fire', feature: true,
+    items: [
+      { weight: '350 g', name: 'Vepřový steak TOMAHAWK', desc: 'fazolové lusky se slaninou', allergens: '1,3,7', price: 295 },
+      { weight: '250 g', name: 'Argentinská hovězí roštěná s pepřovou omáčkou', desc: 'lanýžové hranolky s parmazánem', allergens: '1,7,9', price: 450 },
+      { weight: '250 g', name: 'Krůtí prsíčko s hráškovým krémovým RISOTTEM', desc: 'parmazán', allergens: '1,7', price: 270 },
+    ],
+  },
+  {
+    id: 'burgery', title: 'Burgery', sub: 'Burgers', icon: 'chef',
+    items: [
+      { weight: '200 g', name: 'Hovězí SMASH BURGER s chedarem a karamelizovanou cibulkou', desc: 'coleslaw, domácí hranolky', allergens: '1,3,7,10', price: 330 },
+    ],
+    addons: [
+      { name: 'Zauzená majonéza', price: 45 },
+      { name: 'Anglický chedar', price: 25 },
+      { name: 'Opečený slaninový chips', price: 25 },
+      { name: 'Jalapeňos papričky', price: 20 },
+    ],
+  },
+  {
+    id: 'bezmasa', title: 'Bezmasá jídla', sub: 'Vegetarian', icon: 'leaf',
+    items: [
+      { weight: '150 g', name: 'Smažený CHEDAR v rozpečené bulce', desc: 'polníček, rajče, coleslaw, tatarská omáčka', price: 220 },
+      { weight: '250 g', name: 'Hráškové RISOTTO s grilovanou zeleninou', allergens: '7', price: 220 },
+    ],
+  },
+  {
+    id: 'salaty', title: 'Saláty', sub: 'Salads', icon: 'leaf',
+    items: [
+      { weight: '120 g', name: 'Caesar salát s grilovaným kuřecím prsíčkem', desc: 'římský salát, slanina, parmazán, opečené krutony, ančovičkový dresink', allergens: '1,3,4,7', price: 250 },
+      { weight: '100 g', name: 'MIX salátů s hovězím ROASTBEEFEM', desc: 'zauzená majonéza, cherry rajčata, červená cibulka, rozpečená bagetka', allergens: '1,3,7', price: 250 },
+      { name: 'Šopský salát z čerstvé zeleniny', desc: 'paprika, rajče, okurka · malý / velký', allergens: '1,3,7', price: '80 / 140' },
+      { name: 'Řecký salát z čerstvé zeleniny', desc: 'paprika, rajče, okurka, olivy, balkánský sýr, olivový olej · malý / velký', allergens: '1,3,7', price: '80 / 140' },
+      { name: 'Zelný salát', price: 69 },
+      { name: 'Coleslaw', allergens: '7', price: 69 },
+    ],
+  },
+  {
+    id: 'dezerty', title: 'Dezerty', sub: 'Desserts', icon: 'cake',
+    items: [
+      { name: 'Čokoládové suflé s mangovým sorbetem a malinovou redukcí', allergens: '1,3,7', price: 130 },
+      { name: 'Wafle s kit-kat čokoládovým krémem a banánem', desc: 'šlehačka', allergens: '1,3,7', price: 130 },
+      { name: 'Wafle s lesním ovocem a zakysanou smetanou', allergens: '1,3,7', price: 130 },
+      { name: 'Kopeček zmrzliny', allergens: '1,3,7', price: 35 },
+    ],
+  },
+  {
+    id: 'prilohy', title: 'Přílohy', sub: 'Sides', icon: 'plate', compact: true,
+    items: [
+      { name: 'Domácí hranolky', price: 55 },
+      { name: 'Krokety', price: 60 },
+      { name: 'Bramborový salát', price: 65 },
+      { name: 'Porce knedlíků', price: 45 },
+      { name: 'Vařené brambory', price: 45 },
+      { name: 'Rozpečená česneková bageta', price: 45 },
+    ],
+  },
+  {
+    id: 'omacky', title: 'Omáčky', sub: 'Sauces', icon: 'soup', compact: true,
+    items: [
+      { name: 'Tatarská omáčka', price: 35 },
+      { name: 'Zauzená majonéza', price: 35 },
+      { name: 'Omáčka z modrého sýra', price: 35 },
+      { name: 'Chedar sýrový dip', price: 30 },
+      { name: 'Pepřová omáčka', price: 25 },
+      { name: 'Česnekový dip', price: 25 },
+      { name: 'Jalapeňos omáčka', price: 25 },
+      { name: 'BBQ omáčka', price: 30 },
+      { name: 'HOT BOX set pálivých omáček', price: 35 },
+      { name: 'Spiraca pálivá omáčka', price: 30 },
+      { name: 'Kečup', price: 20 },
+      { name: 'Hořčice', price: 15 },
+    ],
+  },
+  {
+    id: 'pecivo', title: 'Pečivo', sub: 'Bread', icon: 'cake', compact: true,
+    items: [
+      { name: 'Rozpečená česneková bageta', price: 45 },
+      { name: 'Opečený toast', desc: '1 ks', price: 8 },
+      { name: 'Malý košík chleba', desc: '5 ks', price: 20 },
+      { name: 'Velký košík pečiva', desc: '10 ks', price: 30 },
+    ],
+  },
+];
+
+/* ─────────────────────────────────────────
+   ICONS
+   ───────────────────────────────────────── */
+const ICONS = {
+  soup:  <><path d="M3 12h18a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z" /><path d="M7 8c0-1 .5-1.5 1-2s1-1 1-2" /><path d="M11 8c0-1 .5-1.5 1-2s1-1 1-2" /><path d="M15 8c0-1 .5-1.5 1-2s1-1 1-2" /></>,
+  chef:  <><path d="M6 14a4 4 0 0 1-2-7.6 4 4 0 0 1 7.7-1.5 4 4 0 0 1 6.6 0 4 4 0 0 1 4 7.5V14" /><path d="M5 14h14v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><line x1="9" y1="18" x2="9" y2="22" /><line x1="12" y1="18" x2="12" y2="22" /><line x1="15" y1="18" x2="15" y2="22" /></>,
+  plate: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /></>,
+  leaf:  <><path d="M11 20A7 7 0 0 1 4 13c0-4 3-7 7-7s7 3 7 7" /><path d="M11 20c0-5 4-9 9-9" /><path d="M4 13c4 0 7-3 7-7" /></>,
+  fire:  <><path d="M12 2c1 4 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3 1-5 1-8z" /></>,
+  cake:  <><rect x="3" y="11" width="18" height="10" rx="1" /><path d="M3 16h18" /><line x1="8" y1="11" x2="8" y2="6" /><line x1="12" y1="11" x2="12" y2="4" /><line x1="16" y1="11" x2="16" y2="6" /><circle cx="8" cy="5" r="1" /><circle cx="12" cy="3" r="1" /><circle cx="16" cy="5" r="1" /></>,
+  arrowL:<polyline points="15 18 9 12 15 6" />,
+  bolt:  <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />,
+};
+
+function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" {...rest}>
+      {ICONS[name]}
+    </svg>
+  );
+}
+
+/* ─────────────────────────────────────────
+   HERO
+   ───────────────────────────────────────── */
+function MenuHero() {
+  return (
+    <section className="paper" style={{
+      position: 'relative',
+      padding: '72px 64px 88px',
+      borderBottom: '1px solid rgba(15,44,31,0.1)',
+      overflow: 'hidden',
+    }}>
+      <div className="cg" aria-hidden="true" style={{
+        position: 'absolute', right: -40, top: 8,
+        fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+        color: 'rgba(200,150,12,0.07)',
+        letterSpacing: '-0.04em', lineHeight: 1,
+        pointerEvents: 'none', userSelect: 'none',
+      }}>Menu</div>
+
+      <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
+        <nav style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          color: 'var(--mid)', marginBottom: 28,
+        }}>
+          <a href="index.html" style={{ color: 'var(--mid)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <Icon name="arrowL" size={12} />Zpět na úvod
+          </a>
+          <span style={{ opacity: 0.4 }}>/</span>
+          <span style={{ color: 'var(--gold)' }}>Stálý jídelní lístek</span>
+        </nav>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 56, alignItems: 'end' }}>
+          <div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 12,
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 24,
+            }}>
+              <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+              Jídelní lístek
+            </div>
+            <h1 className="cg" style={{
+              fontSize: 'clamp(56px, 7vw, 110px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: 'var(--wood)', lineHeight: 0.95,
+              letterSpacing: '-0.02em', marginBottom: 24,
+            }}>
+              Stálý jídelní<br />lístek
+            </h1>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 13, fontWeight: 400,
+              color: 'var(--mid)', lineHeight: 1.7, maxWidth: 540,
+            }}>
+              <div style={{ marginBottom: 6 }}>
+                Platný od <strong>15:00 hod</strong> — o víkendu a svátcích po celý den.
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14 }}>
+                <Icon name="bolt" size={14} style={{ color: 'var(--gold)' }} />
+                <span>Rozvoz jídel až k Vám domů —&nbsp;
+                  <a href="https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy" target="_blank" rel="noopener" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}>Bolt Food</a>
+                  &nbsp;&amp;&nbsp;
+                  <a href="https://www.foodora.cz" target="_blank" rel="noopener" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}>Foodora</a>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'right' }} className="no-print">
+            <button onClick={() => window.print()} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: 'transparent', border: '1px solid rgba(15,44,31,0.2)',
+              padding: '12px 20px', cursor: 'pointer',
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.14em', textTransform: 'uppercase',
+              color: 'var(--mid)', transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--mid)'; }}>
+              <Icon name="bolt" size={14} />Tisk menu
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MENU ITEM
+   ───────────────────────────────────────── */
+function MenuItem({ weight, name, desc, allergens, price, dark = false, compact = false }) {
+  return (
+    <div className="menu-item" style={{
+      display: 'grid',
+      gridTemplateColumns: compact ? '1fr auto' : '64px 1fr auto',
+      gap: compact ? 16 : 24,
+      alignItems: 'baseline',
+      padding: compact ? '14px 16px' : '22px 16px',
+      borderBottom: dark
+        ? '1px solid rgba(200,150,12,0.18)'
+        : '1px solid rgba(15,44,31,0.1)',
+    }}>
+      {!compact && (
+        <div className="cg" style={{
+          fontSize: 18, fontStyle: 'italic', fontWeight: 500,
+          color: 'var(--gold)', letterSpacing: '0.02em', whiteSpace: 'nowrap',
+        }}>
+          {weight || ''}
+        </div>
+      )}
+
+      <div>
+        <div className="cg" style={{
+          fontSize: compact ? 20 : 24, fontWeight: 600,
+          color: dark ? 'var(--text-dark)' : 'var(--wood)',
+          lineHeight: 1.2, letterSpacing: '0.005em',
+        }}>
+          {name}
+        </div>
+        {desc && (
+          <div style={{
+            fontFamily: 'Lato', fontSize: 16, fontWeight: 300,
+            color: dark ? 'var(--text-mid)' : 'var(--mid)',
+            marginTop: 4, lineHeight: 1.6,
+          }}>
+            {desc}
+          </div>
+        )}
+        {allergens && (
+          <div style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            color: 'var(--gold)', opacity: 0.65, marginTop: 5,
+          }}>
+            Alergeny: {allergens}
+          </div>
+        )}
+      </div>
+
+      <div className="cg" style={{
+        fontSize: compact ? 22 : 26, fontWeight: 700, fontStyle: 'italic',
+        color: 'var(--gold)', letterSpacing: '0.01em',
+        whiteSpace: 'nowrap', lineHeight: 1,
+      }}>
+        {price}<span style={{ fontSize: compact ? 14 : 18, marginLeft: 2, fontStyle: 'normal' }}>&nbsp;Kč</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MENU SECTION
+   ───────────────────────────────────────── */
+function MenuSection({ section, idx }) {
+  const dark = section.feature;
+  const compact = section.compact;
+  const bg = dark ? 'var(--wood)' : (idx % 2 === 0 ? 'var(--cream)' : 'var(--sand)');
+  const cls = dark ? '' : (idx % 2 === 0 ? 'paper' : 'paper-sand');
+  return (
+    <section id={section.id} className={cls} style={{
+      background: bg,
+      padding: dark ? '80px 64px' : '72px 64px',
+      borderTop: dark ? '1px solid var(--gold)' : '1px solid rgba(15,44,31,0.08)',
+      borderBottom: dark ? '1px solid var(--gold)' : 'none',
+    }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        {/* Section header */}
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', gap: 24,
+          marginBottom: 36, paddingBottom: 20,
+          borderBottom: dark
+            ? '1px solid rgba(200,150,12,0.3)'
+            : '1px solid rgba(200,150,12,0.4)',
+        }}>
+          <div style={{
+            width: 52, height: 52,
+            border: '1px solid var(--gold)',
+            background: dark ? 'rgba(200,150,12,0.12)' : 'rgba(200,150,12,0.06)',
+            color: 'var(--gold)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <Icon name={section.icon} size={22} stroke={1.5} />
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <h2 className="cg" style={{
+              fontSize: 'clamp(36px, 4vw, 48px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: dark ? 'var(--text-dark)' : 'var(--wood)',
+              lineHeight: 1, marginBottom: 6,
+            }}>
+              {section.title}
+            </h2>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--gold)',
+            }}>
+              {section.sub}
+            </div>
+          </div>
+        </div>
+
+        {/* Items */}
+        <div style={compact ? {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: '0 48px',
+        } : {}}>
+          {section.items.map((item, i) => (
+            <MenuItem key={i} {...item} dark={dark} compact={compact} />
+          ))}
+        </div>
+
+        {/* Burger add-ons */}
+        {section.addons && (
+          <div style={{ marginTop: 32 }}>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.22em', textTransform: 'uppercase',
+              color: 'var(--mid)', marginBottom: 12, paddingLeft: 16,
+            }}>
+              Příplatky k burgerům
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              gap: '0 48px',
+            }}>
+              {section.addons.map((item, i) => (
+                <MenuItem key={i} {...item} compact={true} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────
+   APP
+   ───────────────────────────────────────── */
+function App() {
+  return (
+    <>
+      <SiteNav activePage="Stálé menu" />
+      <div style={{ height: 72 }} />
+      <MenuHero />
+      {SECTIONS.map((s, i) => (
+        <MenuSection key={s.id} section={s} idx={i} />
+      ))}
+      <SiteFooter />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
