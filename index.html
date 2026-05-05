@@ -17,16 +17,16 @@
 html { scroll-behavior: smooth; }
 
 :root {
-  --wood:      #4A2E1F;
-  --wood-lt:   #5C3A28;
+  --wood:      #1F3A29;
+  --wood-lt:   #2C4A36;
   --gold:      #C8960C;
   --gold-lt:   #D4A828;
-  --cream:     #F9F3EB;
-  --sand:      #E8DDD0;
-  --mid:       #8B7355;
-  --text-dark: #F5E6D3;
-  --text-mid:  #D4B896;
-  --ink:       #2E1D10;
+  --cream:     #F4F1E8;
+  --sand:      #E2DDC9;
+  --mid:       #5C7064;
+  --text-dark: #EFE8D5;
+  --text-mid:  #BFC9B8;
+  --ink:       #0F1F16;
 }
 
 body {
@@ -133,11 +133,26 @@ function Nav() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  const [openMenu, setOpenMenu] = useState(false);
+  const closeTimer = React.useRef(null);
+  const openDropdown = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenMenu(true);
+  };
+  const closeDropdown = () => {
+    closeTimer.current = setTimeout(() => setOpenMenu(false), 180);
+  };
+
   const links = [
     { l: 'Domů',          h: '#' },
-    { l: 'Denní menu',    h: 'http://balounovarestauraceubrizy.eu/denni-menu/' },
-    { l: 'Stálé menu',    h: 'http://balounovarestauraceubrizy.eu/stale-menu' },
-    { l: 'Rozvoz jídel',  h: 'https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy' },
+    {
+      l: 'Jídelní menu',
+      children: [
+        { l: 'Denní menu',      h: 'http://balounovarestauraceubrizy.eu/denni-menu/' },
+        { l: 'Stálé menu',      h: 'http://balounovarestauraceubrizy.eu/stale-menu' },
+        { l: 'Nápojový lístek', h: '#napojovy-listek' },
+      ],
+    },
     { l: 'Voucher',       h: '#voucher' },
     { l: 'O nás',         h: '#o-nas' },
     { l: 'Kontakt',       h: '#kontakt' },
@@ -147,9 +162,9 @@ function Nav() {
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300,
       height: scrolled ? 72 : 124,
-      background: scrolled ? 'rgba(249,243,235,0.97)' : 'transparent',
+      background: scrolled ? 'rgba(244,241,232,0.97)' : 'transparent',
       backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(139,115,85,0.2)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(92,112,100,0.2)' : 'none',
       transition: 'all 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
       display: 'flex', alignItems: 'center',
       padding: '0 52px',
@@ -182,22 +197,102 @@ function Nav() {
         padding: scrolled ? 0 : '6px 8px 6px 20px',
         transition: 'all 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
       }}>
-        {links.map(({ l, h }) => (
-          <a key={l} href={h} style={{
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.16em', textTransform: 'uppercase',
-            color: scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)',
-            textDecoration: 'none', transition: 'color 0.2s',
-            padding: scrolled ? '0 14px' : '0 12px',
-            whiteSpace: 'nowrap',
-            position: 'relative',
-          }}
-          onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-          onMouseLeave={e => e.target.style.color = scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)'}>
-            {l}
-          </a>
-        ))}
-        <a href="#rezervace" style={{
+        {links.map((item) => {
+          if (item.children) {
+            return (
+              <div key={item.l}
+                onMouseEnter={openDropdown}
+                onMouseLeave={closeDropdown}
+                style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <a href="#"
+                  onClick={(e) => e.preventDefault()}
+                  style={{
+                    fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                    letterSpacing: '0.16em', textTransform: 'uppercase',
+                    color: scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)',
+                    textDecoration: 'none', transition: 'color 0.2s',
+                    padding: scrolled ? '0 14px' : '0 12px',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    cursor: 'pointer',
+                  }}>
+                  {item.l}
+                  <span style={{
+                    fontSize: 8,
+                    transform: openMenu ? 'rotate(180deg)' : 'rotate(0)',
+                    transition: 'transform 0.2s',
+                    opacity: 0.7,
+                  }}>▼</span>
+                </a>
+                {openMenu && (
+                  <div style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 12px)',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    minWidth: 240,
+                    background: scrolled ? 'rgba(244,241,232,0.98)' : 'rgba(20,12,6,0.92)',
+                    backdropFilter: 'blur(16px) saturate(140%)',
+                    WebkitBackdropFilter: 'blur(16px) saturate(140%)',
+                    border: scrolled
+                      ? '1px solid rgba(92,112,100,0.2)'
+                      : '1px solid rgba(255,255,255,0.14)',
+                    borderTop: '2px solid var(--gold)',
+                    boxShadow: '0 16px 40px rgba(0,0,0,0.25)',
+                    padding: '6px 0',
+                    zIndex: 400,
+                  }}>
+                    {item.children.map((c) => (
+                      <a key={c.l} href={c.h}
+                        style={{
+                          display: 'block',
+                          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                          letterSpacing: '0.16em', textTransform: 'uppercase',
+                          color: scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)',
+                          textDecoration: 'none',
+                          padding: '14px 22px',
+                          whiteSpace: 'nowrap',
+                          transition: 'all 0.15s',
+                          borderLeft: '2px solid transparent',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = 'var(--gold)';
+                          e.currentTarget.style.background = scrolled
+                            ? 'rgba(200,150,12,0.06)'
+                            : 'rgba(200,150,12,0.1)';
+                          e.currentTarget.style.borderLeftColor = 'var(--gold)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)';
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.borderLeftColor = 'transparent';
+                        }}>
+                        {c.l}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+          return (
+            <a key={item.l} href={item.h} style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.16em', textTransform: 'uppercase',
+              color: scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)',
+              textDecoration: 'none', transition: 'color 0.2s',
+              padding: scrolled ? '0 14px' : '0 12px',
+              whiteSpace: 'nowrap',
+              position: 'relative',
+            }}
+            onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+            onMouseLeave={e => e.target.style.color = scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)'}>
+              {item.l}
+            </a>
+          );
+        })}
+        <a href="https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy"
+          target="_blank" rel="noopener" style={{
           fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
           letterSpacing: '0.18em', textTransform: 'uppercase',
           color: scrolled ? 'var(--gold)' : '#fff',
@@ -211,10 +306,254 @@ function Nav() {
         }}
         onMouseEnter={e => { e.currentTarget.style.background = scrolled ? 'var(--gold)' : '#a87a08'; e.currentTarget.style.color = '#fff'; }}
         onMouseLeave={e => { e.currentTarget.style.background = scrolled ? 'transparent' : 'var(--gold)'; e.currentTarget.style.color = scrolled ? 'var(--gold)' : '#fff'; }}>
-          Rezervace
+          Rozvoz jídel
         </a>
       </div>
     </nav>
+  );
+}
+
+/* ── RESERVATION WIDGET CARD ── */
+const WIDGET_TAG = 'hors-hydra-0011i000002k2VtAAI';
+
+function loadDishWidget(buttonBg, buttonFg) {
+  // Remove old container content + any iframe that was injected
+  const host = document.getElementById(WIDGET_TAG);
+  if (host) host.innerHTML = '';
+  // Remove old script tags + reset _hors
+  document.querySelectorAll('script[data-dish-widget]').forEach(s => s.remove());
+  window._hors = [
+    ['eid', 'hydra-0011i000002k2VtAAI'],
+    ['tagid', WIDGET_TAG],
+    ['width', '100%'],
+    ['height', ''],
+    ['foregroundColor', '#0F1F16'],
+    ['backgroundColor', '#F4F1E8'],
+    ['linkColor', buttonBg],
+    ['errorColor', '#c0392b'],
+    ['primaryButtonForegroundColor', buttonFg],
+    ['primaryButtonBackgroundColor', buttonBg],
+    ['secondaryButtonForegroundColor', buttonBg],
+    ['secondaryButtonBackgroundColor', 'transparent'],
+  ];
+  const s = document.createElement('script');
+  s.src = 'https://reservation.dish.co/widget.js?v=' + Date.now();
+  s.async = true;
+  s.dataset.dishWidget = '1';
+  document.body.appendChild(s);
+}
+
+function ReservationCard() {
+  React.useEffect(() => {
+    // initial load
+    loadDishWidget('#C8960C', '#1F3A29');
+    // listen for theme changes
+    const onTheme = (e) => {
+      const { buttonBg, buttonFg } = e.detail;
+      loadDishWidget(buttonBg, buttonFg);
+    };
+    window.addEventListener('themechange', onTheme);
+    return () => window.removeEventListener('themechange', onTheme);
+  }, []);
+
+  return (
+    <div style={{
+      position: 'absolute',
+      top: '50%',
+      right: 140,
+      transform: 'translateY(-50%)',
+      width: 440,
+      background: 'var(--cream)',
+      boxShadow: '0 24px 60px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.2)',
+      zIndex: 3,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+    }}>
+      {/* Header */}
+      <div style={{
+        background: 'var(--wood)',
+        padding: '22px 28px 20px',
+        textAlign: 'center',
+        borderBottom: '2px solid var(--gold)',
+      }}>
+        <div style={{
+          fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+          letterSpacing: '0.24em', textTransform: 'uppercase',
+          color: 'var(--gold)', marginBottom: 8,
+        }}>✦ Online rezervace ✦</div>
+        <div className="pf" style={{
+          fontSize: 26, fontWeight: 400, fontStyle: 'italic',
+          color: 'var(--text-dark)', lineHeight: 1.1,
+        }}>
+          Rezervujte si <span style={{ color: 'var(--gold)', fontWeight: 700 }}>stůl</span>
+        </div>
+      </div>
+      {/* Widget body */}
+      <div style={{
+        padding: '20px 24px 16px',
+        background: 'var(--cream)',
+      }}>
+        <div id={WIDGET_TAG}></div>
+      </div>
+    </div>
+  );
+}
+
+/* ── THEME SWITCHER ── */
+const THEMES = {
+  forest: {
+    name: 'Forest',
+    sub: 'Současné',
+    swatch: '#1F3A29',
+    btnBg: '#C8960C', btnFg: '#1F3A29',
+    vars: {
+      '--wood': '#1F3A29',
+      '--wood-lt': '#2C4A36',
+      '--gold': '#C8960C',
+      '--gold-lt': '#D4A828',
+      '--cream': '#F4F1E8',
+      '--sand': '#E2DDC9',
+      '--mid': '#5C7064',
+      '--text-dark': '#EFE8D5',
+      '--text-mid': '#BFC9B8',
+      '--ink': '#0F1F16',
+    },
+  },
+  oklch: {
+    name: 'Olive OKLCH',
+    sub: 'Tlumená olivová',
+    swatch: 'oklch(0.32 0.08 155)',
+    btnBg: '#C8960C', btnFg: '#1F3A29',
+    vars: {
+      '--wood': 'oklch(0.22 0.07 155)',
+      '--wood-lt': 'oklch(0.32 0.08 155)',
+      '--gold': '#C8960C',
+      '--gold-lt': '#D4A828',
+      '--cream': '#F4F1E8',
+      '--sand': '#E2DDC9',
+      '--mid': 'oklch(0.42 0.09 155)',
+      '--text-dark': '#EFE8D5',
+      '--text-mid': 'oklch(0.78 0.04 155)',
+      '--ink': 'oklch(0.18 0.05 155)',
+    },
+  },
+  brand: {
+    name: 'Logo Brand',
+    sub: 'Tmavá + logo zelená',
+    swatch: '#211717',
+    btnBg: '#069040', btnFg: '#FFFFFF',
+    vars: {
+      '--wood': '#211717',
+      '--wood-lt': '#2E2020',
+      '--gold': '#069040',
+      '--gold-lt': '#0AB350',
+      '--cream': '#F4F1E8',
+      '--sand': '#E2DDC9',
+      '--mid': '#5C5050',
+      '--text-dark': '#EFE8D5',
+      '--text-mid': '#BFB5B0',
+      '--ink': '#1A1010',
+    },
+  },
+};
+
+function ThemeSwitcher() {
+  const [active, setActive] = useState('forest');
+  const [open, setOpen] = useState(false);
+
+  const apply = (key) => {
+    const t = THEMES[key];
+    if (!t) return;
+    Object.entries(t.vars).forEach(([k, v]) => {
+      document.documentElement.style.setProperty(k, v);
+    });
+    setActive(key);
+    window.dispatchEvent(new CustomEvent('themechange', {
+      detail: { buttonBg: t.btnBg, buttonFg: t.btnFg },
+    }));
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: 24,
+      left: 24,
+      zIndex: 999,
+      fontFamily: 'Lato',
+    }}>
+      {open && (
+        <div style={{
+          background: 'rgba(15,31,22,0.96)',
+          backdropFilter: 'blur(12px)',
+          padding: '18px 18px 14px',
+          marginBottom: 10,
+          width: 240,
+          border: '1px solid rgba(200,150,12,0.3)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+        }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.22em',
+            textTransform: 'uppercase', color: 'rgba(200,150,12,0.9)',
+            marginBottom: 14, paddingBottom: 10,
+            borderBottom: '1px solid rgba(200,150,12,0.2)',
+          }}>
+            Barevné téma
+          </div>
+          {Object.entries(THEMES).map(([key, t]) => (
+            <button key={key}
+              onClick={() => apply(key)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                width: '100%', padding: '10px 8px',
+                background: active === key ? 'rgba(200,150,12,0.12)' : 'transparent',
+                border: 'none', cursor: 'pointer', textAlign: 'left',
+                marginBottom: 4,
+                borderLeft: active === key ? '2px solid #C8960C' : '2px solid transparent',
+                transition: 'background 0.15s',
+              }}>
+              <span style={{
+                width: 28, height: 28,
+                background: t.swatch,
+                border: '1px solid rgba(255,255,255,0.15)',
+                flexShrink: 0,
+              }} />
+              <span>
+                <div style={{
+                  fontSize: 12, fontWeight: 700, color: '#EFE8D5',
+                  letterSpacing: '0.04em',
+                }}>{t.name}</div>
+                <div style={{
+                  fontSize: 10, color: 'rgba(239,232,213,0.55)',
+                  letterSpacing: '0.05em', marginTop: 2,
+                }}>{t.sub}</div>
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+      <button onClick={() => setOpen(!open)} style={{
+        background: 'rgba(15,31,22,0.92)',
+        backdropFilter: 'blur(12px)',
+        color: 'rgba(200,150,12,0.95)',
+        border: '1px solid rgba(200,150,12,0.4)',
+        padding: '12px 18px',
+        cursor: 'pointer',
+        fontSize: 10, fontWeight: 700,
+        letterSpacing: '0.22em', textTransform: 'uppercase',
+        fontFamily: 'Lato',
+        display: 'flex', alignItems: 'center', gap: 10,
+        boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
+      }}>
+        <span style={{
+          width: 14, height: 14,
+          background: THEMES[active].swatch,
+          border: '1px solid rgba(255,255,255,0.2)',
+        }} />
+        {THEMES[active].name}
+        <span style={{ fontSize: 8, marginLeft: 4 }}>{open ? '▼' : '▲'}</span>
+      </button>
+    </div>
   );
 }
 
@@ -225,7 +564,7 @@ function Hero() {
       background: 'var(--wood)',
       minHeight: '100vh',
       display: 'grid',
-      gridTemplateColumns: '0.8fr 1.2fr',
+      gridTemplateColumns: '0.65fr 1.35fr',
       overflow: 'hidden',
       position: 'relative',
     }}>
@@ -233,7 +572,7 @@ function Hero() {
       <div style={{
         display: 'flex', flexDirection: 'column',
         justifyContent: 'center',
-        padding: '110px 64px 80px 140px',
+        padding: '110px 32px 80px 120px',
         position: 'relative', zIndex: 2,
       }}>
         {/* Subtle wood grain lines */}
@@ -301,7 +640,8 @@ function Hero() {
 
         {/* CTAs */}
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          <a href="#rezervace" style={{
+          <a href="https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy"
+            target="_blank" rel="noopener" style={{
             background: 'var(--gold)',
             color: 'var(--wood)',
             padding: '14px 40px',
@@ -313,7 +653,7 @@ function Hero() {
           }}
           onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
           onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
-            Rezervovat stůl
+            Rozvoz jídel
           </a>
           <a href="#menu" style={{
             border: '1px solid rgba(200,150,12,0.4)',
@@ -334,12 +674,12 @@ function Hero() {
         <div style={{ marginTop: 44, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 20, height: 1, background: 'rgba(200,150,12,0.5)' }} />
           <a href="tel:+420272766782" style={{
-            color: 'rgba(212,184,150,0.6)',
+            color: 'rgba(191,201,184,0.6)',
             textDecoration: 'none', fontSize: 13, letterSpacing: '0.06em',
             transition: 'color 0.2s',
           }}
           onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-          onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.6)'}>
+          onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.6)'}>
             272 76 67 82
           </a>
         </div>
@@ -362,44 +702,23 @@ function Hero() {
         {/* Dark overlay on left to blend */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to right, var(--wood) 0%, rgba(74,46,31,0.3) 35%, transparent 70%)',
+          background: 'var(--wood)',
+          maskImage: 'linear-gradient(to right, black 0%, black 8%, rgba(0,0,0,0.85) 22%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.2) 65%, transparent 85%)',
+          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 8%, rgba(0,0,0,0.85) 22%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.2) 65%, transparent 85%)',
           pointerEvents: 'none',
         }} />
 
         {/* Bottom overlay */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to top, rgba(74,46,31,0.8) 0%, transparent 40%)',
+          background: 'var(--wood)',
+          maskImage: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%)',
+          WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%)',
           pointerEvents: 'none',
         }} />
 
-        {/* Small food photo inset — bottom right */}
-        <div style={{
-          position: 'absolute', bottom: 36, right: 36,
-          width: 160, height: 160,
-          border: '2px solid var(--gold)',
-          overflow: 'hidden',
-        }}>
-          <img src={P.burger} alt="Burger"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        </div>
-
-        {/* Praha 4 badge */}
-        <div style={{
-          position: 'absolute', top: 100, right: 36,
-          textAlign: 'center',
-        }}>
-          <div style={{
-            fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
-            letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: 'var(--gold)', marginBottom: 4,
-          }}>Praha 4</div>
-          <div style={{
-            fontFamily: 'Lato', fontSize: 10, fontWeight: 400,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: 'rgba(212,184,150,0.6)',
-          }}>Starý Spořilov</div>
-        </div>
+        {/* Reservation widget overlay */}
+        <ReservationCard />
       </div>
     </section>
   );
@@ -416,13 +735,13 @@ function Stats() {
   return (
     <div className="paper-sand" style={{
       display: 'grid', gridTemplateColumns: 'repeat(4,1fr)',
-      borderBottom: '1px solid rgba(139,115,85,0.2)',
+      borderBottom: '1px solid rgba(92,112,100,0.2)',
     }}>
       {items.map((s, i) => (
         <div key={i} style={{
           padding: '44px 32px',
           textAlign: 'center',
-          borderLeft: i > 0 ? '1px solid rgba(139,115,85,0.18)' : 'none',
+          borderLeft: i > 0 ? '1px solid rgba(92,112,100,0.18)' : 'none',
         }}>
           <div className="pf" style={{
             fontSize: 52, fontWeight: 700,
@@ -467,7 +786,7 @@ function About() {
             width: 180, height: 220,
             border: '4px solid var(--cream)',
             borderRadius: 4, overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(74,46,31,0.25)',
+            boxShadow: '0 8px 32px rgba(31,58,41,0.25)',
           }}>
             <img src={P.drink} alt="Nápoj"
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -601,7 +920,7 @@ function MenuSection() {
               style={{
                 display: 'block',
                 background: c.dark ? 'var(--wood)' : hov === i ? 'var(--sand)' : 'var(--cream)',
-                border: c.dark ? 'none' : '1px solid rgba(139,115,85,0.15)',
+                border: c.dark ? 'none' : '1px solid rgba(92,112,100,0.15)',
                 padding: '40px 36px',
                 textDecoration: 'none',
                 transition: 'all 0.3s',
@@ -617,7 +936,7 @@ function MenuSection() {
               {/* Number */}
               <div className="pf" style={{
                 fontSize: 48, fontWeight: 700,
-                color: c.dark ? 'rgba(200,150,12,0.2)' : 'rgba(74,46,31,0.08)',
+                color: c.dark ? 'rgba(200,150,12,0.2)' : 'rgba(31,58,41,0.08)',
                 lineHeight: 1, marginBottom: 20,
                 fontStyle: 'italic',
               }}>{c.n}</div>
@@ -665,7 +984,7 @@ function MenuSection() {
               fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
               letterSpacing: '0.16em', textTransform: 'uppercase',
               color: 'var(--mid)', textDecoration: 'none',
-              borderBottom: '1px solid rgba(139,115,85,0.3)',
+              borderBottom: '1px solid rgba(92,112,100,0.3)',
               paddingBottom: 3, transition: 'color 0.2s',
             }}
             onMouseEnter={e => e.target.style.color = 'var(--gold)'}
@@ -730,7 +1049,7 @@ function FoodGallery() {
             }} />
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to top, rgba(74,46,31,0.75) 0%, transparent 50%)',
+            background: 'linear-gradient(to top, rgba(31,58,41,0.75) 0%, transparent 50%)',
           }} />
           <div style={{ position: 'absolute', bottom: 28, left: 32 }}>
             <div style={{ width: 28, height: 1, background: 'var(--gold)', marginBottom: 10 }} />
@@ -758,7 +1077,7 @@ function FoodGallery() {
               }} />
             <div style={{
               position: 'absolute', inset: 0,
-              background: hov === i + 1 ? 'rgba(74,46,31,0.55)' : 'rgba(74,46,31,0.15)',
+              background: hov === i + 1 ? 'rgba(31,58,41,0.55)' : 'rgba(31,58,41,0.15)',
               transition: 'background 0.35s',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
@@ -851,7 +1170,7 @@ function Hours() {
           <div style={{ marginTop: 36 }}>
             <p style={{
               fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-              color: 'rgba(212,184,150,0.6)', lineHeight: 1.7,
+              color: 'rgba(191,201,184,0.6)', lineHeight: 1.7,
             }}>
               Jižní IX, 141 00 Praha 4 – Starý Spořilov
             </p>
@@ -879,11 +1198,11 @@ function Hours() {
 
           <a href="mailto:restauraceubrizy@seznam.cz" style={{
             fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-            color: 'rgba(212,184,150,0.6)', textDecoration: 'none',
+            color: 'rgba(191,201,184,0.6)', textDecoration: 'none',
             marginBottom: 40, display: 'block', transition: 'color 0.2s',
           }}
           onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-          onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.6)'}>
+          onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.6)'}>
             restauraceubrizy@seznam.cz
           </a>
 
@@ -911,11 +1230,11 @@ function Hours() {
               <a key={l} href={h} style={{
                 fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
                 letterSpacing: '0.1em',
-                color: 'rgba(212,184,150,0.5)', textDecoration: 'none',
+                color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
                 transition: 'color 0.2s',
               }}
               onMouseEnter={e => e.target.style.color = 'var(--gold)'}
-              onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.5)'}>
+              onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
                 {l}
               </a>
             ))}
@@ -945,7 +1264,7 @@ function Reservation() {
   const inp = (error) => ({
     width: '100%', padding: '13px 16px',
     background: 'transparent',
-    border: `1px solid ${error ? '#c0392b' : 'rgba(139,115,85,0.3)'}`,
+    border: `1px solid ${error ? '#c0392b' : 'rgba(92,112,100,0.3)'}`,
     color: 'var(--ink)', fontSize: 15,
     fontFamily: 'Lato', outline: 'none',
     transition: 'border-color 0.2s',
@@ -954,7 +1273,7 @@ function Reservation() {
   return (
     <section id="rezervace" className="paper-sand" style={{
       padding: '100px 64px',
-      borderTop: '1px solid rgba(139,115,85,0.2)',
+      borderTop: '1px solid rgba(92,112,100,0.2)',
     }}>
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
@@ -1005,7 +1324,7 @@ function Reservation() {
                     onChange={e => { setForm({...form, [k]: e.target.value}); setErr({...err, [k]: false}); }}
                     style={inp(err[k])}
                     onFocus={e => e.target.style.borderColor = 'var(--gold)'}
-                    onBlur={e => e.target.style.borderColor = err[k] ? '#c0392b' : 'rgba(139,115,85,0.3)'} />
+                    onBlur={e => e.target.style.borderColor = err[k] ? '#c0392b' : 'rgba(92,112,100,0.3)'} />
                 </div>
               ))}
               <div>
@@ -1033,7 +1352,7 @@ function Reservation() {
                 value={form.note} onChange={e => setForm({...form, note: e.target.value})}
                 rows={4} style={{ ...inp(false), resize: 'vertical' }}
                 onFocus={e => e.target.style.borderColor = 'var(--gold)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(139,115,85,0.3)'} />
+                onBlur={e => e.target.style.borderColor = 'rgba(92,112,100,0.3)'} />
             </div>
 
             <div style={{ textAlign: 'center', marginTop: 8 }}>
@@ -1080,7 +1399,7 @@ function Footer() {
               }} />
             <p style={{
               fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-              color: 'rgba(212,184,150,0.55)', lineHeight: 1.8, maxWidth: 300,
+              color: 'rgba(191,201,184,0.55)', lineHeight: 1.8, maxWidth: 300,
             }}>
               Rodinná restaurace na Starém Spořilově. Česká kuchyně, čerstvé pivo a přátelská atmosféra od roku 1994.
             </p>
@@ -1095,11 +1414,11 @@ function Footer() {
             {['Domů','Menu','O nás','Fotogalerie','Kontakt','Rezervace'].map(l => (
               <a key={l} href="#" style={{
                 display: 'block', fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-                color: 'rgba(212,184,150,0.5)', textDecoration: 'none',
+                color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
                 marginBottom: 10, transition: 'color 0.2s',
               }}
               onMouseEnter={e => e.target.style.color = '#fff'}
-              onMouseLeave={e => e.target.style.color = 'rgba(212,184,150,0.5)'}>
+              onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
                 {l}
               </a>
             ))}
@@ -1113,7 +1432,7 @@ function Footer() {
             }}>Kontakt</div>
             <p style={{
               fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-              color: 'rgba(212,184,150,0.55)', lineHeight: 1.9, marginBottom: 12,
+              color: 'rgba(191,201,184,0.55)', lineHeight: 1.9, marginBottom: 12,
             }}>
               Jižní IX<br />141 00 Praha 4<br />Starý Spořilov
             </p>
@@ -1126,11 +1445,11 @@ function Footer() {
               +420 272 76 67 82
             </a>
             <a href="mailto:restauraceubrizy@seznam.cz" style={{
-              color: 'rgba(212,184,150,0.45)', textDecoration: 'none',
+              color: 'rgba(191,201,184,0.45)', textDecoration: 'none',
               fontSize: 12, transition: 'color 0.2s',
             }}
             onMouseEnter={e => e.target.style.color='#fff'}
-            onMouseLeave={e => e.target.style.color='rgba(212,184,150,0.45)'}>
+            onMouseLeave={e => e.target.style.color='rgba(191,201,184,0.45)'}>
               restauraceubrizy@seznam.cz
             </a>
           </div>
@@ -1141,7 +1460,7 @@ function Footer() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           flexWrap: 'wrap', gap: 12,
         }}>
-          <span style={{ fontFamily: 'Lato', fontSize: 12, color: 'rgba(212,184,150,0.3)' }}>
+          <span style={{ fontFamily: 'Lato', fontSize: 12, color: 'rgba(191,201,184,0.3)' }}>
             © 2024 Balounova Restaurace U Břízy — Praha 4, Starý Spořilov
           </span>
           <div style={{ display: 'flex', gap: 20 }}>
@@ -1197,7 +1516,7 @@ function TweaksPanel({ tweaks, setTweaks, visible }) {
       }}>Tweaks</div>
 
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 10, color: 'rgba(212,184,150,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div style={{ fontSize: 10, color: 'rgba(191,201,184,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
           Akcentová barva
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -1214,7 +1533,7 @@ function TweaksPanel({ tweaks, setTweaks, visible }) {
       <button onClick={() => window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*')}
         style={{
           background: 'transparent', border: '1px solid rgba(200,150,12,0.3)',
-          color: 'rgba(212,184,150,0.5)', fontSize: 10, padding: '6px 14px',
+          color: 'rgba(191,201,184,0.5)', fontSize: 10, padding: '6px 14px',
           cursor: 'pointer', letterSpacing: '0.1em', textTransform: 'uppercase',
           fontFamily: 'Lato',
         }}>Zavřít</button>
@@ -1244,9 +1563,9 @@ function App() {
   return (
     <>
       <style>{`
-        input::placeholder, textarea::placeholder { color: rgba(139,115,85,0.5); }
+        input::placeholder, textarea::placeholder { color: rgba(92,112,100,0.5); }
         input[type=date]::-webkit-calendar-picker-indicator { opacity: 0.4; cursor: pointer; }
-        select option { background: #E8DDD0; color: #2E1D10; }
+        select option { background: #E2DDC9; color: #0F1F16; }
       `}</style>
       <Nav />
       <Hero />
@@ -1260,6 +1579,7 @@ function App() {
       <Reservation />
       <Footer />
       <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
+      <ThemeSwitcher />
     </>
   );
 }
