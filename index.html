@@ -183,6 +183,19 @@ function loadDishWidget(buttonBg, buttonFg) {
 function ReservationCard() {
   React.useEffect(() => {
     loadDishWidget('#C8960C', '#1A2C24');
+
+    // Wait for dish widget to render, then cap the time-slot select to 4 visible rows
+    const host = document.getElementById(WIDGET_TAG);
+    const obs = new MutationObserver(() => {
+      const sel = host && host.querySelector('.slot-group select');
+      if (sel) {
+        sel.size = 4;
+        sel.style.cssText += 'height:100px!important;max-height:100px!important;';
+        obs.disconnect();
+      }
+    });
+    if (host) obs.observe(host, { childList: true, subtree: true });
+    return () => obs.disconnect();
   }, []);
 
   return (
