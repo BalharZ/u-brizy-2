@@ -87,14 +87,25 @@ body {
 const { useState, useEffect } = React;
 
 /* ─────────────────────────────────────────
-   DATA — Úterý 5. 5.
+   DATA — dynamic Prague date
    ───────────────────────────────────────── */
-const TODAY = {
-  dayName: 'Úterý',
-  dayShort: 'Út',
-  date: '5. května',
-  dayIdx: 1, // 0=Po, 1=Út, ...
-};
+function getPragueToday() {
+  const MONTHS = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
+  const DAY_NAMES = ['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
+  const pragueDateStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Prague',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+  const [year, month, day] = pragueDateStr.split('-').map(Number);
+  const jsDay = new Date(year, month - 1, day).getDay();
+  return {
+    dayName: DAY_NAMES[jsDay],
+    date: `${day}. ${MONTHS[month - 1]}`,
+    dayIdx: jsDay >= 1 && jsDay <= 5 ? jsDay - 1 : -1,
+  };
+}
+
+const TODAY = getPragueToday();
 
 const WEEK_DAYS = [
   { short: 'Po', long: 'Pondělí' },
