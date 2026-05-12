@@ -35,6 +35,7 @@ function SiteNav({ isHome = false, activePage = null }) {
       l: 'Jídelní menu',
       children: [
         { l: 'Denní menu',      h: '/denni-menu' },
+        { l: 'Týdenní nabídka', h: '/tydenni-nabidka' },
         { l: 'Stálé menu',      h: '/stale-menu' },
         { l: 'Nápojový lístek', h: '/napojovy-listek' },
       ],

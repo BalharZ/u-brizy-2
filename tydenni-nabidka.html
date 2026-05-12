@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Týdenní nabídka — Balounova Restaurace U Břízy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lato:wght@400;700&subset=latin,latin-ext&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="menu.css">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="nav.js"></script>
+<script type="text/babel" src="footer.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ─────────────────────────────────────────
+   SECTIONS DATA
+   ───────────────────────────────────────── */
+const SECTIONS = [
+  {
+    id: 'polevka', title: 'Polévka', sub: 'Soup', icon: 'soup',
+    items: [
+      { weight: '200 g', name: 'Minestrone', desc: 'polévka se zeleninou a bazalkovým pestem', price: 89 },
+    ],
+  },
+  {
+    id: 'predkrmy', title: 'Předkrmy', sub: 'Starters', icon: 'leaf',
+    items: [
+      { weight: '200 g', name: 'Bruschetta', desc: 's rajčaty a česnekovým olejem', price: 140 },
+      { weight: '200 g', name: 'Capresse salát', desc: 'mozarella, rajče, bazalkové pesto, bagetka', price: 160 },
+    ],
+  },
+  {
+    id: 'italske', title: 'Italské speciality', sub: 'Italian specials', icon: 'chef', feature: true,
+    items: [
+      { weight: '200 g', name: 'Ciabata Roastbeef', desc: 'mozarella, bylinková majonéza, zeleninový salát s parmazánem', price: 275 },
+      { weight: '200 g', name: 'Špagety Carbonara', desc: 'panchetta, žloutek, parmazán', price: 240 },
+      { weight: '200 g', name: 'Penne Al Tonno', desc: 'steak z tuňáka, kapary, drcená rajčata', price: 250 },
+    ],
+  },
+  {
+    id: 'dezerty', title: 'Dezert', sub: 'Dessert', icon: 'cake',
+    items: [
+      { weight: '200 g', name: 'Tiramisu', price: 130 },
+    ],
+  },
+];
+
+/* ─────────────────────────────────────────
+   ICONS
+   ───────────────────────────────────────── */
+const ICONS = {
+  arrowL: <polyline points="15 18 9 12 15 6" />,
+  bolt:   <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />,
+  phone:  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />,
+  print:  <><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></>,
+  soup:   <><path d="M3 12h18a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z" /><path d="M7 8c0-1 .5-1.5 1-2s1-1 1-2" /><path d="M11 8c0-1 .5-1.5 1-2s1-1 1-2" /><path d="M15 8c0-1 .5-1.5 1-2s1-1 1-2" /></>,
+  leaf:   <><path d="M11 20A7 7 0 0 1 4 13c0-4 3-7 7-7s7 3 7 7" /><path d="M11 20c0-5 4-9 9-9" /><path d="M4 13c4 0 7-3 7-7" /></>,
+  chef:   <><path d="M6 14a4 4 0 0 1-2-7.6 4 4 0 0 1 7.7-1.5 4 4 0 0 1 6.6 0 4 4 0 0 1 4 7.5V14" /><path d="M5 14h14v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><line x1="9" y1="18" x2="9" y2="22" /><line x1="12" y1="18" x2="12" y2="22" /><line x1="15" y1="18" x2="15" y2="22" /></>,
+  cake:   <><rect x="3" y="11" width="18" height="10" rx="1" /><path d="M3 16h18" /><line x1="8" y1="11" x2="8" y2="6" /><line x1="12" y1="11" x2="12" y2="4" /><line x1="16" y1="11" x2="16" y2="6" /><circle cx="8" cy="5" r="1" /><circle cx="12" cy="3" r="1" /><circle cx="16" cy="5" r="1" /></>,
+};
+
+function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" {...rest}>
+      {ICONS[name]}
+    </svg>
+  );
+}
+
+/* ─────────────────────────────────────────
+   HERO
+   ───────────────────────────────────────── */
+function MenuHero() {
+  return (
+    <section className="paper" style={{
+      position: 'relative',
+      padding: '72px 64px 88px',
+      borderBottom: '1px solid rgba(15,44,31,0.1)',
+      overflow: 'hidden',
+    }}>
+      <div className="cg" aria-hidden="true" style={{
+        position: 'absolute', right: -40, top: 8,
+        fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+        color: 'rgba(200,150,12,0.07)',
+        letterSpacing: '-0.04em', lineHeight: 1,
+        pointerEvents: 'none', userSelect: 'none',
+      }}>Menu</div>
+
+      <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
+        <nav style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          color: 'var(--mid)', marginBottom: 28,
+        }}>
+          <a href="/" style={{ color: 'var(--mid)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <Icon name="arrowL" size={12} />Zpět na úvod
+          </a>
+          <span style={{ opacity: 0.4 }}>/</span>
+          <span style={{ color: 'var(--gold)' }}>Týdenní nabídka</span>
+        </nav>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr auto',
+          gap: 56,
+          alignItems: 'end',
+        }}>
+          <div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 12,
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 24,
+            }}>
+              <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+              Speciální nabídka
+            </div>
+            <h1 className="cg" style={{
+              fontSize: 'clamp(46px, 5.5vw, 82px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: 'var(--wood)', lineHeight: 0.95,
+              letterSpacing: '-0.02em', marginBottom: 24,
+              whiteSpace: 'nowrap',
+            }}>
+              Týdenní nabídka
+            </h1>
+          </div>
+
+          <div style={{ textAlign: 'right', paddingBottom: 12 }}>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--mid)', marginBottom: 10,
+            }}>
+              Platný od
+            </div>
+            <div className="cg" style={{
+              fontSize: 28, fontWeight: 600, fontStyle: 'italic',
+              color: 'var(--wood)', letterSpacing: '0.01em',
+            }}>
+              15:00 hod
+            </div>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 15, fontWeight: 400,
+              color: 'var(--mid)', marginTop: 8, whiteSpace: 'nowrap',
+            }}>
+              — o víkendu po celý den
+            </div>
+            <button onClick={() => window.print()} className="no-print" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              marginTop: 20,
+              padding: '10px 18px',
+              background: 'transparent',
+              border: '1px solid rgba(15,44,31,0.2)',
+              color: 'var(--wood)',
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase',
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
+              <Icon name="print" size={14} stroke={1.8} />
+              Tisk menu
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────
+   DELIVERY STRIP
+   ───────────────────────────────────────── */
+function DeliveryStrip() {
+  return (
+    <div style={{
+      background: 'var(--wood)',
+      color: 'var(--text-dark)',
+      padding: '28px 64px',
+    }}>
+      <div style={{
+        maxWidth: 1240, margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr auto auto',
+        alignItems: 'center', gap: 32,
+      }}>
+        <div style={{
+          width: 52, height: 52,
+          border: '1px solid var(--gold)',
+          color: 'var(--gold)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Icon name="bolt" size={22} stroke={1.6} />
+        </div>
+
+        <div>
+          <div style={{
+            fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+            letterSpacing: '0.24em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 4,
+          }}>Rozvoz obědů a večeří</div>
+          <div className="cg" style={{
+            fontSize: 22, fontStyle: 'italic', fontWeight: 500,
+            color: 'var(--text-dark)', letterSpacing: '0.01em',
+          }}>
+            Od 11:00 až k Vám domů nebo do práce
+          </div>
+        </div>
+
+        <a href="tel:+420272766782" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 12,
+          padding: '12px 20px',
+          border: '1px solid rgba(200,150,12,0.4)',
+          color: 'var(--text-dark)', textDecoration: 'none',
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(200,150,12,0.4)'; e.currentTarget.style.color = 'var(--text-dark)'; }}>
+          <Icon name="phone" size={14} stroke={1.8} />
+          272 76 67 82
+        </a>
+
+        <a href="https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy"
+          target="_blank" rel="noopener" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 12,
+          padding: '12px 22px',
+          background: 'var(--gold)', color: 'var(--wood)',
+          textDecoration: 'none',
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          transition: 'background 0.2s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
+        onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
+          <Icon name="bolt" size={14} stroke={2} />
+          Bolt Food
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MENU ITEM
+   ───────────────────────────────────────── */
+function MenuItem({ weight, name, desc, allergens, price, dark = false }) {
+  return (
+    <div className="menu-item" style={{
+      display: 'grid',
+      gridTemplateColumns: '64px 1fr auto',
+      gap: 24,
+      alignItems: 'baseline',
+      padding: '22px 16px',
+      borderBottom: dark
+        ? '1px solid rgba(200,150,12,0.18)'
+        : '1px solid rgba(15,44,31,0.1)',
+    }}>
+      <div className="cg" style={{
+        fontSize: 22, fontStyle: 'italic', fontWeight: 500,
+        color: 'var(--gold)', letterSpacing: '0.02em', whiteSpace: 'nowrap',
+      }}>
+        {weight || ''}
+      </div>
+
+      <div>
+        <div className="cg" style={{
+          fontSize: 24, fontWeight: 600,
+          color: dark ? 'var(--text-dark)' : 'var(--wood)',
+          lineHeight: 1.2, letterSpacing: '0.005em',
+        }}>
+          {name}
+        </div>
+        {desc && (
+          <div style={{
+            fontFamily: 'Lato', fontSize: 16, fontWeight: 400,
+            color: dark ? 'var(--text-mid)' : 'var(--mid)',
+            marginTop: 4, lineHeight: 1.6,
+          }}>
+            {desc}
+          </div>
+        )}
+        {allergens && (
+          <div style={{
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            color: 'var(--gold)', opacity: 0.65, marginTop: 5,
+          }}>
+            Alergeny: {allergens}
+          </div>
+        )}
+      </div>
+
+      <div className="cg" style={{
+        fontSize: 26, fontWeight: 700, fontStyle: 'italic',
+        color: 'var(--gold)', letterSpacing: '0.01em',
+        whiteSpace: 'nowrap', lineHeight: 1,
+      }}>
+        {price}<span style={{ fontSize: 18, marginLeft: 2, fontStyle: 'normal' }}>&nbsp;Kč</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MENU SECTION
+   ───────────────────────────────────────── */
+function MenuSection({ section, idx }) {
+  const dark = section.feature;
+  const bg = dark ? 'var(--wood)' : (idx % 2 === 0 ? 'var(--cream)' : 'var(--sand)');
+  const cls = dark ? '' : (idx % 2 === 0 ? 'paper' : 'paper-sand');
+  return (
+    <section id={section.id} className={cls} style={{
+      background: bg,
+      padding: dark ? '80px 64px' : '72px 64px',
+      borderTop: dark ? '1px solid var(--gold)' : '1px solid rgba(15,44,31,0.08)',
+      borderBottom: dark ? '1px solid var(--gold)' : 'none',
+    }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', gap: 24,
+          marginBottom: 36, paddingBottom: 20,
+          borderBottom: dark
+            ? '1px solid rgba(200,150,12,0.3)'
+            : '1px solid rgba(200,150,12,0.4)',
+        }}>
+          <div style={{
+            width: 52, height: 52,
+            border: '1px solid var(--gold)',
+            background: dark ? 'rgba(200,150,12,0.12)' : 'rgba(200,150,12,0.06)',
+            color: 'var(--gold)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <Icon name={section.icon} size={22} stroke={1.5} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <h2 className="cg" style={{
+              fontSize: 'clamp(36px, 4vw, 48px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: dark ? 'var(--text-dark)' : 'var(--wood)',
+              lineHeight: 1, marginBottom: 6,
+            }}>
+              {section.title}
+            </h2>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--gold)',
+            }}>
+              {section.sub}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          {section.items.map((item, i) => (
+            <MenuItem key={i} {...item} dark={dark} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────
+   APP
+   ───────────────────────────────────────── */
+function App() {
+  return (
+    <>
+      <SiteNav activePage="Týdenní nabídka" />
+      <div style={{ height: 72 }} />
+      <MenuHero />
+      <DeliveryStrip />
+      {SECTIONS.map((s, i) => (
+        <MenuSection key={s.id} section={s} idx={i} />
+      ))}
+      <SiteFooter />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
