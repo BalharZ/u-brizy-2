@@ -42,6 +42,7 @@ function SiteNav({ isHome = false, activePage = null }) {
         { l: 'Seznam alergenů', h: '/seznam-alergenu' },
       ],
     },
+    { l: 'Galerie', h: '/galerie' },
     { l: 'Voucher', h: '/voucher' },
     { l: 'O nás',   h: `${base}#o-nas` },
     { l: 'Kontakt', h: `${base}#kontakt` },

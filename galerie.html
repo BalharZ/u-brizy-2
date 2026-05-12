@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fotogalerie — Balounova Restaurace U Břízy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lato:wght@400;700&subset=latin,latin-ext&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="menu.css">
+<style>
+  .gallery-grid {
+    columns: 4;
+    column-gap: 12px;
+  }
+  .gallery-grid .photo-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+  }
+  .gallery-grid .photo-item img {
+    width: 100%;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .gallery-grid .photo-item:hover img {
+    transform: scale(1.04);
+  }
+  .gallery-grid .photo-item .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15,44,31,0);
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-grid .photo-item:hover .overlay {
+    background: rgba(15,44,31,0.35);
+  }
+  .gallery-grid .photo-item .overlay svg {
+    opacity: 0;
+    transform: scale(0.7);
+    transition: all 0.25s;
+    color: #fff;
+  }
+  .gallery-grid .photo-item:hover .overlay svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+  @media (max-width: 1024px) { .gallery-grid { columns: 3; } }
+  @media (max-width: 640px)  { .gallery-grid { columns: 2; column-gap: 8px; } .gallery-grid .photo-item { margin-bottom: 8px; } }
+  .filter-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    position: relative;
+  }
+  .filter-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 20px; right: 20px;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .filter-btn.active { color: var(--gold); }
+  .filter-btn.active::after { transform: scaleX(1); }
+  .filter-btn:not(.active) { color: var(--mid); }
+  .filter-btn:not(.active):hover { color: var(--ink); }
+  .lb-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.95);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lb-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    display: block;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+  .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .lb-nav:hover { background: rgba(200,150,12,0.3); border-color: var(--gold); }
+  .lb-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.2s;
+  }
+  .lb-close:hover { border-color: var(--gold); color: var(--gold); }
+  .lb-counter {
+    position: absolute;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Lato', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.5);
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="nav.js"></script>
+<script type="text/babel" src="footer.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const g = f => `uploads/galerie/${encodeURIComponent(f)}`;
+
+const PHOTOS = [
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.36.jpeg'),     cat: 'pokrmy',   alt: 'BBQ kuřecí křídla se sezamem' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.36 (1).jpeg'), cat: 'pokrmy',   alt: 'Caprese salát s mozzarellou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.36 (2).jpeg'), cat: 'pokrmy',   alt: 'Jehněčí kýta na bramborovém pyré' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.36 (3).jpeg'), cat: 'pokrmy',   alt: 'Čokoládové suflé s malinovou omáčkou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.36 (4).jpeg'), cat: 'pokrmy',   alt: 'Smažený sýr s hranolky' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.37.jpeg'),     cat: 'pokrmy',   alt: 'Kachní prsa s kroketami' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.37 (1).jpeg'), cat: 'pokrmy',   alt: 'Sendvič s hovězím masem' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.38.jpeg'),     cat: 'pokrmy',   alt: 'Topinka s rajčatovou pomazánkou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.39.jpeg'),     cat: 'pokrmy',   alt: 'Mini burgery na cateringovém stole' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.39 (1).jpeg'), cat: 'pokrmy',   alt: 'Argentinská hovězí roštěná' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.39 (2).jpeg'), cat: 'pokrmy',   alt: 'Chili con carne s tortillou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.39 (3).jpeg'), cat: 'pokrmy',   alt: 'Hovězí steak s pepřovou omáčkou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.39 (4).jpeg'), cat: 'pokrmy',   alt: 'Guláš se zeleninou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.40.jpeg'),     cat: 'pokrmy',   alt: 'Filé z ryby na hráškovém pyré' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.40 (1).jpeg'), cat: 'pokrmy',   alt: 'Masové kuličky s těstovinami' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.41.jpeg'),     cat: 'pokrmy',   alt: 'Hovězí na smetaně s knedlíky' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.41 (1).jpeg'), cat: 'pokrmy',   alt: 'Dýňové pyré s dušeným masem' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.41 (2).jpeg'), cat: 'pokrmy',   alt: 'Hovězí steak s lanýžovou omáčkou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.41 (3).jpeg'), cat: 'pokrmy',   alt: 'Steak se zeleninou a bramborami' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.41 (4).jpeg'), cat: 'pokrmy',   alt: 'Řepné risotto s pečeným hermelínem' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.41 (5).jpeg'), cat: 'pokrmy',   alt: 'Jehněčí kotlety s omáčkou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.42.jpeg'),     cat: 'pokrmy',   alt: 'Grilované krevety' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.42 (1).jpeg'), cat: 'pokrmy',   alt: 'Krevety a kuřecí prsa' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.42 (2).jpeg'), cat: 'pokrmy',   alt: 'Svíčková na bramborovém pyré' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.42 (3).jpeg'), cat: 'pokrmy',   alt: 'Wafle s jahodami a šlehačkou' },
+  { src: g('WhatsApp Image 2026-05-05 at 06.26.42 (4).jpeg'), cat: 'pokrmy',   alt: 'Paštika v zavařovačce s chlebem' },
+];
+
+const FILTERS = [
+  { id: 'all',      label: 'Vše',      count: PHOTOS.length },
+  { id: 'pokrmy',   label: 'Pokrmy',   count: PHOTOS.filter(p => p.cat === 'pokrmy').length },
+  { id: 'zahradka', label: 'Zahrádka', count: PHOTOS.filter(p => p.cat === 'zahradka').length },
+  { id: 'interior', label: 'Interiér', count: PHOTOS.filter(p => p.cat === 'interior').length },
+  { id: 'salonek',  label: 'Salónek',  count: PHOTOS.filter(p => p.cat === 'salonek').length },
+];
+
+/* ── Lightbox ── */
+function Lightbox({ photos, index, onClose, onPrev, onNext }) {
+  React.useEffect(() => {
+    const handler = e => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onPrev();
+      if (e.key === 'ArrowRight') onNext();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose, onPrev, onNext]);
+
+  const photo = photos[index];
+
+  return (
+    <div className="lb-overlay" onClick={onClose}>
+      <img
+        className="lb-img"
+        src={photo.src}
+        alt={photo.alt}
+        onClick={e => e.stopPropagation()}
+      />
+
+      {photos.length > 1 && (
+        <>
+          <button className="lb-nav" style={{ left: 16 }}
+            onClick={e => { e.stopPropagation(); onPrev(); }}>
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button className="lb-nav" style={{ right: 16 }}
+            onClick={e => { e.stopPropagation(); onNext(); }}>
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      <button className="lb-close" onClick={onClose}>✕</button>
+
+      <div className="lb-counter">{index + 1} / {photos.length}</div>
+    </div>
+  );
+}
+
+/* ── Gallery grid ── */
+function Gallery({ photos }) {
+  if (photos.length === 0) {
+    return (
+      <div style={{
+        textAlign: 'center',
+        padding: '80px 32px',
+      }}>
+        <div style={{ fontSize: 48, marginBottom: 20, opacity: 0.35 }}>📷</div>
+        <div className="cg" style={{
+          fontSize: 28, fontStyle: 'italic', fontWeight: 500,
+          color: 'var(--mid)', marginBottom: 12,
+        }}>
+          Fotografie brzy přibydou
+        </div>
+        <div style={{
+          fontFamily: 'Lato', fontSize: 13, color: 'var(--mid)',
+          letterSpacing: '0.04em',
+        }}>
+          Tuto sekci momentálně připravujeme
+        </div>
+      </div>
+    );
+  }
+
+  const [lbIndex, setLbIndex] = React.useState(null);
+
+  const open  = i => { setLbIndex(i); document.body.style.overflow = 'hidden'; };
+  const close = ()  => { setLbIndex(null); document.body.style.overflow = ''; };
+  const prev  = ()  => setLbIndex(i => (i - 1 + photos.length) % photos.length);
+  const next  = ()  => setLbIndex(i => (i + 1) % photos.length);
+
+  return (
+    <>
+      <div className="gallery-grid">
+        {photos.map((photo, i) => (
+          <div key={photo.src} className="photo-item" onClick={() => open(i)}>
+            <img src={photo.src} alt={photo.alt} loading="lazy" />
+            <div className="overlay">
+              <svg width={32} height={32} viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
+              </svg>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {lbIndex !== null && (
+        <Lightbox
+          photos={photos}
+          index={lbIndex}
+          onClose={close}
+          onPrev={prev}
+          onNext={next}
+        />
+      )}
+    </>
+  );
+}
+
+/* ── App ── */
+function App() {
+  const [active, setActive] = React.useState('all');
+
+  const visible = active === 'all'
+    ? PHOTOS
+    : PHOTOS.filter(p => p.cat === active);
+
+  return (
+    <>
+      <SiteNav activePage="Galerie" />
+      <div style={{ height: 72 }} />
+
+      {/* Hero */}
+      <section className="paper" style={{
+        position: 'relative',
+        padding: '72px 64px 88px',
+        borderBottom: '1px solid rgba(15,44,31,0.1)',
+        overflow: 'hidden',
+      }}>
+        <div className="cg" aria-hidden="true" style={{
+          position: 'absolute', right: -24, top: 8,
+          fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+          color: 'rgba(200,150,12,0.07)',
+          letterSpacing: '-0.04em', lineHeight: 1,
+          pointerEvents: 'none', userSelect: 'none',
+        }}>Galerie</div>
+
+        <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
+          <nav style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: 'var(--mid)', marginBottom: 28,
+          }}>
+            <a href="/" style={{ color: 'var(--mid)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+              Zpět na úvod
+            </a>
+            <span style={{ opacity: 0.4 }}>/</span>
+            <span style={{ color: 'var(--gold)' }}>Fotogalerie</span>
+          </nav>
+
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 12,
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.24em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 20,
+          }}>
+            <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+            Restaurace U Břízy
+          </div>
+
+          <h1 className="cg" style={{
+            fontSize: 'clamp(42px, 5.5vw, 82px)',
+            fontWeight: 500, fontStyle: 'italic',
+            color: 'var(--wood)', lineHeight: 0.95,
+            letterSpacing: '-0.02em',
+          }}>
+            Fotogalerie
+          </h1>
+        </div>
+      </section>
+
+      {/* Filter bar */}
+      <div style={{
+        position: 'sticky', top: 72, zIndex: 200,
+        background: 'rgba(244,241,232,0.97)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(92,112,100,0.15)',
+        padding: '0 64px',
+      }}>
+        <div style={{
+          maxWidth: 1240, margin: '0 auto',
+          display: 'flex', alignItems: 'center', gap: 4,
+        }}>
+          {FILTERS.map(f => (
+            <button key={f.id}
+              className={`filter-btn${active === f.id ? ' active' : ''}`}
+              onClick={() => setActive(f.id)}>
+              {f.label}
+              {f.count > 0 && (
+                <span style={{
+                  marginLeft: 6,
+                  fontSize: 9,
+                  fontWeight: 700,
+                  color: active === f.id ? 'var(--gold)' : 'var(--mid)',
+                  opacity: 0.7,
+                }}>
+                  {f.count}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Gallery */}
+      <main className="paper" style={{ padding: '40px 64px 80px' }}>
+        <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+          <Gallery key={active} photos={visible} />
+        </div>
+      </main>
+
+      <SiteFooter />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
