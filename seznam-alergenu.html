@@ -254,11 +254,15 @@ function App() {
             padding: '18px 24px',
             marginBottom: 48,
           }}>
-            <span style={{ fontSize: 22, flexShrink: 0, marginTop: 1 }}>ℹ️</span>
-            <p style={{
-              fontFamily: 'Lato', fontSize: 13, color: 'var(--mid)',
-              lineHeight: 1.65, margin: 0,
-            }}>
+            <div style={{ flexShrink: 0, marginTop: 1, color: 'var(--gold)' }}>
+              <svg width={20} height={20} viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="8" strokeWidth={2.5} />
+                <line x1="12" y1="12" x2="12" y2="16" />
+              </svg>
+            </div>
+            <p style={{ fontSize: 14, color: 'var(--mid)', lineHeight: 1.65, margin: 0 }}>
               <strong style={{ color: 'var(--ink)', fontWeight: 700 }}>Jak číst jídelní lístek:</strong>{' '}
               U každého pokrmu jsou za názvem uvedena čísla alergenů, které pokrm obsahuje.
               Například <strong style={{ color: 'var(--ink)' }}>1, 3, 7</strong> znamená lepek, vejce a mléko.
