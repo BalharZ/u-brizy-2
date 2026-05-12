@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dárkový voucher — Balounova Restaurace U Břízy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Lato:wght@400;700&subset=latin,latin-ext&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="menu.css">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="nav.js"></script>
+<script type="text/babel" src="footer.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const OCCASIONS = [
+  { emoji: '🎂', label: 'Narozeniny' },
+  { emoji: '💑', label: 'Výročí' },
+  { emoji: '🎄', label: 'Vánoce' },
+  { emoji: '🌸', label: 'Svátky' },
+  { emoji: '🎓', label: 'Promoce' },
+  { emoji: '🏆', label: 'Ocenění' },
+];
+
+function PhoneIcon() {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
+function ArrowLeft() {
+  return (
+    <svg width={12} height={12} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+function App() {
+  const [phoneHover, setPhoneHover] = React.useState(false);
+
+  return (
+    <>
+      <SiteNav activePage="Voucher" />
+      <div style={{ height: 72 }} />
+
+      {/* ── HERO ── */}
+      <section className="paper" style={{
+        position: 'relative',
+        padding: '72px 64px 88px',
+        borderBottom: '1px solid rgba(15,44,31,0.1)',
+        overflow: 'hidden',
+      }}>
+        <div className="cg" aria-hidden="true" style={{
+          position: 'absolute', right: -24, top: 8,
+          fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+          color: 'rgba(200,150,12,0.07)',
+          letterSpacing: '-0.04em', lineHeight: 1,
+          pointerEvents: 'none', userSelect: 'none',
+        }}>Voucher</div>
+
+        <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
+          <nav style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: 'var(--mid)', marginBottom: 28,
+          }}>
+            <a href="/" style={{ color: 'var(--mid)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <ArrowLeft />Zpět na úvod
+            </a>
+            <span style={{ opacity: 0.4 }}>/</span>
+            <span style={{ color: 'var(--gold)' }}>Dárkový voucher</span>
+          </nav>
+
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 12,
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.24em', textTransform: 'uppercase',
+            color: 'var(--gold)', marginBottom: 20,
+          }}>
+            <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+            Ideální dárek
+          </div>
+
+          <h1 className="cg" style={{
+            fontSize: 'clamp(42px, 5.5vw, 82px)',
+            fontWeight: 500, fontStyle: 'italic',
+            color: 'var(--wood)', lineHeight: 0.95,
+            letterSpacing: '-0.02em',
+          }}>
+            Dárkový voucher
+          </h1>
+        </div>
+      </section>
+
+      {/* ── MAIN SECTION ── */}
+      <section style={{
+        background: 'var(--wood)',
+        padding: '80px 64px',
+        borderTop: '1px solid var(--gold)',
+        borderBottom: '1px solid var(--gold)',
+      }}>
+        <div style={{
+          maxWidth: 1240, margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 80,
+          alignItems: 'center',
+        }}>
+          {/* Left: voucher image */}
+          <div style={{ position: 'relative' }}>
+            <div style={{
+              position: 'absolute', inset: -12,
+              border: '1px solid rgba(200,150,12,0.3)',
+              pointerEvents: 'none',
+            }} />
+            <img
+              src="uploads/Voucher-v-hodnotě-500-Kč (1).jpg"
+              alt="Dárkový voucher Restaurace U Břízy"
+              style={{
+                width: '100%',
+                display: 'block',
+                boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+              }}
+            />
+          </div>
+
+          {/* Right: text */}
+          <div>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.28em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 20,
+            }}>
+              Restaurace U Břízy
+            </div>
+
+            <h2 className="cg" style={{
+              fontSize: 'clamp(34px, 4vw, 54px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: 'var(--text-dark)', lineHeight: 1.1,
+              marginBottom: 28,
+            }}>
+              Chcete obdarovat své blízké?
+            </h2>
+
+            <p style={{
+              fontFamily: 'Lato', fontSize: 16, fontWeight: 400,
+              color: 'var(--text-mid)', lineHeight: 1.75,
+              marginBottom: 40,
+            }}>
+              Dopřejte jim pořádnou dobrotu od našich excelentních kuchařů.
+              Voucher lze využít na cokoliv z našeho jídelního i nápojového lístku —
+              předkrmy, hlavní jídla, dezerty nebo dobré pivo.
+            </p>
+
+            <a href="tel:+420272766782"
+              onMouseEnter={() => setPhoneHover(true)}
+              onMouseLeave={() => setPhoneHover(false)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 14,
+                padding: '16px 32px',
+                background: phoneHover ? 'var(--gold-lt)' : 'var(--gold)',
+                color: 'var(--wood)',
+                textDecoration: 'none',
+                fontFamily: 'Lato', fontSize: 12, fontWeight: 700,
+                letterSpacing: '0.2em', textTransform: 'uppercase',
+                transition: 'background 0.2s',
+              }}>
+              <PhoneIcon />
+              Pro objednání volejte: +420 272 76 67 82
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── OCCASIONS ── */}
+      <section className="paper" style={{ padding: '72px 64px' }}>
+        <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 12,
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 16,
+            }}>
+              <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+              Ideální příležitosti
+              <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+            </div>
+            <h2 className="cg" style={{
+              fontSize: 'clamp(28px, 3.5vw, 46px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: 'var(--wood)', lineHeight: 1,
+            }}>
+              Kdy voucher potěší nejvíc?
+            </h2>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: 16,
+          }}>
+            {OCCASIONS.map(o => (
+              <div key={o.label} style={{
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', gap: 12,
+                padding: '28px 16px',
+                border: '1px solid rgba(92,112,100,0.15)',
+                background: 'rgba(255,255,255,0.5)',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.background = 'rgba(200,150,12,0.05)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(92,112,100,0.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; }}>
+                <span style={{ fontSize: 40, lineHeight: 1 }}>{o.emoji}</span>
+                <span style={{
+                  fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.14em', textTransform: 'uppercase',
+                  color: 'var(--ink)',
+                }}>
+                  {o.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section className="paper-sand" style={{
+        padding: '72px 64px',
+        borderTop: '1px solid rgba(92,112,100,0.1)',
+      }}>
+        <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 12,
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 16,
+            }}>
+              <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+              Jednoduché
+              <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
+            </div>
+            <h2 className="cg" style={{
+              fontSize: 'clamp(28px, 3.5vw, 46px)',
+              fontWeight: 500, fontStyle: 'italic',
+              color: 'var(--wood)', lineHeight: 1,
+            }}>
+              Jak to funguje?
+            </h2>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 40,
+          }}>
+            {[
+              { step: '01', title: 'Zavolejte nám', desc: 'Kontaktujte nás telefonicky na čísle +420 272 76 67 82. Domluvíme se na hodnotě voucheru a způsobu předání.' },
+              { step: '02', title: 'Připravíme voucher', desc: 'Vytiskneme a připravíme voucher v dohodnuté hodnotě. K vyzvednutí osobně v restauraci.' },
+              { step: '03', title: 'Obdarujte blízké', desc: 'Předejte voucher jako dárek. Obdarovaný ho uplatní při návštěvě naší restaurace — jednoduše řekne obsluze.' },
+            ].map(s => (
+              <div key={s.step} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{
+                  width: 56, height: 56,
+                  border: '1px solid var(--gold)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <span className="cg" style={{
+                    fontSize: 22, fontStyle: 'italic', fontWeight: 600,
+                    color: 'var(--gold)',
+                  }}>{s.step}</span>
+                </div>
+                <h3 style={{
+                  fontFamily: 'Lato', fontSize: 13, fontWeight: 700,
+                  letterSpacing: '0.12em', textTransform: 'uppercase',
+                  color: 'var(--ink)', margin: 0,
+                }}>
+                  {s.title}
+                </h3>
+                <p style={{
+                  fontFamily: 'Lato', fontSize: 14,
+                  color: 'var(--mid)', lineHeight: 1.7,
+                  margin: 0,
+                }}>
+                  {s.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CONDITIONS ── */}
+      <section className="paper" style={{
+        padding: '56px 64px',
+        borderTop: '1px solid rgba(92,112,100,0.1)',
+      }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 20,
+            background: 'rgba(200,150,12,0.07)',
+            border: '1px solid rgba(200,150,12,0.25)',
+            borderLeft: '3px solid var(--gold)',
+            padding: '24px 28px',
+          }}>
+            <div style={{
+              fontFamily: 'Lato', fontSize: 13, fontWeight: 700,
+              letterSpacing: '0.14em', textTransform: 'uppercase',
+              color: 'var(--gold)', flexShrink: 0, paddingTop: 2,
+            }}>
+              Podmínky
+            </div>
+            <div>
+              <p style={{
+                fontFamily: 'Lato', fontSize: 14, color: 'var(--mid)',
+                lineHeight: 1.7, margin: '0 0 8px',
+              }}>
+                Při objednání oznamte uplatnění voucheru obsluze.
+              </p>
+              <p style={{
+                fontFamily: 'Lato', fontSize: 14, color: 'var(--mid)',
+                lineHeight: 1.7, margin: 0,
+              }}>
+                Voucher lze čerpat pouze jednorázově.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
