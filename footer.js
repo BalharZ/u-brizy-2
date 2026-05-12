@@ -4,10 +4,10 @@
      <SiteFooter isHome={true} /> — homepage (links use # anchors)
 */
 function SiteFooter({ isHome = false }) {
-  const base = isHome ? '' : 'index.html';
+  const base = isHome ? '' : '/';
 
   const navLinks = [
-    { l: 'Domů',       h: isHome ? '#' : 'index.html' },
+    { l: 'Domů',       h: isHome ? '#' : '/' },
     { l: 'Menu',       h: `${base}#menu` },
     { l: 'O nás',      h: `${base}#o-nas` },
     { l: 'Fotogalerie',h: `${base}#galerie` },

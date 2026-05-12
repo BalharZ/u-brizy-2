@@ -27,15 +27,15 @@ function SiteNav({ isHome = false, activePage = null }) {
     closeTimer.current = setTimeout(() => setOpenMenu(false), 180);
   };
 
-  const base = isHome ? '' : 'index.html';
+  const base = isHome ? '' : '/';
 
   const links = [
-    { l: 'Domů', h: isHome ? '#' : 'index.html' },
+    { l: 'Domů', h: isHome ? '#' : '/' },
     {
       l: 'Jídelní menu',
       children: [
-        { l: 'Denní menu',      h: 'denni-menu.html' },
-        { l: 'Stálé menu',      h: 'stale-menu.html' },
+        { l: 'Denní menu',      h: '/denni-menu' },
+        { l: 'Stálé menu',      h: '/stale-menu' },
         { l: 'Nápojový lístek', h: `${base}#napojovy-listek` },
       ],
     },
@@ -61,7 +61,7 @@ function SiteNav({ isHome = false, activePage = null }) {
       padding: '0 52px',
     }}>
       {/* Logo */}
-      <a href={isHome ? '#' : 'index.html'} style={{
+      <a href={isHome ? '#' : '/'} style={{
         display: 'flex', alignItems: 'center',
         marginRight: 'auto', textDecoration: 'none',
       }}>
