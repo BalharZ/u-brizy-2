@@ -318,6 +318,22 @@ function MenuHero() {
             }}>
               — o víkendu a svátcích po celý den
             </div>
+            <button onClick={() => window.print()} className="no-print" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              marginTop: 20,
+              padding: '10px 18px',
+              background: 'transparent',
+              border: '1px solid rgba(15,44,31,0.2)',
+              color: 'var(--wood)',
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase',
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
+              <Icon name="print" size={14} stroke={1.8} />
+              Tisk menu
+            </button>
           </div>
         </div>
       </div>
@@ -325,47 +341,6 @@ function MenuHero() {
   );
 }
 
-/* ─────────────────────────────────────────
-   PRINT BAR
-   ───────────────────────────────────────── */
-function PrintBar() {
-  return (
-    <div className="paper-sand no-print" style={{
-      borderBottom: '1px solid rgba(15,44,31,0.08)',
-      padding: '20px 64px',
-    }}>
-      <div style={{
-        maxWidth: 1240, margin: '0 auto',
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between', gap: 24,
-      }}>
-        <div style={{
-          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          color: 'var(--mid)', display: 'flex', alignItems: 'center', gap: 12,
-        }}>
-          <span style={{ width: 24, height: 1, background: 'var(--gold)', display: 'block' }} />
-          Stálý jídelní lístek · platný od 15:00 hod
-        </div>
-        <button onClick={() => window.print()} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 10,
-          padding: '10px 18px',
-          background: 'transparent',
-          border: '1px solid rgba(15,44,31,0.2)',
-          color: 'var(--wood)',
-          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          cursor: 'pointer', transition: 'all 0.2s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
-          <Icon name="print" size={14} stroke={1.8} />
-          Tisk menu
-        </button>
-      </div>
-    </div>
-  );
-}
 
 /* ─────────────────────────────────────────
    DELIVERY STRIP
@@ -607,7 +582,6 @@ function App() {
       <SiteNav activePage="Stálé menu" />
       <div style={{ height: 72 }} />
       <MenuHero />
-      <PrintBar />
       <DeliveryStrip />
       {SECTIONS.map((s, i) => (
         <MenuSection key={s.id} section={s} idx={i} />
