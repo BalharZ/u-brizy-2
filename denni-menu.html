@@ -164,7 +164,7 @@ const SECTIONS = [
     id: 'smazena',
     title: 'Smažená a bezmasá',
     sub: 'Fried & meatless',
-    icon: 'leaf',
+    icon: 'pan',
     items: [
       { weight: '300 g', name: 'Listový salát s grilovaným HALOUMMI', desc: 'rukola, polníček, bazalkové pesto, cherry rajčátka, rozpečená bagetka', price: 215 },
       { weight: '150 g', name: 'Smažený kuřecí řízek', desc: 'hranolky, citrón', price: 199 },
@@ -208,6 +208,7 @@ const ICONS = {
   bolt:  <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />,
   print: <><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></>,
   arrowL:<polyline points="15 18 9 12 15 6" />,
+  pan:   <><circle cx="10" cy="13" r="6"/><line x1="16" y1="13" x2="22" y2="13"/></>,
 };
 
 function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
