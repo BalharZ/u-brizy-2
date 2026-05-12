@@ -14,71 +14,7 @@
 <script type="text/babel" src="nav.js"></script>
 <script type="text/babel" src="footer.js"></script>
 
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
-:root {
-  --wood:      #0F2C1F;
-  --wood-lt:   #234A35;
-  --gold:      #C8960C;
-  --gold-lt:   #D4A828;
-  --cream:     #F4F1E8;
-  --sand:      #E2DDC9;
-  --mid:       #406954;
-  --text-dark: #EFE8D5;
-  --text-mid:  #B1C7B8;
-  --ink:       #0B2318;
-}
-
-@supports (color: oklch(0.5 0.1 155)) {
-  :root {
-    --wood:      oklch(0.22 0.07 155);
-    --wood-lt:   oklch(0.32 0.08 155);
-    --mid:       oklch(0.42 0.09 155);
-    --text-mid:  oklch(0.78 0.04 155);
-    --ink:       oklch(0.18 0.05 155);
-  }
-}
-
-body {
-  font-family: 'Lato', sans-serif;
-  background: var(--cream);
-  color: var(--ink);
-  overflow-x: hidden;
-}
-::selection { background: rgba(200,150,12,0.25); }
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--sand); }
-::-webkit-scrollbar-thumb { background: var(--wood-lt); }
-
-.cg { font-family: 'Lora', serif; }
-
-.paper {
-  background-color: var(--cream);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-}
-.paper-sand {
-  background-color: var(--sand);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Hover lift for menu items */
-.menu-item { transition: background 0.2s; }
-.menu-item:hover { background: rgba(200,150,12,0.05); }
-
-/* Print: hide chrome, show menu */
-@media print {
-  header, footer, .no-print { display: none !important; }
-  body { background: white; }
-  section { page-break-inside: avoid; padding: 24px 0 !important; }
-}
-</style>
+<link rel="stylesheet" href="menu.css">
 </head>
 <body>
 <div id="root"></div>

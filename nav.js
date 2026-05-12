@@ -36,7 +36,7 @@ function SiteNav({ isHome = false, activePage = null }) {
       children: [
         { l: 'Denní menu',      h: '/denni-menu' },
         { l: 'Stálé menu',      h: '/stale-menu' },
-        { l: 'Nápojový lístek', h: `${base}#napojovy-listek` },
+        { l: 'Nápojový lístek', h: '/napojovy-listek' },
       ],
     },
     { l: 'Voucher', h: `${base}#voucher` },
