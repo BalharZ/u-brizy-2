@@ -38,6 +38,7 @@ function SiteNav({ isHome = false, activePage = null }) {
         { l: 'Týdenní nabídka', h: '/tydenni-nabidka' },
         { l: 'Stálé menu',      h: '/stale-menu' },
         { l: 'Nápojový lístek', h: '/napojovy-listek' },
+        { l: 'Seznam alergenů', h: '/seznam-alergenu' },
       ],
     },
     { l: 'Voucher', h: `${base}#voucher` },
