@@ -582,7 +582,6 @@ function Hero() {
           WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%)',
           pointerEvents: 'none',
         }} />
-        <ReservationCard />
       </div>
     </section>
   );
@@ -1577,7 +1576,7 @@ function App() {
       <FoodGallery />
       <OrnDivider text="Navštivte nás" bg="var(--wood)" />
       <Hours />
-      {mob && <ReservationCard standalone />}
+      <ReservationCard standalone />
       <MapSection />
       <SiteFooter isHome={true} />
       <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
