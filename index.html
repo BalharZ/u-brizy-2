@@ -54,25 +54,9 @@ body {
 ::-webkit-scrollbar-track { background: var(--sand); }
 ::-webkit-scrollbar-thumb { background: var(--wood-lt); }
 
-/* Restore original size for dish.co reservation widget */
+/* dish.co reservation widget */
 #hors-hydra-0011i000002k2VtAAI iframe {
   display: block;
-}
-/* Compact the time slot list in the dish widget */
-#hors-hydra-0011i000002k2VtAAI .slot-group,
-#hors-hydra-0011i000002k2VtAAI .slot-data .form-group {
-  max-height: 100px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
-#hors-hydra-0011i000002k2VtAAI .slot-group select {
-  height: 100px !important;
-  max-height: 100px !important;
-}
-#slot {
-  height: 100px !important;
-  max-height: 100px !important;
-  overflow-y: auto !important;
 }
 
 .pf { font-family: 'Playfair Display', serif; }
@@ -188,21 +172,6 @@ function loadDishWidget(buttonBg, buttonFg) {
 function ReservationCard({ standalone = false }) {
   React.useEffect(() => {
     loadDishWidget('#C8960C', '#1A2C24');
-
-    let tries = 0;
-    const interval = setInterval(() => {
-      tries++;
-      const el = document.getElementById('slot');
-      if (el) {
-        el.style.setProperty('height', '100px', 'important');
-        el.style.setProperty('max-height', '100px', 'important');
-        el.style.setProperty('overflow-y', 'auto', 'important');
-        el.style.setProperty('overflow-x', 'hidden', 'important');
-      }
-      if (tries >= 40) clearInterval(interval); // dej si po 12 sekundách
-    }, 300);
-
-    return () => clearInterval(interval);
   }, []);
 
   /* ── Standalone: full-width section for mobile ── */
