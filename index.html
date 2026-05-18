@@ -180,11 +180,10 @@ function loadDishWidget(buttonBg, buttonFg) {
   document.body.appendChild(s);
 }
 
-function ReservationCard() {
+function ReservationCard({ standalone = false }) {
   React.useEffect(() => {
     loadDishWidget('#C8960C', '#1A2C24');
 
-    // Wait for dish widget to render, then cap the time-slot list to ~4 rows
     const host = document.getElementById(WIDGET_TAG);
     const obs = new MutationObserver(() => {
       const slotGroup = host && host.querySelector('.slot-group');
@@ -199,6 +198,76 @@ function ReservationCard() {
     return () => obs.disconnect();
   }, []);
 
+  /* ── Standalone: full-width section for mobile ── */
+  if (standalone) {
+    return (
+      <section id="rezervace" className="paper-sand" style={{
+        padding: '56px 20px 72px',
+        borderTop: '1px solid rgba(92,112,100,0.2)',
+      }}>
+        <div style={{ maxWidth: 480, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 28 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+              letterSpacing: '0.22em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: 14,
+            }}>
+              <span style={{ width: 24, height: 1, background: 'var(--gold)' }} />
+              Rezervace
+              <span style={{ width: 24, height: 1, background: 'var(--gold)' }} />
+            </div>
+            <h2 className="pf" style={{
+              fontSize: 'clamp(28px, 7vw, 40px)', fontWeight: 400,
+              color: 'var(--wood)', lineHeight: 1.1,
+            }}>
+              Rezervujte si <em style={{ fontWeight: 700, fontStyle: 'italic' }}>stůl</em>
+            </h2>
+            <p style={{
+              fontFamily: 'Lato', fontSize: 13, color: 'var(--mid)', marginTop: 10,
+            }}>
+              Nebo zavolejte:{' '}
+              <a href="tel:+420272766782" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}>
+                272 76 67 82
+              </a>
+            </p>
+          </div>
+
+          <div style={{
+            background: 'var(--cream)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
+            overflow: 'hidden',
+            border: '1px solid rgba(92,112,100,0.12)',
+          }}>
+            <div style={{
+              background: 'var(--wood)',
+              padding: '18px 24px',
+              textAlign: 'center',
+              borderBottom: '2px solid var(--gold)',
+            }}>
+              <div style={{
+                fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+                letterSpacing: '0.24em', textTransform: 'uppercase',
+                color: 'var(--gold)', marginBottom: 6,
+              }}>✦ Online rezervace ✦</div>
+              <div className="pf" style={{
+                fontSize: 22, fontWeight: 400, fontStyle: 'italic',
+                color: 'var(--text-dark)', lineHeight: 1.1,
+              }}>
+                Rezervujte si{' '}
+                <span style={{ color: 'var(--gold)', fontWeight: 700 }}>stůl</span>
+              </div>
+            </div>
+            <div style={{ padding: '16px 20px 14px', background: 'var(--cream)' }}>
+              <div id={WIDGET_TAG} style={{ minHeight: 200 }}></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  /* ── Default: absolute card inside desktop hero ── */
   return (
     <div style={{
       position: 'absolute',
@@ -213,7 +282,6 @@ function ReservationCard() {
       flexDirection: 'column',
       overflow: 'hidden',
     }}>
-      {/* Header */}
       <div style={{
         background: 'var(--wood)',
         padding: '22px 28px 20px',
@@ -232,11 +300,7 @@ function ReservationCard() {
           Rezervujte si <span style={{ color: 'var(--gold)', fontWeight: 700 }}>stůl</span>
         </div>
       </div>
-      {/* Widget body */}
-      <div style={{
-        padding: '16px 20px 14px',
-        background: 'var(--cream)',
-      }}>
+      <div style={{ padding: '16px 20px 14px', background: 'var(--cream)' }}>
         <div id={WIDGET_TAG} style={{ minHeight: 200 }}></div>
       </div>
     </div>
@@ -759,9 +823,14 @@ function MenuSection() {
       h: '/pivni-listek', tone: 'dark',
       icon: (
         <>
-          <path d="M5 3h11l-2 16H7L5 3z"/>
-          <path d="M16 7h3a2 2 0 0 1 0 6h-3"/>
-          <line x1="5" y1="10" x2="16" y2="10"/>
+          {/* Mug body */}
+          <path d="M5 5h10l-1.5 14H6.5L5 5z" />
+          {/* Handle */}
+          <path d="M15 9h2a2.5 2.5 0 0 1 0 6h-2" />
+          {/* Foam (3 bumps) */}
+          <path d="M5 5Q6.5 3 8 5Q9.5 3 11 5Q12.5 3 14 5Q15 3 15 5" />
+          {/* Foam / beer divider */}
+          <line x1="5.5" y1="8" x2="14.5" y2="8" />
         </>
       ),
     },
@@ -1498,6 +1567,7 @@ function TweaksPanel({ tweaks, setTweaks, visible }) {
 
 /* ── APP ── */
 function App() {
+  const mob = useMobile();
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const [tweaksVisible, setTweaksVisible] = useState(false);
 
@@ -1532,7 +1602,7 @@ function App() {
       <OrnDivider text="Navštivte nás" bg="var(--wood)" />
       <Hours />
       <MapSection />
-      <Reservation />
+      {mob && <ReservationCard standalone />}
       <SiteFooter isHome={true} />
       <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
     </>
