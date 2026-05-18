@@ -189,29 +189,20 @@ function ReservationCard({ standalone = false }) {
   React.useEffect(() => {
     loadDishWidget('#C8960C', '#1A2C24');
 
-    const host = document.getElementById(WIDGET_TAG);
-
-    const applyStyles = () => {
-      if (!host) return;
-      const slotGroup = host.querySelector('.slot-group');
-      if (slotGroup) {
-        slotGroup.style.cssText += 'max-height:100px!important;overflow-y:auto!important;overflow-x:hidden!important;';
-        const sel = slotGroup.querySelector('select');
-        if (sel) { sel.size = 4; sel.style.cssText += 'height:100px!important;'; }
+    let tries = 0;
+    const interval = setInterval(() => {
+      tries++;
+      const el = document.getElementById('slot');
+      if (el) {
+        el.style.setProperty('height', '100px', 'important');
+        el.style.setProperty('max-height', '100px', 'important');
+        el.style.setProperty('overflow-y', 'auto', 'important');
+        el.style.setProperty('overflow-x', 'hidden', 'important');
       }
-      const slotEl = document.getElementById('slot');
-      if (slotEl) {
-        slotEl.style.setProperty('height', '100px', 'important');
-        slotEl.style.setProperty('max-height', '100px', 'important');
-        slotEl.style.setProperty('overflow-y', 'auto', 'important');
-      }
-      if (slotGroup || slotEl) obs.disconnect();
-    };
+      if (tries >= 40) clearInterval(interval); // dej si po 12 sekundách
+    }, 300);
 
-    const obs = new MutationObserver(applyStyles);
-    if (host) obs.observe(host, { childList: true, subtree: true });
-    const timer = setTimeout(applyStyles, 2500);
-    return () => { obs.disconnect(); clearTimeout(timer); };
+    return () => clearInterval(interval);
   }, []);
 
   /* ── Standalone: full-width section for mobile ── */
