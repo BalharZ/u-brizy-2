@@ -98,7 +98,7 @@ function SiteNav({ isHome = false, activePage = null }) {
         }}>
           <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="U Břízy"
             style={{
-              height: mob ? (scrolled ? 38 : 62) : (scrolled ? 52 : 96),
+              height: mob ? (scrolled ? 42 : 68) : (scrolled ? 52 : 96),
               width: 'auto', display: 'block',
               filter: isSolid
                 ? 'none'
