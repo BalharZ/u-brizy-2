@@ -76,13 +76,13 @@ function SiteNav({ isHome = false, activePage = null }) {
     return scrolled ? 'var(--mid)' : 'rgba(255,255,255,0.92)';
   };
 
-  const isSolid = scrolled || mob;
+  const isSolid = scrolled || !isHome;
 
   return (
     <>
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300,
-        height: mob ? 64 : (scrolled ? 72 : 124),
+        height: mob ? (scrolled ? 56 : 80) : (scrolled ? 72 : 124),
         background: isSolid ? 'rgba(244,241,232,0.97)' : 'transparent',
         backdropFilter: isSolid ? 'blur(12px)' : 'none',
         WebkitBackdropFilter: isSolid ? 'blur(12px)' : 'none',
@@ -98,7 +98,7 @@ function SiteNav({ isHome = false, activePage = null }) {
         }}>
           <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="U Břízy"
             style={{
-              height: mob ? 44 : (scrolled ? 52 : 96),
+              height: mob ? (scrolled ? 38 : 62) : (scrolled ? 52 : 96),
               width: 'auto', display: 'block',
               filter: isSolid
                 ? 'none'
@@ -242,21 +242,21 @@ function SiteNav({ isHome = false, activePage = null }) {
             }}>
             <span style={{
               display: 'block', width: 22, height: 2,
-              background: 'var(--mid)', transformOrigin: 'center',
+              background: isSolid ? 'var(--mid)' : '#fff', transformOrigin: 'center',
               transform: mobileOpen ? 'rotate(45deg) translate(0, 7px)' : 'none',
-              transition: 'transform 0.25s',
+              transition: 'transform 0.25s, background 0.45s',
             }} />
             <span style={{
               display: 'block', width: 22, height: 2,
-              background: 'var(--mid)',
+              background: isSolid ? 'var(--mid)' : '#fff',
               opacity: mobileOpen ? 0 : 1,
-              transition: 'opacity 0.2s',
+              transition: 'opacity 0.2s, background 0.45s',
             }} />
             <span style={{
               display: 'block', width: 22, height: 2,
-              background: 'var(--mid)', transformOrigin: 'center',
+              background: isSolid ? 'var(--mid)' : '#fff', transformOrigin: 'center',
               transform: mobileOpen ? 'rotate(-45deg) translate(0, -7px)' : 'none',
-              transition: 'transform 0.25s',
+              transition: 'transform 0.25s, background 0.45s',
             }} />
           </button>
         )}
