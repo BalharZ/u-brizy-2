@@ -1118,19 +1118,6 @@ function Hours() {
   const mob = useMobile();
   return (
     <section id="kontakt" style={{ background: 'var(--wood)' }}>
-      {/* Section title */}
-      <div style={{
-        textAlign: 'center', padding: mob ? '48px 20px 32px' : '72px 64px 48px',
-        borderBottom: '1px solid rgba(200,150,12,0.18)',
-      }}>
-        <SectionLabel center light>Navštivte nás</SectionLabel>
-        <h2 className="pf" style={{
-          fontSize: mob ? 'clamp(24px, 6vw, 36px)' : 'clamp(32px, 4vw, 52px)',
-          fontWeight: 400, fontStyle: 'italic',
-          color: 'var(--text-dark)',
-        }}>Otevřeno každý den od 11:00</h2>
-      </div>
-
       {/* Two columns */}
       <div style={{
         display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr',
