@@ -169,117 +169,99 @@ function loadDishWidget(buttonBg, buttonFg) {
   document.body.appendChild(s);
 }
 
-function ReservationCard({ standalone = false }) {
+function ReservationAndMap() {
+  const mob = useMobile();
+
   React.useEffect(() => {
     loadDishWidget('#C8960C', '#1A2C24');
   }, []);
 
-  /* ── Standalone: full-width section for mobile ── */
-  if (standalone) {
-    return (
-      <section id="rezervace" className="paper-sand" style={{
-        padding: '56px 20px 72px',
-        borderTop: '1px solid rgba(92,112,100,0.2)',
+  return (
+    <section className="paper-sand" style={{
+      padding: mob ? '48px 20px 56px' : '80px 64px 96px',
+      borderTop: '1px solid rgba(92,112,100,0.2)',
+    }}>
+      <div style={{
+        maxWidth: 1240, margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: mob ? '1fr' : '1fr 1.35fr',
+        gap: mob ? 48 : 72,
+        alignItems: 'start',
       }}>
-        <div style={{ maxWidth: 480, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 28 }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 10,
-              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.22em', textTransform: 'uppercase',
-              color: 'var(--gold)', marginBottom: 14,
-            }}>
-              <span style={{ width: 24, height: 1, background: 'var(--gold)' }} />
-              Rezervace
-              <span style={{ width: 24, height: 1, background: 'var(--gold)' }} />
-            </div>
-            <h2 className="pf" style={{
-              fontSize: 'clamp(28px, 7vw, 40px)', fontWeight: 400,
-              color: 'var(--wood)', lineHeight: 1.1,
-            }}>
-              Rezervujte si <em style={{ fontWeight: 700, fontStyle: 'italic' }}>stůl</em>
-            </h2>
-            <p style={{
-              fontFamily: 'Lato', fontSize: 13, color: 'var(--mid)', marginTop: 10,
-            }}>
-              Nebo zavolejte:{' '}
-              <a href="tel:+420272766782" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}>
-                272 76 67 82
-              </a>
-            </p>
-          </div>
+
+        {/* ── LEFT: Reservation ── */}
+        <div id="rezervace">
+          <SectionLabel>Rezervace</SectionLabel>
+          <h2 className="pf" style={{
+            fontSize: mob ? 'clamp(28px, 7vw, 40px)' : 'clamp(28px, 2.8vw, 40px)',
+            fontWeight: 400, color: 'var(--wood)', lineHeight: 1.1, marginBottom: 10,
+          }}>
+            Rezervujte si <em style={{ fontWeight: 700, fontStyle: 'italic' }}>stůl</em>
+          </h2>
+          <p style={{
+            fontFamily: 'Lato', fontSize: 13, color: 'var(--mid)', marginBottom: 24, lineHeight: 1.6,
+          }}>
+            Nebo zavolejte:{' '}
+            <a href="tel:+420272766782" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}>
+              272 76 67 82
+            </a>
+          </p>
 
           <div style={{
             background: 'var(--cream)',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.1)',
             overflow: 'hidden',
             border: '1px solid rgba(92,112,100,0.12)',
           }}>
             <div style={{
               background: 'var(--wood)',
-              padding: '18px 24px',
+              padding: '16px 24px',
               textAlign: 'center',
               borderBottom: '2px solid var(--gold)',
             }}>
               <div style={{
                 fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
                 letterSpacing: '0.24em', textTransform: 'uppercase',
-                color: 'var(--gold)', marginBottom: 6,
+                color: 'var(--gold)',
               }}>✦ Online rezervace ✦</div>
-              <div className="pf" style={{
-                fontSize: 22, fontWeight: 400, fontStyle: 'italic',
-                color: 'var(--text-dark)', lineHeight: 1.1,
-              }}>
-                Rezervujte si{' '}
-                <span style={{ color: 'var(--gold)', fontWeight: 700 }}>stůl</span>
-              </div>
             </div>
             <div style={{ padding: '16px 20px 14px', background: 'var(--cream)' }}>
               <div id={WIDGET_TAG} style={{ minHeight: 200 }}></div>
             </div>
           </div>
         </div>
-      </section>
-    );
-  }
 
-  /* ── Default: absolute card inside desktop hero ── */
-  return (
-    <div style={{
-      position: 'absolute',
-      top: '50%',
-      right: 140,
-      transform: 'translateY(-50%)',
-      width: 360,
-      background: 'var(--cream)',
-      boxShadow: '0 24px 60px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.2)',
-      zIndex: 3,
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-    }}>
-      <div style={{
-        background: 'var(--wood)',
-        padding: '22px 28px 20px',
-        textAlign: 'center',
-        borderBottom: '2px solid var(--gold)',
-      }}>
-        <div style={{
-          fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
-          letterSpacing: '0.24em', textTransform: 'uppercase',
-          color: 'var(--gold)', marginBottom: 8,
-        }}>✦ Online rezervace ✦</div>
-        <div className="pf" style={{
-          fontSize: 26, fontWeight: 400, fontStyle: 'italic',
-          color: 'var(--text-dark)', lineHeight: 1.1,
-        }}>
-          Rezervujte si <span style={{ color: 'var(--gold)', fontWeight: 700 }}>stůl</span>
+        {/* ── RIGHT: Map ── */}
+        <div id="kde-jsme">
+          <SectionLabel>Kde nás najdete</SectionLabel>
+          <h2 className="pf" style={{
+            fontSize: mob ? 'clamp(28px, 7vw, 40px)' : 'clamp(28px, 2.8vw, 40px)',
+            fontWeight: 400, color: 'var(--wood)', lineHeight: 1.1, marginBottom: 10,
+          }}>
+            Jižní IX · <em style={{ fontWeight: 700, fontStyle: 'italic', color: 'var(--gold)' }}>Spořilov</em>
+          </h2>
+          <p style={{
+            fontFamily: 'Lato', fontSize: 13, color: 'var(--mid)', marginBottom: 24, lineHeight: 1.6,
+          }}>
+            141 00 Praha 4 · Starý Spořilov
+          </p>
+
+          <div style={{
+            border: '2px solid var(--gold)',
+            height: mob ? 280 : 430,
+            overflow: 'hidden',
+            background: 'var(--wood)',
+          }}>
+            <iframe
+              title="Restaurace U Břízy – mapa"
+              src="https://maps.google.com/maps?q=Balounova+Restaurace+U+B%C5%99%C3%ADzy,+Ji%C5%BEn%C3%AD+IX,+Praha+4&hl=cs&z=16&output=embed"
+              width="100%" height="100%" style={{ border: 0, display: 'block' }}
+              loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+          </div>
         </div>
+
       </div>
-      <div style={{ padding: '16px 20px 14px', background: 'var(--cream)' }}>
-        <div id={WIDGET_TAG} style={{ minHeight: 200 }}></div>
-      </div>
-    </div>
+    </section>
   );
 }
 
@@ -1308,48 +1290,6 @@ function Hours() {
   );
 }
 
-/* ── MAP SECTION ── */
-function MapSection() {
-  const mob = useMobile();
-  return (
-    <section id="kde-jsme" className="paper-sand" style={{
-      padding: mob ? '48px 20px 56px' : '90px 64px 100px',
-      borderTop: '1px solid rgba(92,112,100,0.2)',
-    }}>
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: mob ? 28 : 48 }}>
-          <SectionLabel center>Najdete nás</SectionLabel>
-          <h2 className="pf" style={{
-            fontSize: mob ? 'clamp(26px, 6vw, 38px)' : 'clamp(36px, 4vw, 54px)', fontWeight: 400,
-            color: 'var(--wood)',
-          }}>
-            Kde nás <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--gold)' }}>najdete</em>
-          </h2>
-          <p style={{
-            fontFamily: 'Lato', fontSize: mob ? 13 : 15, color: 'var(--mid)',
-            marginTop: 14, letterSpacing: '0.04em',
-          }}>
-            Jižní IX · 141 00 Praha 4 · Starý Spořilov
-          </p>
-        </div>
-
-        <div style={{
-          position: 'relative',
-          border: '2px solid var(--gold)',
-          height: mob ? 300 : 520,
-          overflow: 'hidden',
-          background: 'var(--wood)',
-        }}>
-          <iframe
-            title="Restaurace U Břízy – mapa"
-            src="https://maps.google.com/maps?q=Balounova+Restaurace+U+B%C5%99%C3%ADzy,+Ji%C5%BEn%C3%AD+IX,+Praha+4&hl=cs&z=16&output=embed"
-            width="100%" height="100%" style={{ border: 0, display: 'block' }}
-            loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ── RESERVATION ── */
 function Reservation() {
@@ -1576,8 +1516,7 @@ function App() {
       <FoodGallery />
       <OrnDivider text="Navštivte nás" bg="var(--wood)" />
       <Hours />
-      <ReservationCard standalone />
-      <MapSection />
+      <ReservationAndMap />
       <SiteFooter isHome={true} />
       <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
     </>
