@@ -69,6 +69,11 @@ body {
   height: 100px !important;
   max-height: 100px !important;
 }
+#hors-hydra-0011i000002k2VtAAI .form-control {
+  height: 100px !important;
+  max-height: 100px !important;
+  overflow-y: auto !important;
+}
 
 .pf { font-family: 'Playfair Display', serif; }
 
@@ -185,17 +190,28 @@ function ReservationCard({ standalone = false }) {
     loadDishWidget('#C8960C', '#1A2C24');
 
     const host = document.getElementById(WIDGET_TAG);
-    const obs = new MutationObserver(() => {
-      const slotGroup = host && host.querySelector('.slot-group');
+
+    const applyStyles = () => {
+      if (!host) return;
+      const slotGroup = host.querySelector('.slot-group');
       if (slotGroup) {
         slotGroup.style.cssText += 'max-height:100px!important;overflow-y:auto!important;overflow-x:hidden!important;';
         const sel = slotGroup.querySelector('select');
         if (sel) { sel.size = 4; sel.style.cssText += 'height:100px!important;'; }
-        obs.disconnect();
       }
-    });
+      const formControls = host.querySelectorAll('.form-control');
+      formControls.forEach(fc => {
+        fc.style.setProperty('height', '100px', 'important');
+        fc.style.setProperty('max-height', '100px', 'important');
+        fc.style.setProperty('overflow-y', 'auto', 'important');
+      });
+      if (slotGroup || formControls.length > 0) obs.disconnect();
+    };
+
+    const obs = new MutationObserver(applyStyles);
     if (host) obs.observe(host, { childList: true, subtree: true });
-    return () => obs.disconnect();
+    const timer = setTimeout(applyStyles, 2500);
+    return () => { obs.disconnect(); clearTimeout(timer); };
   }, []);
 
   /* ── Standalone: full-width section for mobile ── */
@@ -1601,8 +1617,8 @@ function App() {
       <FoodGallery />
       <OrnDivider text="Navštivte nás" bg="var(--wood)" />
       <Hours />
-      <MapSection />
       {mob && <ReservationCard standalone />}
+      <MapSection />
       <SiteFooter isHome={true} />
       <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVisible} />
     </>
