@@ -69,7 +69,7 @@ body {
   height: 100px !important;
   max-height: 100px !important;
 }
-#hors-hydra-0011i000002k2VtAAI .form-control {
+#slot {
   height: 100px !important;
   max-height: 100px !important;
   overflow-y: auto !important;
@@ -199,13 +199,13 @@ function ReservationCard({ standalone = false }) {
         const sel = slotGroup.querySelector('select');
         if (sel) { sel.size = 4; sel.style.cssText += 'height:100px!important;'; }
       }
-      const formControls = host.querySelectorAll('.form-control');
-      formControls.forEach(fc => {
-        fc.style.setProperty('height', '100px', 'important');
-        fc.style.setProperty('max-height', '100px', 'important');
-        fc.style.setProperty('overflow-y', 'auto', 'important');
-      });
-      if (slotGroup || formControls.length > 0) obs.disconnect();
+      const slotEl = document.getElementById('slot');
+      if (slotEl) {
+        slotEl.style.setProperty('height', '100px', 'important');
+        slotEl.style.setProperty('max-height', '100px', 'important');
+        slotEl.style.setProperty('overflow-y', 'auto', 'important');
+      }
+      if (slotGroup || slotEl) obs.disconnect();
     };
 
     const obs = new MutationObserver(applyStyles);
