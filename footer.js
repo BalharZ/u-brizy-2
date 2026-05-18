@@ -4,13 +4,14 @@
      <SiteFooter isHome={true} /> — homepage (links use # anchors)
 */
 function SiteFooter({ isHome = false }) {
+  const mob = useMobile();
   const base = isHome ? '' : '/';
 
   const navLinks = [
     { l: 'Domů',       h: isHome ? '#' : '/' },
     { l: 'Menu',       h: `${base}#menu` },
     { l: 'O nás',      h: `${base}#o-nas` },
-    { l: 'Fotogalerie',h: `${base}#galerie` },
+    { l: 'Fotogalerie',h: '/galerie' },
     { l: 'Kontakt',    h: `${base}#kontakt` },
     { l: 'Rezervace',  h: `${base}#rezervace` },
   ];
@@ -19,19 +20,22 @@ function SiteFooter({ isHome = false }) {
     <footer style={{
       background: 'var(--ink)',
       borderTop: '2px solid var(--gold)',
-      padding: '56px 64px 36px',
+      padding: mob ? '40px 24px 28px' : '56px 64px 36px',
     }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        {/* Top: logo + links */}
+        {/* Top section */}
         <div style={{
-          display: 'grid', gridTemplateColumns: '2fr 1fr 1fr',
-          gap: 48, paddingBottom: 48,
+          display: 'grid',
+          gridTemplateColumns: mob ? '1fr' : '2fr 1fr 1fr',
+          gap: mob ? 32 : 48,
+          paddingBottom: mob ? 32 : 48,
           borderBottom: '1px solid rgba(200,150,12,0.2)',
-          marginBottom: 28,
+          marginBottom: 24,
         }}>
+          {/* Logo + tagline */}
           <div>
             <img src="uploads/Balounova-restaurace-U-Břízy.png" alt="Logo"
-              style={{ height: 84, display: 'block', marginBottom: 20 }} />
+              style={{ height: mob ? 60 : 84, display: 'block', marginBottom: 16 }} />
             <p style={{
               fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
               color: 'rgba(191,201,184,0.55)', lineHeight: 1.8, maxWidth: 300,
@@ -40,60 +44,112 @@ function SiteFooter({ isHome = false }) {
             </p>
           </div>
 
-          <div>
-            <div style={{
-              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
-              color: 'var(--gold)', marginBottom: 20,
-            }}>Navigace</div>
-            {navLinks.map(({ l, h }) => (
-              <a key={l} href={h} style={{
-                display: 'block', fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-                color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
-                marginBottom: 10, transition: 'color 0.2s',
-              }}
-              onMouseEnter={e => e.target.style.color = '#fff'}
-              onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
-                {l}
-              </a>
-            ))}
-          </div>
-
-          <div>
-            <div style={{
-              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
-              color: 'var(--gold)', marginBottom: 20,
-            }}>Kontakt</div>
-            <p style={{
-              fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
-              color: 'rgba(191,201,184,0.55)', lineHeight: 1.9, marginBottom: 12,
-            }}>
-              Jižní IX<br />141 00 Praha 4<br />Starý Spořilov
-            </p>
-            <a href="tel:+420272766782" style={{
-              display: 'block', color: 'var(--gold)', textDecoration: 'none',
-              fontSize: 14, fontWeight: 700, marginBottom: 6, transition: 'opacity 0.2s',
-            }}
-            onMouseEnter={e => e.target.style.opacity='0.7'}
-            onMouseLeave={e => e.target.style.opacity='1'}>
-              +420 272 76 67 82
-            </a>
-            <a href="mailto:restauraceubrizy@seznam.cz" style={{
-              color: 'rgba(191,201,184,0.45)', textDecoration: 'none',
-              fontSize: 12, transition: 'color 0.2s',
-            }}
-            onMouseEnter={e => e.target.style.color='#fff'}
-            onMouseLeave={e => e.target.style.color='rgba(191,201,184,0.45)'}>
-              restauraceubrizy@seznam.cz
-            </a>
-          </div>
+          {/* Nav + Contact — side by side on mobile */}
+          {mob ? (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+              <div>
+                <div style={{
+                  fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.18em', textTransform: 'uppercase',
+                  color: 'var(--gold)', marginBottom: 16,
+                }}>Navigace</div>
+                {navLinks.map(({ l, h }) => (
+                  <a key={l} href={h} style={{
+                    display: 'block', fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+                    color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
+                    marginBottom: 9, transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => e.target.style.color = '#fff'}
+                  onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
+                    {l}
+                  </a>
+                ))}
+              </div>
+              <div>
+                <div style={{
+                  fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.18em', textTransform: 'uppercase',
+                  color: 'var(--gold)', marginBottom: 16,
+                }}>Kontakt</div>
+                <p style={{
+                  fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+                  color: 'rgba(191,201,184,0.55)', lineHeight: 1.9, marginBottom: 10,
+                }}>
+                  Jižní IX<br />141 00 Praha 4<br />Starý Spořilov
+                </p>
+                <a href="tel:+420272766782" style={{
+                  display: 'block', color: 'var(--gold)', textDecoration: 'none',
+                  fontSize: 13, fontWeight: 700, marginBottom: 6, transition: 'opacity 0.2s',
+                }}>
+                  +420 272 76 67 82
+                </a>
+                <a href="mailto:restauraceubrizy@seznam.cz" style={{
+                  color: 'rgba(191,201,184,0.45)', textDecoration: 'none',
+                  fontSize: 11, wordBreak: 'break-all',
+                }}>
+                  restauraceubrizy@seznam.cz
+                </a>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div>
+                <div style={{
+                  fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.18em', textTransform: 'uppercase',
+                  color: 'var(--gold)', marginBottom: 20,
+                }}>Navigace</div>
+                {navLinks.map(({ l, h }) => (
+                  <a key={l} href={h} style={{
+                    display: 'block', fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+                    color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
+                    marginBottom: 10, transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => e.target.style.color = '#fff'}
+                  onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
+                    {l}
+                  </a>
+                ))}
+              </div>
+              <div>
+                <div style={{
+                  fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                  letterSpacing: '0.18em', textTransform: 'uppercase',
+                  color: 'var(--gold)', marginBottom: 20,
+                }}>Kontakt</div>
+                <p style={{
+                  fontFamily: 'Lato', fontSize: 13, fontWeight: 300,
+                  color: 'rgba(191,201,184,0.55)', lineHeight: 1.9, marginBottom: 12,
+                }}>
+                  Jižní IX<br />141 00 Praha 4<br />Starý Spořilov
+                </p>
+                <a href="tel:+420272766782" style={{
+                  display: 'block', color: 'var(--gold)', textDecoration: 'none',
+                  fontSize: 14, fontWeight: 700, marginBottom: 6, transition: 'opacity 0.2s',
+                }}
+                onMouseEnter={e => e.target.style.opacity='0.7'}
+                onMouseLeave={e => e.target.style.opacity='1'}>
+                  +420 272 76 67 82
+                </a>
+                <a href="mailto:restauraceubrizy@seznam.cz" style={{
+                  color: 'rgba(191,201,184,0.45)', textDecoration: 'none',
+                  fontSize: 12, transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => e.target.style.color='#fff'}
+                onMouseLeave={e => e.target.style.color='rgba(191,201,184,0.45)'}>
+                  restauraceubrizy@seznam.cz
+                </a>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Bottom bar */}
         <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          flexWrap: 'wrap', gap: 12,
+          display: 'flex',
+          flexDirection: mob ? 'column' : 'row',
+          justifyContent: 'space-between', alignItems: mob ? 'flex-start' : 'center',
+          gap: 12,
         }}>
           <span style={{ fontFamily: 'Lato', fontSize: 12, color: 'rgba(191,201,184,0.3)' }}>
             © {new Date().getFullYear()} Balounova Restaurace U Břízy — Praha 4, Starý Spořilov

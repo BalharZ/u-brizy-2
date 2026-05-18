@@ -81,20 +81,23 @@ function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
    HERO
    ───────────────────────────────────────── */
 function MenuHero() {
+  const mob = useMobile();
   return (
     <section className="paper" style={{
       position: 'relative',
-      padding: '72px 64px 88px',
+      padding: mob ? '88px 20px 48px' : '72px 64px 88px',
       borderBottom: '1px solid rgba(15,44,31,0.1)',
       overflow: 'hidden',
     }}>
-      <div className="cg" aria-hidden="true" style={{
-        position: 'absolute', right: -40, top: 8,
-        fontSize: 220, fontStyle: 'italic', fontWeight: 500,
-        color: 'rgba(200,150,12,0.07)',
-        letterSpacing: '-0.04em', lineHeight: 1,
-        pointerEvents: 'none', userSelect: 'none',
-      }}>Menu</div>
+      {!mob && (
+        <div className="cg" aria-hidden="true" style={{
+          position: 'absolute', right: -40, top: 8,
+          fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+          color: 'rgba(200,150,12,0.07)',
+          letterSpacing: '-0.04em', lineHeight: 1,
+          pointerEvents: 'none', userSelect: 'none',
+        }}>Menu</div>
+      )}
 
       <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
         <nav style={{
@@ -112,8 +115,8 @@ function MenuHero() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr auto',
-          gap: 56,
+          gridTemplateColumns: mob ? '1fr' : '1fr auto',
+          gap: mob ? 12 : 56,
           alignItems: 'end',
         }}>
           <div>
@@ -121,58 +124,56 @@ function MenuHero() {
               display: 'inline-flex', alignItems: 'center', gap: 12,
               fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
               letterSpacing: '0.24em', textTransform: 'uppercase',
-              color: 'var(--gold)', marginBottom: 24,
+              color: 'var(--gold)', marginBottom: mob ? 16 : 24,
             }}>
               <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
               Speciální nabídka
             </div>
             <h1 className="cg" style={{
-              fontSize: 'clamp(46px, 5.5vw, 82px)',
+              fontSize: mob ? 'clamp(36px, 9vw, 56px)' : 'clamp(46px, 5.5vw, 82px)',
               fontWeight: 500, fontStyle: 'italic',
               color: 'var(--wood)', lineHeight: 0.95,
-              letterSpacing: '-0.02em', marginBottom: 24,
-              whiteSpace: 'nowrap',
+              letterSpacing: '-0.02em', marginBottom: mob ? 12 : 24,
             }}>
               Týdenní nabídka
             </h1>
           </div>
 
-          <div style={{ textAlign: 'right', paddingBottom: 12 }}>
+          <div style={{ textAlign: mob ? 'left' : 'right', paddingBottom: 12 }}>
             <div style={{
               fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
               letterSpacing: '0.24em', textTransform: 'uppercase',
-              color: 'var(--mid)', marginBottom: 10,
+              color: 'var(--mid)', marginBottom: 6,
             }}>
               Platný od
             </div>
             <div className="cg" style={{
-              fontSize: 28, fontWeight: 600, fontStyle: 'italic',
+              fontSize: mob ? 22 : 28, fontWeight: 600, fontStyle: 'italic',
               color: 'var(--wood)', letterSpacing: '0.01em',
             }}>
               15:00 hod
             </div>
             <div style={{
-              fontFamily: 'Lato', fontSize: 15, fontWeight: 400,
-              color: 'var(--mid)', marginTop: 8, whiteSpace: 'nowrap',
+              fontFamily: 'Lato', fontSize: mob ? 13 : 15, fontWeight: 400,
+              color: 'var(--mid)', marginTop: 6,
             }}>
               — o víkendu po celý den
             </div>
-            <button onClick={() => window.print()} className="no-print" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 10,
-              marginTop: 20,
-              padding: '10px 18px',
-              background: 'transparent',
-              border: '1px solid rgba(15,44,31,0.2)',
-              color: 'var(--wood)',
-              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
-              cursor: 'pointer', transition: 'all 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
-              <Icon name="print" size={14} stroke={1.8} />
-              Tisk menu
-            </button>
+            {!mob && (
+              <button onClick={() => window.print()} className="no-print" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                marginTop: 20, padding: '10px 18px',
+                background: 'transparent', border: '1px solid rgba(15,44,31,0.2)',
+                color: 'var(--wood)', fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
+                cursor: 'pointer', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
+                <Icon name="print" size={14} stroke={1.8} />
+                Tisk menu
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -184,17 +185,20 @@ function MenuHero() {
    DELIVERY STRIP
    ───────────────────────────────────────── */
 function DeliveryStrip() {
+  const mob = useMobile();
   return (
     <div style={{
       background: 'var(--wood)',
       color: 'var(--text-dark)',
-      padding: '28px 64px',
+      padding: mob ? '20px 16px' : '28px 64px',
     }}>
       <div style={{
         maxWidth: 1240, margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr auto auto',
-        alignItems: 'center', gap: 32,
+        display: mob ? 'flex' : 'grid',
+        flexDirection: mob ? 'column' : undefined,
+        gridTemplateColumns: mob ? undefined : 'auto 1fr auto auto',
+        alignItems: mob ? 'flex-start' : 'center',
+        gap: mob ? 14 : 32,
       }}>
         <div style={{
           width: 52, height: 52,
@@ -258,46 +262,49 @@ function DeliveryStrip() {
    MENU ITEM
    ───────────────────────────────────────── */
 function MenuItem({ weight, name, desc, allergens, price, dark = false }) {
+  const mob = useMobile();
   return (
     <div className="menu-item" style={{
       display: 'grid',
-      gridTemplateColumns: '64px 1fr auto',
-      gap: 24,
+      gridTemplateColumns: mob ? '1fr auto' : '64px 1fr auto',
+      gap: mob ? 12 : 24,
       alignItems: 'baseline',
-      padding: '22px 16px',
+      padding: mob ? '14px 12px' : '22px 16px',
       borderBottom: dark
         ? '1px solid rgba(200,150,12,0.18)'
         : '1px solid rgba(15,44,31,0.1)',
     }}>
-      <div className="cg" style={{
-        fontSize: 22, fontStyle: 'italic', fontWeight: 500,
-        color: 'var(--gold)', letterSpacing: '0.02em', whiteSpace: 'nowrap',
-      }}>
-        {weight || ''}
-      </div>
+      {!mob && (
+        <div className="cg" style={{
+          fontSize: 22, fontStyle: 'italic', fontWeight: 500,
+          color: 'var(--gold)', letterSpacing: '0.02em', whiteSpace: 'nowrap',
+        }}>
+          {weight || ''}
+        </div>
+      )}
 
       <div>
         <div className="cg" style={{
-          fontSize: 24, fontWeight: 600,
+          fontSize: mob ? 19 : 24, fontWeight: 600,
           color: dark ? 'var(--text-dark)' : 'var(--wood)',
-          lineHeight: 1.2, letterSpacing: '0.005em',
+          lineHeight: 1.25, letterSpacing: '0.005em',
         }}>
           {name}
         </div>
         {desc && (
           <div style={{
-            fontFamily: 'Lato', fontSize: 16, fontWeight: 400,
+            fontFamily: 'Lato', fontSize: mob ? 13 : 16, fontWeight: 400,
             color: dark ? 'var(--text-mid)' : 'var(--mid)',
-            marginTop: 4, lineHeight: 1.6,
+            marginTop: mob ? 3 : 4, lineHeight: 1.5,
           }}>
             {desc}
           </div>
         )}
         {allergens && (
           <div style={{
-            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
             letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: 'var(--gold)', opacity: 0.65, marginTop: 5,
+            color: 'var(--gold)', opacity: 0.65, marginTop: 4,
           }}>
             Alergeny: {allergens}
           </div>
@@ -305,11 +312,11 @@ function MenuItem({ weight, name, desc, allergens, price, dark = false }) {
       </div>
 
       <div className="cg" style={{
-        fontSize: 26, fontWeight: 700, fontStyle: 'italic',
+        fontSize: mob ? 20 : 26, fontWeight: 700, fontStyle: 'italic',
         color: 'var(--gold)', letterSpacing: '0.01em',
         whiteSpace: 'nowrap', lineHeight: 1,
       }}>
-        {price}<span style={{ fontSize: 18, marginLeft: 2, fontStyle: 'normal' }}>&nbsp;Kč</span>
+        {price}<span style={{ fontSize: mob ? 12 : 18, marginLeft: 2, fontStyle: 'normal' }}>&nbsp;Kč</span>
       </div>
     </div>
   );
@@ -319,37 +326,38 @@ function MenuItem({ weight, name, desc, allergens, price, dark = false }) {
    MENU SECTION
    ───────────────────────────────────────── */
 function MenuSection({ section, idx }) {
+  const mob = useMobile();
   const dark = section.feature;
   const bg = dark ? 'var(--wood)' : (idx % 2 === 0 ? 'var(--cream)' : 'var(--sand)');
   const cls = dark ? '' : (idx % 2 === 0 ? 'paper' : 'paper-sand');
   return (
     <section id={section.id} className={cls} style={{
       background: bg,
-      padding: dark ? '80px 64px' : '72px 64px',
+      padding: mob ? '40px 16px' : (dark ? '80px 64px' : '72px 64px'),
       borderTop: dark ? '1px solid var(--gold)' : '1px solid rgba(15,44,31,0.08)',
       borderBottom: dark ? '1px solid var(--gold)' : 'none',
     }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{
-          display: 'flex', alignItems: 'flex-start', gap: 24,
-          marginBottom: 36, paddingBottom: 20,
+          display: 'flex', alignItems: 'flex-start', gap: mob ? 16 : 24,
+          marginBottom: mob ? 20 : 36, paddingBottom: mob ? 16 : 20,
           borderBottom: dark
             ? '1px solid rgba(200,150,12,0.3)'
             : '1px solid rgba(200,150,12,0.4)',
         }}>
           <div style={{
-            width: 52, height: 52,
+            width: mob ? 40 : 52, height: mob ? 40 : 52,
             border: '1px solid var(--gold)',
             background: dark ? 'rgba(200,150,12,0.12)' : 'rgba(200,150,12,0.06)',
             color: 'var(--gold)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>
-            <Icon name={section.icon} size={22} stroke={1.5} />
+            <Icon name={section.icon} size={mob ? 18 : 22} stroke={1.5} />
           </div>
           <div style={{ flex: 1 }}>
             <h2 className="cg" style={{
-              fontSize: 'clamp(36px, 4vw, 48px)',
+              fontSize: mob ? 'clamp(26px, 7vw, 36px)' : 'clamp(36px, 4vw, 48px)',
               fontWeight: 500, fontStyle: 'italic',
               color: dark ? 'var(--text-dark)' : 'var(--wood)',
               lineHeight: 1, marginBottom: 6,

@@ -300,6 +300,7 @@ function Gallery({ photos }) {
 
 /* ── App ── */
 function App() {
+  const mob = useMobile();
   const [active, setActive] = React.useState('all');
 
   const visible = active === 'all'
@@ -309,22 +310,24 @@ function App() {
   return (
     <>
       <SiteNav activePage="Galerie" />
-      <div style={{ height: 72 }} />
+      <div style={{ height: mob ? 64 : 72 }} />
 
       {/* Hero */}
       <section className="paper" style={{
         position: 'relative',
-        padding: '72px 64px 88px',
+        padding: mob ? '88px 20px 48px' : '72px 64px 88px',
         borderBottom: '1px solid rgba(15,44,31,0.1)',
         overflow: 'hidden',
       }}>
-        <div className="cg" aria-hidden="true" style={{
-          position: 'absolute', right: -24, top: 8,
-          fontSize: 220, fontStyle: 'italic', fontWeight: 500,
-          color: 'rgba(200,150,12,0.07)',
-          letterSpacing: '-0.04em', lineHeight: 1,
-          pointerEvents: 'none', userSelect: 'none',
-        }}>Galerie</div>
+        {!mob && (
+          <div className="cg" aria-hidden="true" style={{
+            position: 'absolute', right: -24, top: 8,
+            fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+            color: 'rgba(200,150,12,0.07)',
+            letterSpacing: '-0.04em', lineHeight: 1,
+            pointerEvents: 'none', userSelect: 'none',
+          }}>Galerie</div>
+        )}
 
         <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
           <nav style={{
@@ -352,7 +355,7 @@ function App() {
           </div>
 
           <h1 className="cg" style={{
-            fontSize: 'clamp(42px, 5.5vw, 82px)',
+            fontSize: mob ? 'clamp(36px, 9vw, 56px)' : 'clamp(42px, 5.5vw, 82px)',
             fontWeight: 500, fontStyle: 'italic',
             color: 'var(--wood)', lineHeight: 0.95,
             letterSpacing: '-0.02em',
@@ -364,15 +367,15 @@ function App() {
 
       {/* Filter bar */}
       <div style={{
-        position: 'sticky', top: 72, zIndex: 200,
+        position: 'sticky', top: mob ? 64 : 72, zIndex: 200,
         background: 'rgba(244,241,232,0.97)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(92,112,100,0.15)',
-        padding: '0 64px',
+        padding: mob ? '0 16px' : '0 64px',
       }}>
         <div style={{
           maxWidth: 1240, margin: '0 auto',
-          display: 'flex', alignItems: 'center', gap: 4,
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4,
         }}>
           {FILTERS.map(f => (
             <button key={f.id}
@@ -396,7 +399,7 @@ function App() {
       </div>
 
       {/* Gallery */}
-      <main className="paper" style={{ padding: '40px 64px 80px' }}>
+      <main className="paper" style={{ padding: mob ? '20px 12px 48px' : '40px 64px 80px' }}>
         <div style={{ maxWidth: 1240, margin: '0 auto' }}>
           <Gallery key={active} photos={visible} />
         </div>

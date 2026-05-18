@@ -64,20 +64,23 @@ function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
    HERO
    ───────────────────────────────────────── */
 function MenuHero() {
+  const mob = useMobile();
   return (
     <section className="paper" style={{
       position: 'relative',
-      padding: '72px 64px 88px',
+      padding: mob ? '88px 20px 48px' : '72px 64px 88px',
       borderBottom: '1px solid rgba(15,44,31,0.1)',
       overflow: 'hidden',
     }}>
-      <div className="cg" aria-hidden="true" style={{
-        position: 'absolute', right: -40, top: 8,
-        fontSize: 220, fontStyle: 'italic', fontWeight: 500,
-        color: 'rgba(200,150,12,0.07)',
-        letterSpacing: '-0.04em', lineHeight: 1,
-        pointerEvents: 'none', userSelect: 'none',
-      }}>Pivo</div>
+      {!mob && (
+        <div className="cg" aria-hidden="true" style={{
+          position: 'absolute', right: -40, top: 8,
+          fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+          color: 'rgba(200,150,12,0.07)',
+          letterSpacing: '-0.04em', lineHeight: 1,
+          pointerEvents: 'none', userSelect: 'none',
+        }}>Pivo</div>
+      )}
 
       <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
         <nav style={{
@@ -95,7 +98,7 @@ function MenuHero() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr auto',
+          gridTemplateColumns: mob ? '1fr' : '1fr auto',
           gap: 56,
           alignItems: 'end',
         }}>
@@ -110,33 +113,35 @@ function MenuHero() {
               Na čepu
             </div>
             <h1 className="cg" style={{
-              fontSize: 'clamp(46px, 5.5vw, 82px)',
+              fontSize: mob ? 'clamp(36px, 9vw, 56px)' : 'clamp(46px, 5.5vw, 82px)',
               fontWeight: 500, fontStyle: 'italic',
               color: 'var(--wood)', lineHeight: 0.95,
               letterSpacing: '-0.02em', marginBottom: 24,
-              whiteSpace: 'nowrap',
+              whiteSpace: mob ? 'normal' : 'nowrap',
             }}>
               Pivní lístek
             </h1>
           </div>
 
-          <div style={{ textAlign: 'right', paddingBottom: 12 }}>
-            <button onClick={() => window.print()} className="no-print" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 10,
-              padding: '10px 18px',
-              background: 'transparent',
-              border: '1px solid rgba(15,44,31,0.2)',
-              color: 'var(--wood)',
-              fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-              letterSpacing: '0.18em', textTransform: 'uppercase',
-              cursor: 'pointer', transition: 'all 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
-              <Icon name="print" size={14} stroke={1.8} />
-              Tisk lístku
-            </button>
-          </div>
+          {!mob && (
+            <div style={{ textAlign: 'right', paddingBottom: 12 }}>
+              <button onClick={() => window.print()} className="no-print" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                padding: '10px 18px',
+                background: 'transparent',
+                border: '1px solid rgba(15,44,31,0.2)',
+                color: 'var(--wood)',
+                fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
+                cursor: 'pointer', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(15,44,31,0.2)'; e.currentTarget.style.color = 'var(--wood)'; }}>
+                <Icon name="print" size={14} stroke={1.8} />
+                Tisk lístku
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -147,26 +152,31 @@ function MenuHero() {
    DELIVERY STRIP
    ───────────────────────────────────────── */
 function DeliveryStrip() {
+  const mob = useMobile();
   return (
     <div style={{
       background: 'var(--wood)',
       color: 'var(--text-dark)',
-      padding: '28px 64px',
+      padding: mob ? '24px 20px' : '28px 64px',
     }}>
       <div style={{
         maxWidth: 1240, margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr auto auto',
-        alignItems: 'center', gap: 32,
+        display: mob ? 'flex' : 'grid',
+        flexDirection: mob ? 'column' : undefined,
+        gridTemplateColumns: mob ? undefined : 'auto 1fr auto auto',
+        alignItems: mob ? 'flex-start' : 'center',
+        gap: mob ? 16 : 32,
       }}>
-        <div style={{
-          width: 52, height: 52,
-          border: '1px solid var(--gold)',
-          color: 'var(--gold)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Icon name="bolt" size={22} stroke={1.6} />
-        </div>
+        {!mob && (
+          <div style={{
+            width: 52, height: 52,
+            border: '1px solid var(--gold)',
+            color: 'var(--gold)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Icon name="bolt" size={22} stroke={1.6} />
+          </div>
+        )}
 
         <div>
           <div style={{
@@ -175,43 +185,45 @@ function DeliveryStrip() {
             color: 'var(--gold)', marginBottom: 4,
           }}>Rozvoz obědů a večeří</div>
           <div className="cg" style={{
-            fontSize: 22, fontStyle: 'italic', fontWeight: 500,
+            fontSize: mob ? 18 : 22, fontStyle: 'italic', fontWeight: 500,
             color: 'var(--text-dark)', letterSpacing: '0.01em',
           }}>
             Od 11:00 až k Vám domů nebo do práce
           </div>
         </div>
 
-        <a href="tel:+420272766782" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 12,
-          padding: '12px 20px',
-          border: '1px solid rgba(200,150,12,0.4)',
-          color: 'var(--text-dark)', textDecoration: 'none',
-          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          transition: 'all 0.2s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(200,150,12,0.4)'; e.currentTarget.style.color = 'var(--text-dark)'; }}>
-          <Icon name="phone" size={14} stroke={1.8} />
-          272 76 67 82
-        </a>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <a href="tel:+420272766782" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 12,
+            padding: '12px 20px',
+            border: '1px solid rgba(200,150,12,0.4)',
+            color: 'var(--text-dark)', textDecoration: 'none',
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold)'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(200,150,12,0.4)'; e.currentTarget.style.color = 'var(--text-dark)'; }}>
+            <Icon name="phone" size={14} stroke={1.8} />
+            272 76 67 82
+          </a>
 
-        <a href="https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy"
-          target="_blank" rel="noopener" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 12,
-          padding: '12px 22px',
-          background: 'var(--gold)', color: 'var(--wood)',
-          textDecoration: 'none',
-          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          transition: 'background 0.2s',
-        }}
-        onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
-          <Icon name="bolt" size={14} stroke={2} />
-          Bolt Food
-        </a>
+          <a href="https://food.bolt.eu/en-US/271-prague/p/31855-restaurace-u-b%C5%99%C3%ADzy"
+            target="_blank" rel="noopener" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 12,
+            padding: '12px 22px',
+            background: 'var(--gold)', color: 'var(--wood)',
+            textDecoration: 'none',
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--gold-lt)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'var(--gold)'}>
+            <Icon name="bolt" size={14} stroke={2} />
+            Bolt Food
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -221,36 +233,39 @@ function DeliveryStrip() {
    BEER ITEM
    ───────────────────────────────────────── */
 function BeerItem({ degree, name, desc, nonalcoholic, price, dark = false }) {
+  const mob = useMobile();
   const dual = Array.isArray(price);
   return (
     <div className="menu-item" style={{
       display: 'grid',
-      gridTemplateColumns: '56px 1fr auto',
-      gap: 24,
+      gridTemplateColumns: mob ? '1fr auto' : '56px 1fr auto',
+      gap: mob ? 12 : 24,
       alignItems: 'center',
-      padding: '22px 16px',
+      padding: mob ? '16px 0' : '22px 16px',
       borderBottom: dark
         ? '1px solid rgba(200,150,12,0.18)'
         : '1px solid rgba(15,44,31,0.1)',
     }}>
-      <div className="cg" style={{
-        fontSize: 22, fontStyle: 'italic', fontWeight: 700,
-        color: 'var(--gold)', textAlign: 'center', lineHeight: 1,
-      }}>
-        {degree || ''}
-      </div>
+      {!mob && (
+        <div className="cg" style={{
+          fontSize: 22, fontStyle: 'italic', fontWeight: 700,
+          color: 'var(--gold)', textAlign: 'center', lineHeight: 1,
+        }}>
+          {degree || ''}
+        </div>
+      )}
 
       <div>
         <div className="cg" style={{
-          fontSize: 22, fontWeight: 600,
+          fontSize: mob ? 18 : 22, fontWeight: 600,
           color: dark ? 'var(--text-dark)' : 'var(--wood)',
           lineHeight: 1.2, letterSpacing: '0.005em',
         }}>
-          {name}
+          {mob && degree ? `${degree} ${name}` : name}
         </div>
         {desc && (
           <div style={{
-            fontFamily: 'Lato', fontSize: 13,
+            fontFamily: 'Lato', fontSize: mob ? 12 : 13,
             color: dark ? 'var(--text-mid)' : 'var(--mid)',
             marginTop: 3,
           }}>
@@ -273,17 +288,17 @@ function BeerItem({ degree, name, desc, nonalcoholic, price, dark = false }) {
       </div>
 
       <div className="cg" style={{
-        fontSize: 24, fontWeight: 700, fontStyle: 'italic',
+        fontSize: mob ? 18 : 24, fontWeight: 700, fontStyle: 'italic',
         color: 'var(--gold)', whiteSpace: 'nowrap', textAlign: 'right', lineHeight: 1,
       }}>
         {dual ? (
           <>
             {price[0]}
-            <span style={{ fontSize: 15, fontStyle: 'normal', opacity: 0.45, margin: '0 5px' }}>/</span>
+            <span style={{ fontSize: mob ? 12 : 15, fontStyle: 'normal', opacity: 0.45, margin: '0 5px' }}>/</span>
             {price[1]}
           </>
         ) : price}
-        <span style={{ fontSize: 14, fontStyle: 'normal', marginLeft: 2 }}>&nbsp;Kč</span>
+        <span style={{ fontSize: mob ? 11 : 14, fontStyle: 'normal', marginLeft: 2 }}>&nbsp;Kč</span>
       </div>
     </div>
   );
@@ -293,13 +308,14 @@ function BeerItem({ degree, name, desc, nonalcoholic, price, dark = false }) {
    BEER SECTION
    ───────────────────────────────────────── */
 function BeerSection({ section, idx }) {
+  const mob = useMobile();
   const dark = section.feature;
   const bg = dark ? 'var(--wood)' : (idx % 2 === 0 ? 'var(--cream)' : 'var(--sand)');
   const cls = dark ? '' : (idx % 2 === 0 ? 'paper' : 'paper-sand');
   return (
     <section id={section.id} className={cls} style={{
       background: bg,
-      padding: dark ? '80px 64px' : '72px 64px',
+      padding: mob ? '40px 16px' : (dark ? '80px 64px' : '72px 64px'),
       borderTop: dark ? '1px solid var(--gold)' : '1px solid rgba(15,44,31,0.08)',
       borderBottom: dark ? '1px solid var(--gold)' : 'none',
     }}>
@@ -312,19 +328,19 @@ function BeerSection({ section, idx }) {
             : '1px solid rgba(200,150,12,0.4)',
         }}>
           <div style={{
-            width: 52, height: 52,
+            width: mob ? 40 : 52, height: mob ? 40 : 52,
             border: '1px solid var(--gold)',
             background: dark ? 'rgba(200,150,12,0.12)' : 'rgba(200,150,12,0.06)',
             color: 'var(--gold)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>
-            <Icon name={section.icon} size={22} stroke={1.5} />
+            <Icon name={section.icon} size={mob ? 18 : 22} stroke={1.5} />
           </div>
 
           <div style={{ flex: 1 }}>
             <h2 className="cg" style={{
-              fontSize: 'clamp(36px, 4vw, 48px)',
+              fontSize: mob ? 'clamp(26px, 7vw, 36px)' : 'clamp(36px, 4vw, 48px)',
               fontWeight: 500, fontStyle: 'italic',
               color: dark ? 'var(--text-dark)' : 'var(--wood)',
               lineHeight: 1, marginBottom: 6,
@@ -340,16 +356,18 @@ function BeerSection({ section, idx }) {
             </div>
           </div>
 
-          {/* Price header */}
-          <div style={{
-            fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
-            letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: 'var(--mid)', textAlign: 'right',
-            paddingTop: 6,
-            whiteSpace: 'nowrap',
-          }}>
-            0,5 l &nbsp;/&nbsp; 0,3 l
-          </div>
+          {/* Price header — hidden on mobile */}
+          {!mob && (
+            <div style={{
+              fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.2em', textTransform: 'uppercase',
+              color: 'var(--mid)', textAlign: 'right',
+              paddingTop: 6,
+              whiteSpace: 'nowrap',
+            }}>
+              0,5 l &nbsp;/&nbsp; 0,3 l
+            </div>
+          )}
         </div>
 
         {section.items.map((item, i) => (

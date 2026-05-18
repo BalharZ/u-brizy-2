@@ -245,12 +245,14 @@ function ReservationCard() {
 
 /* ── HERO ── */
 function Hero() {
+  const mob = useMobile();
   return (
     <section style={{
       background: 'var(--wood)',
       minHeight: '100vh',
-      display: 'grid',
-      gridTemplateColumns: '0.65fr 1.35fr',
+      display: mob ? 'flex' : 'grid',
+      flexDirection: mob ? 'column' : undefined,
+      gridTemplateColumns: mob ? undefined : '0.65fr 1.35fr',
       overflow: 'hidden',
       position: 'relative',
     }}>
@@ -258,7 +260,7 @@ function Hero() {
       <div style={{
         display: 'flex', flexDirection: 'column',
         justifyContent: 'center',
-        padding: '110px 32px 80px 120px',
+        padding: mob ? '100px 24px 48px' : '110px 32px 80px 120px',
         position: 'relative', zIndex: 2,
       }}>
         {/* Subtle wood grain lines */}
@@ -288,7 +290,7 @@ function Hero() {
 
         {/* Main headline */}
         <h1 className="pf" style={{
-          fontSize: 'clamp(42px, 5vw, 72px)',
+          fontSize: mob ? 'clamp(32px, 8vw, 52px)' : 'clamp(42px, 5vw, 72px)',
           fontWeight: 400,
           color: 'var(--text-dark)',
           lineHeight: 1.12,
@@ -298,7 +300,7 @@ function Hero() {
           Balounova<br />Restaurace
         </h1>
         <h1 className="pf" style={{
-          fontSize: 'clamp(56px, 7vw, 96px)',
+          fontSize: mob ? 'clamp(44px, 11vw, 72px)' : 'clamp(56px, 7vw, 96px)',
           fontWeight: 700,
           fontStyle: 'italic',
           color: 'var(--gold)',
@@ -394,6 +396,7 @@ function Hero() {
       <div style={{
         position: 'relative',
         overflow: 'hidden',
+        height: mob ? 280 : 'auto',
       }}>
         {/* Main large photo */}
         <img src={P.terrace} alt="Zahrádka"
@@ -405,13 +408,15 @@ function Hero() {
           }} />
 
         {/* Dark overlay on left to blend */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'var(--wood)',
-          maskImage: 'linear-gradient(to right, black 0%, black 8%, rgba(0,0,0,0.85) 22%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.2) 65%, transparent 85%)',
-          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 8%, rgba(0,0,0,0.85) 22%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.2) 65%, transparent 85%)',
-          pointerEvents: 'none',
-        }} />
+        {!mob && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'var(--wood)',
+            maskImage: 'linear-gradient(to right, black 0%, black 8%, rgba(0,0,0,0.85) 22%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.2) 65%, transparent 85%)',
+            WebkitMaskImage: 'linear-gradient(to right, black 0%, black 8%, rgba(0,0,0,0.85) 22%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.2) 65%, transparent 85%)',
+            pointerEvents: 'none',
+          }} />
+        )}
 
         {/* Bottom overlay */}
         <div style={{
@@ -422,8 +427,8 @@ function Hero() {
           pointerEvents: 'none',
         }} />
 
-        {/* Reservation widget overlay */}
-        <ReservationCard />
+        {/* Reservation widget overlay — desktop only */}
+        {!mob && <ReservationCard />}
       </div>
     </section>
   );
@@ -431,6 +436,7 @@ function Hero() {
 
 /* ── STATS ── */
 function Stats() {
+  const mob = useMobile();
   const items = [
     { val: '30+',  lab: 'Let tradice' },
     { val: '170+', lab: 'Míst k sezení' },
@@ -439,17 +445,18 @@ function Stats() {
   ];
   return (
     <div className="paper-sand" style={{
-      display: 'grid', gridTemplateColumns: 'repeat(4,1fr)',
+      display: 'grid', gridTemplateColumns: mob ? 'repeat(2,1fr)' : 'repeat(4,1fr)',
       borderBottom: '1px solid rgba(92,112,100,0.2)',
     }}>
       {items.map((s, i) => (
         <div key={i} style={{
-          padding: '44px 32px',
+          padding: mob ? '28px 16px' : '44px 32px',
           textAlign: 'center',
-          borderLeft: i > 0 ? '1px solid rgba(92,112,100,0.18)' : 'none',
+          borderLeft: mob ? (i % 2 === 1 ? '1px solid rgba(92,112,100,0.18)' : 'none') : (i > 0 ? '1px solid rgba(92,112,100,0.18)' : 'none'),
+          borderTop: mob && i >= 2 ? '1px solid rgba(92,112,100,0.18)' : 'none',
         }}>
           <div className="pf" style={{
-            fontSize: 52, fontWeight: 700,
+            fontSize: mob ? 40 : 52, fontWeight: 700,
             color: 'var(--wood)', lineHeight: 1, marginBottom: 8,
           }}>{s.val}</div>
           <div style={{
@@ -465,60 +472,62 @@ function Stats() {
 
 /* ── ABOUT ── */
 function About() {
+  const mob = useMobile();
   return (
-    <section id="o-nas" className="paper" style={{ padding: '100px 0', overflow: 'hidden' }}>
+    <section id="o-nas" className="paper" style={{ padding: mob ? '56px 0' : '100px 0', overflow: 'hidden' }}>
       <div style={{
         maxWidth: 1240, margin: '0 auto',
-        display: 'grid', gridTemplateColumns: '1fr 1fr',
-        gap: 0, padding: '0 64px',
+        display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr',
+        gap: 0, padding: mob ? '0 20px' : '0 64px',
         alignItems: 'center',
       }}>
         {/* Left: photo */}
-        <div style={{ position: 'relative', paddingRight: 64 }}>
-          {/* Main photo */}
-          <div style={{
-            borderRadius: 4,
-            overflow: 'hidden',
-            aspectRatio: '4/5',
-            maxHeight: 580,
-          }}>
-            <img src={P.sliders} alt="Hostina"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        {!mob && (
+          <div style={{ position: 'relative', paddingRight: 64 }}>
+            <div style={{
+              borderRadius: 4,
+              overflow: 'hidden',
+              aspectRatio: '4/5',
+              maxHeight: 580,
+            }}>
+              <img src={P.sliders} alt="Hostina"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
+            {/* Offset inset photo */}
+            <div style={{
+              position: 'absolute', bottom: -32, right: 24,
+              width: 180, height: 220,
+              border: '4px solid var(--cream)',
+              borderRadius: 4, overflow: 'hidden',
+              boxShadow: '0 8px 32px rgba(31,58,41,0.25)',
+            }}>
+              <img src={P.drink} alt="Nápoj"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
+            {/* Gold frame accent */}
+            <div style={{
+              position: 'absolute', top: -16, left: -16,
+              width: 80, height: 80,
+              borderTop: '2px solid var(--gold)',
+              borderLeft: '2px solid var(--gold)',
+              pointerEvents: 'none',
+            }} />
           </div>
-          {/* Offset inset photo */}
-          <div style={{
-            position: 'absolute', bottom: -32, right: 24,
-            width: 180, height: 220,
-            border: '4px solid var(--cream)',
-            borderRadius: 4, overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(31,58,41,0.25)',
-          }}>
-            <img src={P.drink} alt="Nápoj"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          </div>
-          {/* Gold frame accent */}
-          <div style={{
-            position: 'absolute', top: -16, left: -16,
-            width: 80, height: 80,
-            borderTop: '2px solid var(--gold)',
-            borderLeft: '2px solid var(--gold)',
-            pointerEvents: 'none',
-          }} />
-        </div>
+        )}
 
         {/* Right: text */}
-        <div style={{ paddingLeft: 32, paddingBottom: 32 }}>
+        <div style={{ paddingLeft: mob ? 0 : 32, paddingBottom: 32 }}>
           <SectionLabel>O naší restauraci</SectionLabel>
 
           <h2 className="pf" style={{
-            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontSize: mob ? 'clamp(28px, 7vw, 40px)' : 'clamp(36px, 4vw, 56px)',
             fontWeight: 400, lineHeight: 1.15,
             color: 'var(--wood)', marginBottom: 10,
           }}>
             Rodinná atmosféra
           </h2>
           <h2 className="pf" style={{
-            fontSize: 'clamp(36px, 4vw, 56px)',
+            fontSize: mob ? 'clamp(28px, 7vw, 40px)' : 'clamp(36px, 4vw, 56px)',
             fontWeight: 700, fontStyle: 'italic',
             lineHeight: 1.15,
             color: 'var(--wood)', marginBottom: 36,
@@ -530,14 +539,14 @@ function About() {
           <div style={{ marginTop: 28 }} />
 
           <p style={{
-            fontFamily: 'Lato', fontSize: 15, fontWeight: 300, lineHeight: 1.9,
-            color: 'var(--mid)', marginBottom: 20, maxWidth: 460,
+            fontFamily: 'Lato', fontSize: mob ? 14 : 15, fontWeight: 300, lineHeight: 1.9,
+            color: 'var(--mid)', marginBottom: 20,
           }}>
             Nacházíme se na Starém Spořilově — klidné vilové čtvrti Prahy 4. Od roku 1994 tady vaříme poctivou českou kuchyni s láskou a péčí, která se předává z generace na generaci.
           </p>
           <p style={{
-            fontFamily: 'Lato', fontSize: 15, fontWeight: 300, lineHeight: 1.9,
-            color: 'var(--mid)', marginBottom: 48, maxWidth: 460,
+            fontFamily: 'Lato', fontSize: mob ? 14 : 15, fontWeight: 300, lineHeight: 1.9,
+            color: 'var(--mid)', marginBottom: mob ? 32 : 48,
           }}>
             Ať přijdete s rodinou, přáteli nebo obchodními partnery — u nás se vždy najde správné místo. Velká zahrádka, útulný salonek i prostorný interiér na vás čekají.
           </p>
@@ -564,9 +573,10 @@ function About() {
 
 /* ── ORNAMENT DIVIDER ── */
 function OrnDivider({ text, bg = 'var(--cream)' }) {
+  const mob = useMobile();
   return (
     <div className="orn-rule" style={{
-      padding: '0 64px',
+      padding: mob ? '0 20px' : '0 64px',
       background: bg,
     }}>
       <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, transparent, var(--gold))' }} />
@@ -586,6 +596,7 @@ function OrnDivider({ text, bg = 'var(--cream)' }) {
 
 /* ── MENU SECTION ── */
 function MenuSection() {
+  const mob = useMobile();
   const [hov, setHov] = useState(null);
   const cards = [
     {
@@ -629,13 +640,13 @@ function MenuSection() {
   ];
 
   return (
-    <section id="menu" className="paper" style={{ padding: '80px 64px 100px' }}>
+    <section id="menu" className="paper" style={{ padding: mob ? '48px 20px 64px' : '80px 64px 100px' }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+        <div style={{ textAlign: 'center', marginBottom: mob ? 32 : 56 }}>
           <SectionLabel center>Jídelní &amp; nápojový lístek</SectionLabel>
           <h2 className="pf" style={{
-            fontSize: 'clamp(36px, 4vw, 54px)', fontWeight: 400,
+            fontSize: mob ? 'clamp(28px, 7vw, 42px)' : 'clamp(36px, 4vw, 54px)', fontWeight: 400,
             color: 'var(--wood)', lineHeight: 1.15,
           }}>
             Co pro vás <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--gold)' }}>připravujeme</em>
@@ -643,7 +654,7 @@ function MenuSection() {
         </div>
 
         {/* Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : 'repeat(3,1fr)', gap: mob ? 12 : 2 }}>
           {cards.map((c, i) => (
             <a key={i} href={c.h}
               onMouseEnter={() => setHov(i)}
@@ -752,6 +763,7 @@ function MenuSection() {
 
 /* ── FOOD GALLERY ── */
 function FoodGallery() {
+  const mob = useMobile();
   const [hov, setHov] = useState(null);
   const photos = [
     { src: P.tartare, label: 'Hovězí tatarák' },
@@ -765,12 +777,12 @@ function FoodGallery() {
     <section style={{ background: 'var(--wood)', padding: '0' }}>
       {/* Header */}
       <div style={{
-        textAlign: 'center', padding: '72px 64px 48px',
+        textAlign: 'center', padding: mob ? '48px 20px 32px' : '72px 64px 48px',
         borderBottom: '1px solid rgba(200,150,12,0.2)',
       }}>
         <SectionLabel center light>Z naší kuchyně</SectionLabel>
         <h2 className="pf" style={{
-          fontSize: 'clamp(32px, 3.5vw, 48px)',
+          fontSize: mob ? 'clamp(24px, 6vw, 36px)' : 'clamp(32px, 3.5vw, 48px)',
           fontWeight: 400, color: 'var(--text-dark)',
           fontStyle: 'italic',
         }}>
@@ -778,74 +790,100 @@ function FoodGallery() {
         </h2>
       </div>
 
-      {/* Asymmetric photo grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1.6fr 1fr 1fr',
-        gridTemplateRows: '340px 340px',
-      }}>
-        {/* Big left — spans 2 rows */}
-        <div
-          onMouseEnter={() => setHov(0)}
-          onMouseLeave={() => setHov(null)}
-          style={{
-            gridRow: 'span 2',
-            position: 'relative', overflow: 'hidden',
-            borderRight: '3px solid var(--wood)',
-          }}>
-          <img src={photos[0].src} alt={photos[0].label}
-            style={{
-              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-              transform: hov === 0 ? 'scale(1.05)' : 'scale(1)',
-              transition: 'transform 0.7s ease',
-            }} />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to top, rgba(31,58,41,0.75) 0%, transparent 50%)',
-          }} />
-          <div style={{ position: 'absolute', bottom: 28, left: 32 }}>
-            <div style={{ width: 28, height: 1, background: 'var(--gold)', marginBottom: 10 }} />
-            <span className="pf" style={{
-              color: '#fff', fontSize: 24, fontStyle: 'italic',
-            }}>{photos[0].label}</span>
-          </div>
+      {mob ? (
+        /* Mobile: simple 2-column grid */
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 2,
+        }}>
+          {photos.map((p, i) => (
+            <div key={i} style={{
+              position: 'relative', overflow: 'hidden',
+              aspectRatio: '4/5',
+            }}>
+              <img src={p.src} alt={p.label}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(to top, rgba(31,58,41,0.7) 0%, transparent 50%)',
+              }} />
+              <div style={{ position: 'absolute', bottom: 12, left: 12 }}>
+                <span className="pf" style={{ color: '#fff', fontSize: 14, fontStyle: 'italic' }}>{p.label}</span>
+              </div>
+            </div>
+          ))}
         </div>
-
-        {/* Right 4 cells */}
-        {photos.slice(1).map((p, i) => (
-          <div key={i}
-            onMouseEnter={() => setHov(i + 1)}
+      ) : (
+        /* Desktop: asymmetric grid */
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1.6fr 1fr 1fr',
+          gridTemplateRows: '340px 340px',
+        }}>
+          {/* Big left — spans 2 rows */}
+          <div
+            onMouseEnter={() => setHov(0)}
             onMouseLeave={() => setHov(null)}
             style={{
+              gridRow: 'span 2',
               position: 'relative', overflow: 'hidden',
-              borderBottom: i < 2 ? '3px solid var(--wood)' : 'none',
-              borderLeft: i % 2 === 1 ? '3px solid var(--wood)' : 'none',
+              borderRight: '3px solid var(--wood)',
             }}>
-            <img src={p.src} alt={p.label}
+            <img src={photos[0].src} alt={photos[0].label}
               style={{
                 width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                transform: hov === i + 1 ? 'scale(1.07)' : 'scale(1)',
-                transition: 'transform 0.6s ease',
+                transform: hov === 0 ? 'scale(1.05)' : 'scale(1)',
+                transition: 'transform 0.7s ease',
               }} />
             <div style={{
               position: 'absolute', inset: 0,
-              background: hov === i + 1 ? 'rgba(31,58,41,0.55)' : 'rgba(31,58,41,0.15)',
-              transition: 'background 0.35s',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+              background: 'linear-gradient(to top, rgba(31,58,41,0.75) 0%, transparent 50%)',
+            }} />
+            <div style={{ position: 'absolute', bottom: 28, left: 32 }}>
+              <div style={{ width: 28, height: 1, background: 'var(--gold)', marginBottom: 10 }} />
               <span className="pf" style={{
-                color: '#fff', fontSize: 20, fontStyle: 'italic',
-                opacity: hov === i + 1 ? 1 : 0,
-                transform: `translateY(${hov === i + 1 ? 0 : 6}px)`,
-                transition: 'all 0.3s',
-              }}>{p.label}</span>
+                color: '#fff', fontSize: 24, fontStyle: 'italic',
+              }}>{photos[0].label}</span>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Right 4 cells */}
+          {photos.slice(1).map((p, i) => (
+            <div key={i}
+              onMouseEnter={() => setHov(i + 1)}
+              onMouseLeave={() => setHov(null)}
+              style={{
+                position: 'relative', overflow: 'hidden',
+                borderBottom: i < 2 ? '3px solid var(--wood)' : 'none',
+                borderLeft: i % 2 === 1 ? '3px solid var(--wood)' : 'none',
+              }}>
+              <img src={p.src} alt={p.label}
+                style={{
+                  width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                  transform: hov === i + 1 ? 'scale(1.07)' : 'scale(1)',
+                  transition: 'transform 0.6s ease',
+                }} />
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: hov === i + 1 ? 'rgba(31,58,41,0.55)' : 'rgba(31,58,41,0.15)',
+                transition: 'background 0.35s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span className="pf" style={{
+                  color: '#fff', fontSize: 20, fontStyle: 'italic',
+                  opacity: hov === i + 1 ? 1 : 0,
+                  transform: `translateY(${hov === i + 1 ? 0 : 6}px)`,
+                  transition: 'all 0.3s',
+                }}>{p.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Link to gallery */}
-      <div style={{ textAlign: 'center', padding: '40px' }}>
+      <div style={{ textAlign: 'center', padding: mob ? '28px 20px' : '40px' }}>
         <a href="http://balounovarestauraceubrizy.eu/fotogalerie/" style={{
           color: 'var(--gold)',
           fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
@@ -867,16 +905,17 @@ function FoodGallery() {
 
 /* ── HOURS + CONTACT ── */
 function Hours() {
+  const mob = useMobile();
   return (
     <section id="kontakt" style={{ background: 'var(--wood)' }}>
       {/* Section title */}
       <div style={{
-        textAlign: 'center', padding: '72px 64px 48px',
+        textAlign: 'center', padding: mob ? '48px 20px 32px' : '72px 64px 48px',
         borderBottom: '1px solid rgba(200,150,12,0.18)',
       }}>
         <SectionLabel center light>Navštivte nás</SectionLabel>
         <h2 className="pf" style={{
-          fontSize: 'clamp(32px, 4vw, 52px)',
+          fontSize: mob ? 'clamp(24px, 6vw, 36px)' : 'clamp(32px, 4vw, 52px)',
           fontWeight: 400, fontStyle: 'italic',
           color: 'var(--text-dark)',
         }}>Otevřeno každý den od 11:00</h2>
@@ -884,13 +923,13 @@ function Hours() {
 
       {/* Two columns */}
       <div style={{
-        display: 'grid', gridTemplateColumns: '1fr 1fr',
+        display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr',
         maxWidth: 1000, margin: '0 auto',
-        padding: '64px 64px 80px',
-        gap: 0,
+        padding: mob ? '32px 20px 48px' : '64px 64px 80px',
+        gap: mob ? 40 : 0,
       }}>
         {/* Left: hours */}
-        <div style={{ paddingRight: 64, borderRight: '1px solid var(--gold)' }}>
+        <div style={{ paddingRight: mob ? 0 : 64, borderRight: mob ? 'none' : '1px solid var(--gold)', borderBottom: mob ? '1px solid rgba(200,150,12,0.3)' : 'none', paddingBottom: mob ? 40 : 0 }}>
           <div style={{
             fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
             letterSpacing: '0.2em', textTransform: 'uppercase',
@@ -904,16 +943,16 @@ function Hours() {
           ].map((r, i) => (
             <div key={i} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '22px 0',
+              padding: mob ? '16px 0' : '22px 0',
               borderBottom: '1px solid rgba(200,150,12,0.15)',
             }}>
               <span style={{
-                fontFamily: 'Lato', fontSize: 18, fontWeight: 400,
+                fontFamily: 'Lato', fontSize: mob ? 15 : 18, fontWeight: 400,
                 color: 'var(--text-dark)',
                 letterSpacing: '0.02em',
               }}>{r.d}</span>
               <span className="pf" style={{
-                fontSize: 28, fontWeight: r.accent ? 700 : 400,
+                fontSize: mob ? 20 : 28, fontWeight: r.accent ? 700 : 400,
                 fontStyle: r.accent ? 'italic' : 'normal',
                 color: r.accent ? 'var(--gold)' : 'var(--text-dark)',
               }}>{r.t}</span>
@@ -938,7 +977,7 @@ function Hours() {
         </div>
 
         {/* Right: contact + CTA */}
-        <div style={{ paddingLeft: 64, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ paddingLeft: mob ? 0 : 64, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{
             fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
             letterSpacing: '0.2em', textTransform: 'uppercase',
@@ -1070,26 +1109,23 @@ function Hours() {
 
 /* ── MAP SECTION ── */
 function MapSection() {
-  // Coordinates for Jižní IX, 141 00 Praha 4 (Spořilov)
-  const lat = 50.0436;
-  const lng = 14.4727;
-  const mapsUrl = 'https://www.google.com/maps/place/Ji%C5%BEn%C3%AD+IX,+141+00+Praha-Sta%C5%99%C3%BD+Spo%C5%99ilov';
+  const mob = useMobile();
   return (
     <section id="kde-jsme" className="paper-sand" style={{
-      padding: '90px 64px 100px',
+      padding: mob ? '48px 20px 56px' : '90px 64px 100px',
       borderTop: '1px solid rgba(92,112,100,0.2)',
     }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+        <div style={{ textAlign: 'center', marginBottom: mob ? 28 : 48 }}>
           <SectionLabel center>Najdete nás</SectionLabel>
           <h2 className="pf" style={{
-            fontSize: 'clamp(36px, 4vw, 54px)', fontWeight: 400,
+            fontSize: mob ? 'clamp(26px, 6vw, 38px)' : 'clamp(36px, 4vw, 54px)', fontWeight: 400,
             color: 'var(--wood)',
           }}>
             Kde nás <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--gold)' }}>najdete</em>
           </h2>
           <p style={{
-            fontFamily: 'Lato', fontSize: 15, color: 'var(--mid)',
+            fontFamily: 'Lato', fontSize: mob ? 13 : 15, color: 'var(--mid)',
             marginTop: 14, letterSpacing: '0.04em',
           }}>
             Jižní IX · 141 00 Praha 4 · Starý Spořilov
@@ -1099,7 +1135,7 @@ function MapSection() {
         <div style={{
           position: 'relative',
           border: '2px solid var(--gold)',
-          height: 520,
+          height: mob ? 300 : 520,
           overflow: 'hidden',
           background: 'var(--wood)',
         }}>
@@ -1116,6 +1152,7 @@ function MapSection() {
 
 /* ── RESERVATION ── */
 function Reservation() {
+  const mob = useMobile();
   const [form, setForm] = useState({ name: '', phone: '', date: '', guests: '2', note: '' });
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState({});
@@ -1141,14 +1178,14 @@ function Reservation() {
 
   return (
     <section id="rezervace" className="paper-sand" style={{
-      padding: '100px 64px',
+      padding: mob ? '48px 20px 64px' : '100px 64px',
       borderTop: '1px solid rgba(92,112,100,0.2)',
     }}>
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+        <div style={{ textAlign: 'center', marginBottom: mob ? 32 : 56 }}>
           <SectionLabel center>Rezervace</SectionLabel>
           <h2 className="pf" style={{
-            fontSize: 'clamp(36px, 4vw, 54px)', fontWeight: 400,
+            fontSize: mob ? 'clamp(28px, 7vw, 42px)' : 'clamp(36px, 4vw, 54px)', fontWeight: 400,
             color: 'var(--wood)',
           }}>
             Rezervujte si <em style={{ fontStyle: 'italic', fontWeight: 700 }}>stůl</em>
@@ -1163,12 +1200,12 @@ function Reservation() {
 
         {sent ? (
           <div style={{
-            textAlign: 'center', padding: '60px 40px',
+            textAlign: 'center', padding: mob ? '40px 20px' : '60px 40px',
             border: '1px solid var(--gold)',
             background: 'rgba(200,150,12,0.06)',
           }}>
             <span style={{ color: 'var(--gold)', fontSize: 40, display: 'block', marginBottom: 16 }}>✦</span>
-            <h3 className="pf" style={{ fontSize: 40, fontWeight: 400, color: 'var(--wood)', marginBottom: 12, fontStyle: 'italic' }}>
+            <h3 className="pf" style={{ fontSize: mob ? 32 : 40, fontWeight: 400, color: 'var(--wood)', marginBottom: 12, fontStyle: 'italic' }}>
               Děkujeme!
             </h3>
             <p style={{ color: 'var(--mid)', fontSize: 15, lineHeight: 1.8 }}>
@@ -1177,7 +1214,7 @@ function Reservation() {
           </div>
         ) : (
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 20 }}>
               {[
                 { k: 'name',  l: 'Jméno *',  t: 'text', ph: 'Jan Novák' },
                 { k: 'phone', l: 'Telefon *', t: 'tel',  ph: '+420 123 456 789' },

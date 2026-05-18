@@ -48,27 +48,30 @@ function ArrowLeft() {
 }
 
 function App() {
+  const mob = useMobile();
   const [phoneHover, setPhoneHover] = React.useState(false);
 
   return (
     <>
       <SiteNav activePage="Voucher" />
-      <div style={{ height: 72 }} />
+      <div style={{ height: mob ? 64 : 72 }} />
 
       {/* ── HERO ── */}
       <section className="paper" style={{
         position: 'relative',
-        padding: '72px 64px 88px',
+        padding: mob ? '88px 20px 48px' : '72px 64px 88px',
         borderBottom: '1px solid rgba(15,44,31,0.1)',
         overflow: 'hidden',
       }}>
-        <div className="cg" aria-hidden="true" style={{
-          position: 'absolute', right: -24, top: 8,
-          fontSize: 220, fontStyle: 'italic', fontWeight: 500,
-          color: 'rgba(200,150,12,0.07)',
-          letterSpacing: '-0.04em', lineHeight: 1,
-          pointerEvents: 'none', userSelect: 'none',
-        }}>Voucher</div>
+        {!mob && (
+          <div className="cg" aria-hidden="true" style={{
+            position: 'absolute', right: -24, top: 8,
+            fontSize: 220, fontStyle: 'italic', fontWeight: 500,
+            color: 'rgba(200,150,12,0.07)',
+            letterSpacing: '-0.04em', lineHeight: 1,
+            pointerEvents: 'none', userSelect: 'none',
+          }}>Voucher</div>
+        )}
 
         <div style={{ maxWidth: 1240, margin: '0 auto', position: 'relative' }}>
           <nav style={{
@@ -95,7 +98,7 @@ function App() {
           </div>
 
           <h1 className="cg" style={{
-            fontSize: 'clamp(42px, 5.5vw, 82px)',
+            fontSize: mob ? 'clamp(36px, 9vw, 56px)' : 'clamp(42px, 5.5vw, 82px)',
             fontWeight: 500, fontStyle: 'italic',
             color: 'var(--wood)', lineHeight: 0.95,
             letterSpacing: '-0.02em',
@@ -108,24 +111,26 @@ function App() {
       {/* ── MAIN SECTION ── */}
       <section style={{
         background: 'var(--wood)',
-        padding: '80px 64px',
+        padding: mob ? '48px 20px' : '80px 64px',
         borderTop: '1px solid var(--gold)',
         borderBottom: '1px solid var(--gold)',
       }}>
         <div style={{
           maxWidth: 1240, margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 80,
+          gridTemplateColumns: mob ? '1fr' : '1fr 1fr',
+          gap: mob ? 40 : 80,
           alignItems: 'center',
         }}>
-          {/* Left: voucher image */}
+          {/* Voucher image */}
           <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute', inset: -12,
-              border: '1px solid rgba(200,150,12,0.3)',
-              pointerEvents: 'none',
-            }} />
+            {!mob && (
+              <div style={{
+                position: 'absolute', inset: -12,
+                border: '1px solid rgba(200,150,12,0.3)',
+                pointerEvents: 'none',
+              }} />
+            )}
             <img
               src="uploads/Voucher-v-hodnot%C4%9B-500-K%C4%8D%20(1).jpg"
               alt="Dárkový voucher Restaurace U Břízy"
@@ -137,7 +142,7 @@ function App() {
             />
           </div>
 
-          {/* Right: text */}
+          {/* Text */}
           <div>
             <div style={{
               fontFamily: 'Lato', fontSize: 10, fontWeight: 700,
@@ -148,7 +153,7 @@ function App() {
             </div>
 
             <h2 className="cg" style={{
-              fontSize: 'clamp(34px, 4vw, 54px)',
+              fontSize: mob ? 'clamp(28px, 7vw, 42px)' : 'clamp(34px, 4vw, 54px)',
               fontWeight: 500, fontStyle: 'italic',
               color: 'var(--text-dark)', lineHeight: 1.1,
               marginBottom: 28,
@@ -157,9 +162,9 @@ function App() {
             </h2>
 
             <p style={{
-              fontFamily: 'Lato', fontSize: 16, fontWeight: 400,
+              fontFamily: 'Lato', fontSize: mob ? 14 : 16, fontWeight: 400,
               color: 'var(--text-mid)', lineHeight: 1.75,
-              marginBottom: 40,
+              marginBottom: mob ? 28 : 40,
             }}>
               Dopřejte jim pořádnou dobrotu od našich excelentních kuchařů.
               Voucher lze využít na cokoliv z našeho jídelního i nápojového lístku —
@@ -171,11 +176,11 @@ function App() {
               onMouseLeave={() => setPhoneHover(false)}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 14,
-                padding: '16px 32px',
+                padding: mob ? '14px 24px' : '16px 32px',
                 background: phoneHover ? 'var(--gold-lt)' : 'var(--gold)',
                 color: 'var(--wood)',
                 textDecoration: 'none',
-                fontFamily: 'Lato', fontSize: 12, fontWeight: 700,
+                fontFamily: 'Lato', fontSize: mob ? 11 : 12, fontWeight: 700,
                 letterSpacing: '0.2em', textTransform: 'uppercase',
                 transition: 'background 0.2s',
               }}>
@@ -187,9 +192,9 @@ function App() {
       </section>
 
       {/* ── OCCASIONS ── */}
-      <section className="paper" style={{ padding: '72px 64px' }}>
+      <section className="paper" style={{ padding: mob ? '48px 20px' : '72px 64px' }}>
         <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <div style={{ textAlign: 'center', marginBottom: mob ? 32 : 48 }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 12,
               fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
@@ -201,7 +206,7 @@ function App() {
               <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
             </div>
             <h2 className="cg" style={{
-              fontSize: 'clamp(28px, 3.5vw, 46px)',
+              fontSize: mob ? 'clamp(24px, 6vw, 36px)' : 'clamp(28px, 3.5vw, 46px)',
               fontWeight: 500, fontStyle: 'italic',
               color: 'var(--wood)', lineHeight: 1,
             }}>
@@ -212,13 +217,14 @@ function App() {
           <div style={{
             display: 'flex', flexWrap: 'wrap',
             justifyContent: 'center',
-            gap: 16,
+            gap: mob ? 10 : 16,
           }}>
             {OCCASIONS.map(o => (
               <div key={o.label} style={{
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 14,
-                width: 160, padding: '32px 16px',
+                width: mob ? 'calc(33% - 8px)' : 160,
+                padding: mob ? '20px 8px' : '32px 16px',
                 border: '1px solid rgba(92,112,100,0.15)',
                 background: 'rgba(255,255,255,0.5)',
                 textAlign: 'center',
@@ -226,9 +232,9 @@ function App() {
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.background = 'rgba(200,150,12,0.05)'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(92,112,100,0.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; }}>
-                <span style={{ fontSize: 44, lineHeight: 1 }}>{o.emoji}</span>
+                <span style={{ fontSize: mob ? 32 : 44, lineHeight: 1 }}>{o.emoji}</span>
                 <span style={{
-                  fontSize: 11, fontWeight: 700,
+                  fontSize: mob ? 10 : 11, fontWeight: 700,
                   letterSpacing: '0.14em', textTransform: 'uppercase',
                   color: 'var(--ink)',
                 }}>
@@ -242,11 +248,11 @@ function App() {
 
       {/* ── HOW IT WORKS ── */}
       <section className="paper-sand" style={{
-        padding: '72px 64px',
+        padding: mob ? '48px 20px' : '72px 64px',
         borderTop: '1px solid rgba(92,112,100,0.1)',
       }}>
         <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <div style={{ textAlign: 'center', marginBottom: mob ? 32 : 52 }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 12,
               fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
@@ -258,7 +264,7 @@ function App() {
               <span style={{ width: 32, height: 1, background: 'var(--gold)' }} />
             </div>
             <h2 className="cg" style={{
-              fontSize: 'clamp(28px, 3.5vw, 46px)',
+              fontSize: mob ? 'clamp(24px, 6vw, 36px)' : 'clamp(28px, 3.5vw, 46px)',
               fontWeight: 500, fontStyle: 'italic',
               color: 'var(--wood)', lineHeight: 1,
             }}>
@@ -268,15 +274,15 @@ function App() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 40,
+            gridTemplateColumns: mob ? '1fr' : 'repeat(3, 1fr)',
+            gap: mob ? 28 : 40,
           }}>
             {[
               { step: '01', title: 'Zavolejte nám', desc: 'Kontaktujte nás telefonicky na čísle +420 272 76 67 82. Domluvíme se na hodnotě voucheru a způsobu předání.' },
               { step: '02', title: 'Připravíme voucher', desc: 'Vytiskneme a připravíme voucher v dohodnuté hodnotě. K vyzvednutí osobně v restauraci.' },
               { step: '03', title: 'Obdarujte blízké', desc: 'Předejte voucher jako dárek. Obdarovaný ho uplatní při návštěvě naší restaurace — jednoduše řekne obsluze.' },
             ].map(s => (
-              <div key={s.step} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div key={s.step} style={{ display: 'flex', flexDirection: mob ? 'row' : 'column', gap: mob ? 20 : 16, alignItems: mob ? 'flex-start' : 'stretch' }}>
                 <div style={{
                   width: 56, height: 56,
                   border: '1px solid var(--gold)',
@@ -288,20 +294,22 @@ function App() {
                     color: 'var(--gold)',
                   }}>{s.step}</span>
                 </div>
-                <h3 style={{
-                  fontFamily: 'Lato', fontSize: 13, fontWeight: 700,
-                  letterSpacing: '0.12em', textTransform: 'uppercase',
-                  color: 'var(--ink)', margin: 0,
-                }}>
-                  {s.title}
-                </h3>
-                <p style={{
-                  fontFamily: 'Lato', fontSize: 14,
-                  color: 'var(--mid)', lineHeight: 1.7,
-                  margin: 0,
-                }}>
-                  {s.desc}
-                </p>
+                <div>
+                  <h3 style={{
+                    fontFamily: 'Lato', fontSize: 13, fontWeight: 700,
+                    letterSpacing: '0.12em', textTransform: 'uppercase',
+                    color: 'var(--ink)', margin: '0 0 8px',
+                  }}>
+                    {s.title}
+                  </h3>
+                  <p style={{
+                    fontFamily: 'Lato', fontSize: 14,
+                    color: 'var(--mid)', lineHeight: 1.7,
+                    margin: 0,
+                  }}>
+                    {s.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -310,7 +318,7 @@ function App() {
 
       {/* ── CONDITIONS ── */}
       <section className="paper-sand" style={{
-        padding: '48px 64px',
+        padding: mob ? '32px 20px' : '48px 64px',
         borderTop: '1px solid rgba(92,112,100,0.12)',
       }}>
         <div style={{
@@ -339,6 +347,7 @@ function App() {
               <div key={i} style={{
                 display: 'flex', alignItems: 'center', gap: 10,
                 fontSize: 14, color: 'var(--mid)', lineHeight: 1.5,
+                textAlign: 'left',
               }}>
                 <span style={{
                   width: 5, height: 5, borderRadius: '50%',
