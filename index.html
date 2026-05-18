@@ -184,8 +184,8 @@ function ReservationAndMap() {
       <div style={{
         maxWidth: 1240, margin: '0 auto',
         display: 'grid',
-        gridTemplateColumns: mob ? '1fr' : '2fr 3fr',
-        gap: mob ? 48 : 72,
+        gridTemplateColumns: mob ? '1fr' : '7fr 1px 13fr',
+        gap: mob ? 48 : 48,
         alignItems: 'stretch',
       }}>
 
@@ -230,6 +230,15 @@ function ReservationAndMap() {
             </div>
           </div>
         </div>
+
+        {/* ── SEPARATOR ── */}
+        {!mob && (
+          <div style={{
+            width: 1,
+            alignSelf: 'stretch',
+            background: 'linear-gradient(to bottom, transparent 0%, var(--gold) 12%, var(--gold) 88%, transparent 100%)',
+          }} />
+        )}
 
         {/* ── RIGHT: Map ── */}
         <div id="kde-jsme" style={{ display: 'flex', flexDirection: 'column' }}>
