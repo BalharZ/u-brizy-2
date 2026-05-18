@@ -62,7 +62,6 @@ function SiteNav({ isHome = false, activePage = null }) {
         { l: 'Stálé menu',      h: '/stale-menu' },
         { l: 'Nápojový lístek', h: '/napojovy-listek' },
         { l: 'Pivní lístek',   h: '/pivni-listek' },
-        { l: 'Seznam alergenů', h: '/seznam-alergenu' },
       ],
     },
     { l: 'Galerie', h: '/galerie' },
