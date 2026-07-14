@@ -13,6 +13,7 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel" src="nav.js"></script>
 <script type="text/babel" src="footer.js"></script>
+<script src="menubot.js"></script>
 
 <link rel="stylesheet" href="menu.css">
 </head>
@@ -20,7 +21,7 @@
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 /* ─────────────────────────────────────────
    DATA — dynamic Prague date
@@ -51,84 +52,8 @@ const WEEK_DAYS = [
   { short: 'Pá', long: 'Pátek' },
 ];
 
-const SECTIONS = [
-  {
-    id: 'polevky',
-    title: 'Polévky',
-    sub: 'Soups',
-    icon: 'soup',
-    items: [
-      { name: 'Zeleninový krém s parmazánem', price: 65 },
-      { name: 'Hovězí vývar s masem, zeleninou a nudlemi', price: 60 },
-    ],
-  },
-  {
-    id: 'speciality',
-    title: 'Speciality šéfkuchaře',
-    sub: 'Chef\u2019s specials',
-    icon: 'chef',
-    feature: true,
-    items: [
-      {
-        weight: '180 g',
-        name: 'Savojský vepřový řízek',
-        desc: 'obalený ve vejci, bramborová kaše, citrón, okurka',
-        price: 230,
-      },
-      {
-        weight: '150 g',
-        name: 'Kuřecí ZINGER BURGER',
-        desc: 'smažené kuřecí maso v kukuřičných lupínkách, zauzená majonéza, coleslaw, čedar, batátové hranolky',
-        price: 265,
-      },
-    ],
-  },
-  {
-    id: 'hlavni',
-    title: 'Hlavní jídla',
-    sub: 'Main courses',
-    icon: 'plate',
-    items: [
-      { weight: '150 g', name: 'Kuřecí nudličky FLAMENDR', desc: 'sypané sýrem, zelenina, domácí bramboráčky', price: 210 },
-      { weight: '150 g', name: 'Rozlítaný hovězí ptáček', desc: 'uzenina, vejce, okurka, vařená rýže', price: 199 },
-      { weight: '150 g', name: 'Krůtí výpečky', desc: 'špenát, bramborové knedlíky', price: 185 },
-      { weight: '300 g', name: 'Plněné bramborové knedlíky uzeným masem', desc: 'bílé zelí, restovaná cibulka', price: 199 },
-      { weight: '150 g', name: 'Smažený květák', desc: 's tatarskou omáčkou, vařené brambory', price: 195 },
-    ],
-  },
-  {
-    id: 'smazena',
-    title: 'Smažená a bezmasá',
-    sub: 'Fried & meatless',
-    icon: 'pan',
-    items: [
-      { weight: '300 g', name: 'Listový salát s grilovaným HALOUMMI', desc: 'rukola, polníček, bazalkové pesto, cherry rajčátka, rozpečená bagetka', price: 215 },
-      { weight: '150 g', name: 'Smažený kuřecí řízek', desc: 'hranolky, citrón', price: 199 },
-      { weight: '120 g', name: 'Smažený sýr GOUDA', desc: 'vařené brambory, tatarská omáčka', price: 199 },
-    ],
-  },
-  {
-    id: 'minutky',
-    title: 'Minutková jídla',
-    sub: 'À la minute · this week',
-    icon: 'fire',
-    items: [
-      { weight: '200 g', name: 'Steak z grilované krkovice', desc: 's hořčičnou omáčkou, hranolky', price: 240 },
-      { weight: '150 g', name: 'Grilovaný hermelín', desc: 'obalený v anglické slanině, brusinky, tatarská omáčka, vařené brambory', price: 230 },
-      { weight: '300 g', name: 'MIX salátů s grilovaným kozím sýrem a červenou řepou', desc: 'vinaigrette, rozpečená bagetka', price: 240 },
-    ],
-  },
-  {
-    id: 'dezert-salat',
-    title: 'Dezert & salát',
-    sub: 'Dessert & salad',
-    icon: 'cake',
-    items: [
-      { weight: '3 ks', name: 'Domácí lívance', desc: 's čerstvými jahodami a zakysanou smetanou', price: 130 },
-      { name: 'Šopský salát', price: 50 },
-    ],
-  },
-];
+/* Sekce menu se načítají z menubotu (viz menubot.js) — klient je edituje
+   v aplikaci menubot.cz, tady se jen vykreslí naším designem. */
 
 /* ─────────────────────────────────────────
    ICONS
@@ -159,7 +84,7 @@ function Icon({ name, size = 18, stroke = 1.6, ...rest }) {
 /* ─────────────────────────────────────────
    HERO — Day & Date banner
    ───────────────────────────────────────── */
-function MenuHero() {
+function MenuHero({ day }) {
   const mob = useMobile();
   return (
     <section className="paper" style={{
@@ -227,14 +152,14 @@ function MenuHero() {
               letterSpacing: '-0.02em',
               marginBottom: 18,
             }}>
-              {TODAY.dayName}
+              {day.dayName}
             </h1>
             <div className="cg" style={{
               fontSize: 32, fontWeight: 400,
               color: 'var(--mid)',
               fontStyle: 'italic',
             }}>
-              {TODAY.date}
+              {day.date}
             </div>
           </div>
 
@@ -267,7 +192,7 @@ function MenuHero() {
 /* ─────────────────────────────────────────
    DAY TABS
    ───────────────────────────────────────── */
-function DayTabs() {
+function DayTabs({ dayIdx }) {
   const mob = useMobile();
   return (
     <div className="paper-sand" style={{
@@ -283,7 +208,7 @@ function DayTabs() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {WEEK_DAYS.map((d, i) => {
-            const active = i === TODAY.dayIdx;
+            const active = i === dayIdx;
             return (
               <button key={d.short}
                 disabled={!active}
@@ -477,7 +402,9 @@ function MenuItem({ weight, name, desc, price, dark = false }) {
         color: 'var(--gold)', letterSpacing: '0.01em',
         whiteSpace: 'nowrap', lineHeight: 1,
       }}>
-        {price}<span style={{ fontSize: mob ? 12 : 18, marginLeft: 2, fontStyle: 'normal' }}>&nbsp;Kč</span>
+        {price != null && (
+          <>{price}<span style={{ fontSize: mob ? 12 : 18, marginLeft: 2, fontStyle: 'normal' }}>&nbsp;Kč</span></>
+        )}
       </div>
     </div>
   );
@@ -552,19 +479,152 @@ function MenuSection({ section, idx }) {
 
 
 /* ─────────────────────────────────────────
+   STAVOVÉ HLÁŠKY (načítání / výpadek menubotu)
+   ───────────────────────────────────────── */
+function MenuNotice({ title, text, showPhone }) {
+  const mob = useMobile();
+  return (
+    <section className="paper" style={{
+      padding: mob ? '56px 16px' : '96px 64px',
+      textAlign: 'center',
+    }}>
+      <div style={{ maxWidth: 560, margin: '0 auto' }}>
+        <h2 className="cg" style={{
+          fontSize: mob ? 26 : 34, fontWeight: 500, fontStyle: 'italic',
+          color: 'var(--wood)', marginBottom: 12,
+        }}>
+          {title}
+        </h2>
+        <p style={{
+          fontFamily: 'Lato', fontSize: mob ? 14 : 16,
+          color: 'var(--mid)', lineHeight: 1.6,
+        }}>
+          {text}
+        </p>
+        {showPhone && (
+          <a href="tel:+420272766782" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            marginTop: 24, padding: '12px 22px',
+            background: 'var(--gold)', color: 'var(--wood)',
+            textDecoration: 'none',
+            fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+          }}>
+            <Icon name="phone" size={14} stroke={1.8} />
+            272 76 67 82
+          </a>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────
+   ODBĚR MENU E-MAILEM — formulář z menubotu
+   ───────────────────────────────────────── */
+function MenuSubscribe({ html }) {
+  const mob = useMobile();
+  const box = useRef(null);
+
+  useEffect(() => {
+    if (html) Menubot.bindSubscribeForm(box.current);
+  }, [html]);
+
+  if (!html) return null;
+
+  return (
+    <section className="paper-sand no-print" style={{
+      padding: mob ? '40px 16px' : '72px 64px',
+      borderTop: '1px solid rgba(15,44,31,0.08)',
+    }}>
+      <div style={{ maxWidth: 520, margin: '0 auto', textAlign: 'center' }}>
+        <div style={{
+          fontFamily: 'Lato', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.24em', textTransform: 'uppercase',
+          color: 'var(--gold)', marginBottom: 14,
+        }}>
+          Denní menu e-mailem
+        </div>
+        <h2 className="cg" style={{
+          fontSize: mob ? 26 : 34, fontWeight: 500, fontStyle: 'italic',
+          color: 'var(--wood)', marginBottom: 24,
+        }}>
+          Přihlaste se k odběru
+        </h2>
+        <div className="mb-subscribe" ref={box} dangerouslySetInnerHTML={{ __html: html }} />
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────
    APP
    ───────────────────────────────────────── */
 function App() {
+  const [menu, setMenu] = useState({ status: 'loading', sections: [], subscribe: null, published: null });
+
+  useEffect(() => {
+    let alive = true;
+    Menubot.load('daily').then(data => {
+      if (!alive) return;
+      setMenu({
+        status: data.sections.length ? 'ready' : 'empty',
+        sections: data.sections,
+        subscribe: data.subscribe,
+        published: data.published,
+      });
+    }).catch(err => {
+      console.error(err);
+      if (alive) setMenu({ status: 'error', sections: [], subscribe: null, published: null });
+    });
+    return () => { alive = false; };
+  }, []);
+
+  // Datum bereme z menubotu (to je den, ke kterému menu opravdu patří);
+  // dokud se nenačte, ukazujeme dnešek podle pražského času.
+  const p = menu.published;
+  const day = p && p.dayName
+    ? { dayName: p.dayName, date: p.date || TODAY.date, dayIdx: p.weekIdx }
+    : TODAY;
+
+  const subscribeHTML = menu.subscribe
+    ? (menu.subscribe.form || '') + (menu.subscribe.gdpr || '')
+    : '';
+
   return (
     <>
       <SiteNav activePage="Denní menu" />
       <div style={{ height: 72 }} />
-      <MenuHero />
-      <DayTabs />
+      <MenuHero day={day} />
+      <DayTabs dayIdx={day.dayIdx} />
       <DeliveryStrip />
-      {SECTIONS.map((s, i) => (
+
+      {menu.status === 'loading' && (
+        <MenuNotice
+          title="Načítáme dnešní menu…"
+          text="Za okamžik uvidíte aktuální nabídku kuchyně."
+        />
+      )}
+      {menu.status === 'empty' && (
+        <MenuNotice
+          title="Dnešní menu zatím není vystavené"
+          text="Nabídku doplňujeme každé ráno. Rádi vám ji mezitím řekneme po telefonu."
+          showPhone
+        />
+      )}
+      {menu.status === 'error' && (
+        <MenuNotice
+          title="Menu se nepodařilo načíst"
+          text="Zkuste prosím stránku za chvíli obnovit. Aktuální nabídku vám také rádi sdělíme po telefonu."
+          showPhone
+        />
+      )}
+
+      {menu.sections.map((s, i) => (
         <MenuSection key={s.id} section={s} idx={i} />
       ))}
+
+      <MenuSubscribe html={subscribeHTML} />
       <SiteFooter />
     </>
   );
