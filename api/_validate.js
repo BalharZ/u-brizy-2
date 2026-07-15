@@ -11,7 +11,7 @@ const ICONS = {
                  'sprout', 'salad', 'bottle', 'bread', 'potato', 'snowflake'],
   'pivni-listek': ['beer'],
   'napojovy-listek': ['drop', 'cup', 'glass', 'shot', 'coffee', 'tea', 'hot',
-                      'cocktail', 'wine', 'snack'],
+                      'cocktail', 'wine', 'bottle', 'sprout', 'snack'],
 };
 
 const LIMITS = {

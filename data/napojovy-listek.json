@@ -1,159 +1,65 @@
 [
   {
-    "id": "vody",
-    "title": "Vody a minerálky",
-    "sub": "Water & mineral",
-    "icon": "drop",
-    "note": "Kohoutkovou vodu zdarma nepodáváme.",
-    "items": [
-      {
-        "weight": "0,33 l",
-        "name": "Mattoni perlivá",
-        "price": 39
-      },
-      {
-        "weight": "0,33 l",
-        "name": "Mattoni jemně perlivá",
-        "price": 39
-      },
-      {
-        "weight": "0,33 l",
-        "name": "Aquila neperlivá",
-        "price": 39
-      },
-      {
-        "weight": "1,0 l",
-        "name": "Džbán vody s ledem a citronem",
-        "price": 50
-      },
-      {
-        "weight": "0,1 l",
-        "name": "Soda",
-        "price": 8
-      },
-      {
-        "weight": "0,5 l",
-        "name": "Voda jemně perlivá plast",
-        "price": 25
-      }
-    ]
-  },
-  {
-    "id": "limonady",
-    "title": "Limonády, džusy & tonic",
-    "sub": "Soft drinks & juices",
+    "id": "nealko",
+    "title": "Nealkoholické nápoje",
+    "sub": "Soft drinks",
     "icon": "cup",
+    "note": "Kohoutkovou vodu zdarma nepodáváme.",
     "items": [
       {
         "weight": "0,33 l sklo",
         "name": "Coca-Cola",
-        "price": 49
+        "price": 60
       },
       {
         "weight": "0,33 l sklo",
         "name": "Coca-Cola Zero",
-        "price": 49
+        "price": 60
       },
       {
         "weight": "0,33 l sklo",
         "name": "Fanta",
-        "price": 49
+        "price": 60
       },
       {
         "weight": "0,33 l sklo",
         "name": "Sprite",
-        "price": 49
+        "price": 60
       },
       {
         "weight": "0,25 l sklo",
         "name": "Kinley Tonic",
-        "price": 42
+        "price": 55
       },
       {
         "weight": "0,25 l sklo",
         "name": "Kinley Ginger",
-        "price": 42
-      },
-      {
-        "weight": "0,2 l",
-        "name": "Juice Granini 100% pomeranč",
-        "price": 42
-      },
-      {
-        "weight": "0,2 l",
-        "name": "Juice Granini 100% jablko",
-        "price": 42
-      },
-      {
-        "weight": "0,2 l",
-        "name": "Juice Granini multivitamin",
-        "price": 42
-      },
-      {
-        "weight": "0,2 l",
-        "name": "Juice Granini ananas",
-        "price": 42
-      },
-      {
-        "weight": "0,2 l",
-        "name": "Juice Granini jahoda",
-        "price": 42
+        "price": 55
       },
       {
         "weight": "0,33 l",
-        "name": "Jupík (dětský nápoj)",
-        "price": 35
-      }
-    ]
-  },
-  {
-    "id": "tocene",
-    "title": "Točené & energie",
-    "sub": "Draft sodas & energy drinks",
-    "icon": "glass",
-    "note": "Alergeny v závorce.",
-    "items": [
-      {
-        "weight": "0,3 l",
-        "name": "Kofola točená",
-        "price": 29
+        "name": "Mattoni perlivá",
+        "price": 45
       },
       {
-        "weight": "0,5 l",
-        "name": "Kofola točená",
-        "price": 40
+        "weight": "0,33 l",
+        "name": "NATURA jemně perlivá",
+        "price": 45
       },
       {
-        "weight": "0,3 l",
-        "name": "Malinovka točená",
-        "allergens": "1",
-        "price": 29
+        "weight": "0,33 l",
+        "name": "NATURA neperlivá",
+        "price": 45
       },
       {
-        "weight": "0,5 l",
-        "name": "Malinovka točená",
-        "allergens": "1",
-        "price": 40
+        "weight": "0,1 l",
+        "name": "Soda",
+        "price": 12
       },
       {
-        "weight": "0,4 l",
-        "name": "Domácí limonáda kiwi / ananas",
-        "price": 65
-      },
-      {
-        "weight": "0,4 l",
-        "name": "Domácí limonáda mango / meruňka",
-        "price": 65
-      },
-      {
-        "weight": "0,4 l",
-        "name": "Domácí okurková limonáda",
-        "price": 65
-      },
-      {
-        "weight": "0,4 l",
-        "name": "Domácí citronáda",
-        "price": 65
+        "weight": "1,0 l",
+        "name": "Džbán vody s ledem a citronem",
+        "price": 60
       },
       {
         "weight": "0,25 l",
@@ -163,178 +69,137 @@
       },
       {
         "weight": "0,5 l",
+        "name": "Voda jemně perlivá plast",
+        "price": 25
+      },
+      {
+        "weight": "0,33 l",
+        "name": "Jupík (dětský nápoj)",
+        "price": 35
+      },
+      {
+        "weight": "0,5 l",
         "name": "Ice Tea",
         "price": 35
       }
     ]
   },
   {
-    "id": "alkohol",
-    "title": "Alkoholické nápoje",
-    "sub": "Spirits · 0,05 l",
-    "icon": "shot",
-    "note": "Alergeny v závorce.",
-    "compact": true,
+    "id": "dzus",
+    "title": "Džus",
+    "sub": "Juice",
+    "icon": "drop",
     "items": [
       {
-        "name": "Vodka, Griotka, Tuzemák, Zelená",
-        "price": 45
+        "weight": "0,25 l",
+        "name": "Džus dle nabídky",
+        "price": 55
+      }
+    ]
+  },
+  {
+    "id": "tocena-limonada",
+    "title": "Točená limonáda",
+    "sub": "Draft lemonade",
+    "icon": "glass",
+    "items": [
+      {
+        "weight": "0,3 l",
+        "name": "Kofola točená",
+        "price": 35
       },
       {
-        "name": "Fernet Stock / Citrus",
+        "weight": "0,5 l",
+        "name": "Kofola točená",
         "price": 50
       },
       {
-        "name": "Becherovka",
+        "weight": "0,3 l",
+        "name": "Malinovka točená",
+        "allergens": "1",
+        "price": 35
+      },
+      {
+        "weight": "0,5 l",
+        "name": "Malinovka točená",
+        "allergens": "1",
         "price": 50
-      },
+      }
+    ]
+  },
+  {
+    "id": "domaci-limonada",
+    "title": "Domácí limonáda",
+    "sub": "Homemade lemonade",
+    "icon": "sprout",
+    "items": [
       {
-        "name": "Jägermeister",
-        "price": 70
-      },
-      {
-        "name": "Slivovice, hruškovice, meruňkovice (Fleret)",
-        "price": 75
-      },
-      {
-        "name": "Gin Gordon",
-        "allergens": "1",
-        "price": 65
-      },
-      {
-        "name": "Gin Bombay",
-        "allergens": "1",
-        "price": 75
-      },
-      {
-        "name": "Campari Bitter",
-        "desc": "0,1 l",
-        "price": 60
-      },
-      {
-        "name": "Cinzano Bianco",
-        "desc": "0,1 l",
-        "allergens": "12",
-        "price": 40
-      },
-      {
-        "name": "Havana Rum 3 y.o.",
-        "price": 65
-      },
-      {
-        "name": "Captain Morgan Spiced Rum",
-        "price": 65
-      },
-      {
-        "name": "Ron Zacapa Rum Centenario Años 23",
-        "price": 160
-      },
-      {
-        "name": "Diplomatico Rum",
-        "price": 160
-      },
-      {
-        "name": "Rum Bumbu",
-        "price": 160
-      },
-      {
-        "name": "Rum La Hechira",
-        "price": 160
-      },
-      {
-        "name": "Rum Abuelo",
-        "price": 99
-      },
-      {
-        "name": "Rum Pyrat",
-        "price": 120
-      },
-      {
-        "name": "Rum Republica",
-        "price": 70
-      },
-      {
-        "name": "Metaxa *****",
-        "price": 65
-      },
-      {
-        "name": "Metaxa *******",
-        "price": 95
-      },
-      {
-        "name": "Tequila Olmeca Gold / Silver",
-        "price": 75
-      },
-      {
-        "name": "Jack Daniel's / Jack Daniel's Honey",
+        "weight": "0,4 l",
+        "name": "Domácí limonáda dle denní nabídky",
         "price": 85
-      },
-      {
-        "name": "Jameson",
-        "price": 70
-      },
-      {
-        "name": "Tullamore Dew",
-        "price": 75
-      },
-      {
-        "name": "Chivas Regal 12 y.o.",
-        "price": 95
-      },
-      {
-        "name": "Glenfiddich Single Malt Whisky 15 y.o.",
-        "price": 150
-      },
-      {
-        "name": "Hennessy Cognac",
-        "price": 150
       }
     ]
   },
   {
     "id": "kava",
-    "title": "Italská káva Moak",
+    "title": "Nabídka kávy",
     "sub": "Coffee",
     "icon": "coffee",
     "items": [
       {
-        "name": "Espresso malé / velké",
-        "price": 39
+        "name": "Espresso",
+        "price": 55
       },
       {
-        "name": "Cappuccino",
-        "allergens": "7",
-        "price": 50
+        "name": "Espresso Lungo",
+        "price": 55
+      },
+      {
+        "name": "Espresso macchiato",
+        "price": 65
       },
       {
         "name": "Latté macchiato",
         "allergens": "7",
-        "price": 60
+        "price": 80
+      },
+      {
+        "name": "Cappuccino",
+        "allergens": "7",
+        "price": 70
+      },
+      {
+        "name": "Turecká",
+        "price": 50
       },
       {
         "name": "Vídeňská",
         "allergens": "7",
         "price": 45
-      },
-      {
-        "name": "Turecká",
-        "price": 35
       }
     ]
   },
   {
     "id": "caje",
-    "title": "Čaje",
+    "title": "Nabídka čajů",
     "sub": "Tea · konvička",
     "icon": "tea",
     "items": [
       {
         "name": "Černý, ovocný, zelený",
-        "price": 50
+        "price": 60
       },
       {
         "name": "Z čerstvého zázvoru",
-        "price": 60
+        "price": 70
+      },
+      {
+        "name": "Z čerstvé máty",
+        "price": 70
+      },
+      {
+        "name": "Pečený čaj dle nabídky",
+        "price": 75
       }
     ]
   },
@@ -346,17 +211,17 @@
     "items": [
       {
         "name": "Grog tuzemák",
-        "price": 55
+        "price": 70
       },
       {
         "name": "Grog griotka",
-        "price": 55
+        "price": 70
       },
       {
         "weight": "0,2 l",
         "name": "Svařené víno",
         "allergens": "12",
-        "price": 60
+        "price": 75
       },
       {
         "name": "Horká čokoláda",
@@ -366,60 +231,296 @@
     ]
   },
   {
+    "id": "delikatesy",
+    "title": "Drobné delikatesy",
+    "sub": "Snacks",
+    "icon": "snack",
+    "items": [
+      {
+        "name": "Brambůrky dle nabídky",
+        "price": 35
+      },
+      {
+        "name": "Arašídy",
+        "price": 40
+      },
+      {
+        "name": "Mandle",
+        "price": 60
+      },
+      {
+        "name": "Tyčinky slané",
+        "price": 35
+      },
+      {
+        "name": "Kešu oříšky",
+        "price": 30
+      },
+      {
+        "name": "Žvýkačky",
+        "price": 20
+      }
+    ]
+  },
+  {
+    "id": "aperitivy",
+    "title": "Aperitivy",
+    "sub": "Aperitifs",
+    "icon": "glass",
+    "items": [
+      {
+        "name": "Cinzano Bianco",
+        "desc": "0,1 l",
+        "allergens": "12",
+        "price": 70
+      },
+      {
+        "name": "Campari Bitter",
+        "price": 80
+      }
+    ]
+  },
+  {
+    "id": "likery",
+    "title": "Likéry a destiláty",
+    "sub": "Liqueurs & spirits · 0,04 l",
+    "icon": "shot",
+    "items": [
+      {
+        "name": "Vodka Finlandia",
+        "price": 80
+      },
+      {
+        "name": "Becherovka",
+        "price": 65
+      },
+      {
+        "name": "Griotka",
+        "price": 60
+      },
+      {
+        "name": "Zelená",
+        "price": 60
+      },
+      {
+        "name": "Fernet Stock / Citrus",
+        "price": 65
+      },
+      {
+        "name": "Jägermeister / Jägermeister Orange",
+        "price": 85
+      },
+      {
+        "name": "Gin Gordon dry / rosé",
+        "allergens": "1",
+        "price": 80
+      },
+      {
+        "name": "Gin Bombay",
+        "allergens": "1",
+        "price": 95
+      },
+      {
+        "name": "Gin Hendrick’s",
+        "price": 140
+      },
+      {
+        "name": "Gin Gunpowder",
+        "price": 170
+      },
+      {
+        "name": "Metaxa 5*",
+        "price": 85
+      },
+      {
+        "name": "Metaxa 12*",
+        "price": 99
+      },
+      {
+        "name": "Tequila Teremana Gold / Silver",
+        "price": 99
+      },
+      {
+        "name": "Jack Daniel’s",
+        "price": 99
+      },
+      {
+        "name": "Slivovice, hruškovice, meruňkovice",
+        "price": 95
+      },
+      {
+        "name": "Jameson",
+        "price": 90
+      },
+      {
+        "name": "Tullamore Dew / Tullamore Honey",
+        "price": 90
+      },
+      {
+        "name": "Chivas Regal 12 y.o.",
+        "price": 99
+      },
+      {
+        "name": "Glenfiddich Single Malt Whisky 15 y.o.",
+        "price": 170
+      },
+      {
+        "name": "Hennessy Cognac",
+        "price": 170
+      }
+    ]
+  },
+  {
+    "id": "rumy",
+    "title": "Rumy",
+    "sub": "Rum · 0,04 l",
+    "icon": "bottle",
+    "items": [
+      {
+        "name": "Tuzemák",
+        "price": 65
+      },
+      {
+        "name": "Republica Božkov",
+        "price": 85
+      },
+      {
+        "name": "Havana Club 3 y.o.",
+        "price": 80
+      },
+      {
+        "name": "Captain Morgan Spiced",
+        "price": 80
+      },
+      {
+        "name": "Legendario Elixir",
+        "price": 99
+      },
+      {
+        "name": "Ron Zacapa Centenario Años 23",
+        "price": 185
+      },
+      {
+        "name": "Abuelo",
+        "price": 120
+      },
+      {
+        "name": "El General",
+        "price": 170
+      },
+      {
+        "name": "Bumbu",
+        "price": 185
+      },
+      {
+        "name": "Bumbu X.O.",
+        "price": 195
+      },
+      {
+        "name": "La Hechicera",
+        "price": 195
+      },
+      {
+        "name": "Diplomatico",
+        "price": 160
+      },
+      {
+        "name": "Pyrat",
+        "price": 120
+      }
+    ]
+  },
+  {
     "id": "drinky",
-    "title": "Míchané drinky",
+    "title": "Míchané nápoje",
     "sub": "Cocktails",
     "icon": "cocktail",
     "feature": true,
     "items": [
       {
+        "weight": "0,3 l",
+        "name": "Gin & Tonic",
+        "allergens": "12",
+        "price": 129
+      },
+      {
+        "weight": "0,4 l",
+        "name": "Cuba Libre",
+        "price": 135
+      },
+      {
         "weight": "0,2 l",
         "name": "Aperol Spritz",
         "allergens": "12",
-        "price": 120
+        "price": 140
+      },
+      {
+        "weight": "0,2 l",
+        "name": "Skinny Bitch",
+        "desc": "vodka, soda + limeta",
+        "allergens": "12",
+        "price": 104
+      },
+      {
+        "name": "Jägermeister Orange",
+        "desc": "tonic + plátek citrónu",
+        "price": 134
+      },
+      {
+        "name": "Včelička",
+        "desc": "Tullamore Dew Honey + Sprite",
+        "price": 140
+      },
+      {
+        "name": "Paloma z Teremany",
+        "desc": "grepová soda + Teremana tequila + limetková šťáva + agáve sirup",
+        "price": 150
       },
       {
         "weight": "0,2 l",
         "name": "Moscow Mule",
         "price": 120
-      },
-      {
-        "weight": "0,2 l",
-        "name": "Skinny Bitch",
-        "allergens": "12",
-        "price": 120
-      },
-      {
-        "weight": "0,3 l",
-        "name": "Gin + Tonic + okurka",
-        "allergens": "12",
-        "price": 107
-      },
-      {
-        "weight": "0,4 l",
-        "name": "Cuba Libre",
-        "price": 114
       }
     ]
   },
   {
     "id": "vino",
-    "title": "Vinný list",
+    "title": "Vinný lístek",
     "sub": "Wine list",
     "icon": "wine",
     "note": "Další nabídka kvalitních vín Vinařství Baloun dle vinné karty.",
     "items": [
       {
-        "weight": "0,2 l",
-        "name": "Bílé víno — Pinot, Chardonnay, Tramín červený",
+        "weight": "0,1 l",
+        "name": "Bílé víno — Pinot",
         "allergens": "12",
-        "price": 60
+        "price": 40
       },
       {
-        "weight": "0,2 l",
-        "name": "Červené víno Merlot",
+        "weight": "0,1 l",
+        "name": "Červené víno — Vino rosso",
         "allergens": "12",
-        "price": 44
+        "price": 40
+      },
+      {
+        "weight": "0,1 l",
+        "name": "Prosecco rozlévané",
+        "price": 45
+      },
+      {
+        "weight": "0,75 l",
+        "name": "Prosecco Mionetto",
+        "price": 490
+      },
+      {
+        "weight": "0,75 l",
+        "name": "Prosecco Serenissima extra dry",
+        "price": 550
+      },
+      {
+        "weight": "0,75 l",
+        "name": "Sekt Bohemia",
+        "price": 299
       },
       {
         "weight": "0,7 l",
@@ -432,50 +533,6 @@
         "name": "Červené víno",
         "allergens": "12",
         "price": 240
-      },
-      {
-        "weight": "0,1 l",
-        "name": "Prosecco rozlévané",
-        "price": 40
-      },
-      {
-        "weight": "0,7 l",
-        "name": "Prosecco Mioneto Brut",
-        "price": 390
-      },
-      {
-        "weight": "0,7 l",
-        "name": "Sekt Bohemia",
-        "price": 280
-      }
-    ]
-  },
-  {
-    "id": "delikatesy",
-    "title": "Drobné delikatesy",
-    "sub": "Snacks",
-    "icon": "snack",
-    "compact": true,
-    "items": [
-      {
-        "name": "Brambůrky slané, česnekové",
-        "price": 35
-      },
-      {
-        "name": "Arašídy",
-        "price": 35
-      },
-      {
-        "name": "Kešu oříšky",
-        "price": 30
-      },
-      {
-        "name": "Tyčinky velké slané",
-        "price": 35
-      },
-      {
-        "name": "Žvýkačky",
-        "price": 20
       }
     ]
   }
