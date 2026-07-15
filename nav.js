@@ -35,6 +35,42 @@ function SiteNav({ isHome = false, activePage = null }) {
     if (!mob) setMobileOpen(false);
   }, [mob]);
 
+  /* Odkazy „O nás" a „Kontakt" míří z podstránek na /#o-nas a /#kontakt. Cíl ale
+     vykreslí React až po načtení, takže prohlížeč při skoku na kotvu ještě nemá
+     kam skrolovat a zůstane nahoře. Doskrolujeme sami, jakmile cíl existuje. */
+  React.useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+
+    let raf, tries = 0, landedAt = null;
+    const scrollToTarget = () => {
+      const el = document.getElementById(id);
+      if (!el) return false;
+      // 'instant' schválně: html má scroll-behavior: smooth a při načtení stránky
+      // by se přes celou stránku animovalo skrolování.
+      el.scrollIntoView({ behavior: 'instant', block: 'start' });
+      landedAt = Math.round(window.scrollY);
+      return true;
+    };
+    const tick = () => {
+      // ~2 s: než se doveze Babel, React a obrázky nad cílem
+      if (scrollToTarget() || tries++ > 120) return;
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+
+    // Obrázky nad cílem po doskrolování posunou layout — po jejich načtení srovnat,
+    // ale jen když mezitím uživatel sám neskroloval.
+    const onLoad = () => {
+      if (landedAt !== null && Math.abs(window.scrollY - landedAt) < 2) scrollToTarget();
+    };
+    window.addEventListener('load', onLoad);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('load', onLoad);
+    };
+  }, []);
+
   React.useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };

@@ -1,6 +1,42 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
+/* Lato z Google Fonts CDN neumí 14 českých znaků: č ď ě ň ř ť ů Č Ď Ě Ň Ř Ť Ů.
+   Prohlížeč za ně dosadí systémové písmo (u inline font-family: 'Lato' dokonce
+   patkové Times) a znaky pak v textu vyčnívají jinou kresbou. Ostatní diakritika
+   (á é í ó ú ý š ž) je v pořádku, proto si toho jde snadno nevšimnout.
+
+   Není to chyba Lata — originál z latofonts.com všechny znaky má. Zrovna těchhle
+   14 je v Latu poskládaných z komponent (r + háček) a subsetter Google Fonts je
+   rozbíjí; nemá je ani jejich vlastní podsada „?text=ř".
+
+   Řešení: těch 14 znaků bereme z originálního Lata (OFL, viz fonts/OFL.txt),
+   podsazeného přesně na ně. Zbytek písma dál jede z Google CDN a díky
+   unicode-range se tenhle soubor použije jen na ně. Musí to být rodina „Lato",
+   protože stránky mají font-family: 'Lato' natvrdo v inline stylech.
+
+   Řezy jen 400 a 700 — stejné, jaké si stránky s menu.css tahají z Google.
+   Doplnit sem 300 by bylo špatně: text s font-weight: 300 (patička) se dnes
+   vykreslí Latem 400, takže by těch 14 znaků vyšlo tenčí než zbytek slova.
+
+   Kdyby Google font někdy spravil, celý tenhle blok jde smazat. */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/lato-cz-400.woff2) format('woff2');
+  unicode-range: U+010C-010F, U+011A-011B, U+0147-0148, U+0158-0159, U+0164-0165, U+016E-016F;
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/lato-cz-700.woff2) format('woff2');
+  unicode-range: U+010C-010F, U+011A-011B, U+0147-0148, U+0158-0159, U+0164-0165, U+016E-016F;
+}
+
 :root {
   --wood:      #0F2C1F;
   --wood-lt:   #234A35;

@@ -18,6 +18,39 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
+/* Lato z Google CDN neumí č ď ě ň ř ť ů Č Ď Ě Ň Ř Ť Ů — viz komentář v menu.css.
+   Tahle stránka menu.css nenačítá, má vlastní styly, takže se pravidla musí
+   zopakovat i tady. Na rozdíl od menu.css tu je i řez 300, protože jako jediná
+   si Lato 300 z Google skutečně tahá a používá ho. */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/lato-cz-300.woff2) format('woff2');
+  unicode-range: U+010C-010F, U+011A-011B, U+0147-0148, U+0158-0159, U+0164-0165, U+016E-016F;
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/lato-cz-400.woff2) format('woff2');
+  unicode-range: U+010C-010F, U+011A-011B, U+0147-0148, U+0158-0159, U+0164-0165, U+016E-016F;
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/lato-cz-700.woff2) format('woff2');
+  unicode-range: U+010C-010F, U+011A-011B, U+0147-0148, U+0158-0159, U+0164-0165, U+016E-016F;
+}
+
+/* Cíle kotev z menu (#o-nas, #kontakt) nesmí zmizet pod fixní navigací. */
+#o-nas, #kontakt { scroll-margin-top: 90px; }
+@media (max-width: 767px) { #o-nas, #kontakt { scroll-margin-top: 64px; } }
+
 :root {
   /* Olive theme — sRGB hex fallbacks */
   --wood:      #0F2C1F;
