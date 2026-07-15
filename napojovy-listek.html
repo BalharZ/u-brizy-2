@@ -14,155 +14,17 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel" src="nav.js"></script>
 <script type="text/babel" src="footer.js"></script>
+<script type="text/babel" src="menu-data.js"></script>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState } = React;
-
 /* ─────────────────────────────────────────
-   SECTIONS DATA
+   DATA LÍSTKU
+   Obsah edituje klient ve /vstup, viz menu-data.js.
    ───────────────────────────────────────── */
-const SECTIONS = [
-  {
-    id: 'vody', title: 'Vody a minerálky', sub: 'Water & mineral', icon: 'drop',
-    note: 'Kohoutkovou vodu zdarma nepodáváme.',
-    items: [
-      { weight: '0,33 l', name: 'Mattoni perlivá', price: 39 },
-      { weight: '0,33 l', name: 'Mattoni jemně perlivá', price: 39 },
-      { weight: '0,33 l', name: 'Aquila neperlivá', price: 39 },
-      { weight: '1,0 l',  name: 'Džbán vody s ledem a citronem', price: 50 },
-      { weight: '0,1 l',  name: 'Soda', price: 8 },
-      { weight: '0,5 l',  name: 'Voda jemně perlivá plast', price: 25 },
-    ],
-  },
-  {
-    id: 'limonady', title: 'Limonády, džusy & tonic', sub: 'Soft drinks & juices', icon: 'cup',
-    items: [
-      { weight: '0,33 l sklo', name: 'Coca-Cola', price: 49 },
-      { weight: '0,33 l sklo', name: 'Coca-Cola Zero', price: 49 },
-      { weight: '0,33 l sklo', name: 'Fanta', price: 49 },
-      { weight: '0,33 l sklo', name: 'Sprite', price: 49 },
-      { weight: '0,25 l sklo', name: 'Kinley Tonic', price: 42 },
-      { weight: '0,25 l sklo', name: 'Kinley Ginger', price: 42 },
-      { weight: '0,2 l', name: 'Juice Granini 100% pomeranč', price: 42 },
-      { weight: '0,2 l', name: 'Juice Granini 100% jablko', price: 42 },
-      { weight: '0,2 l', name: 'Juice Granini multivitamin', price: 42 },
-      { weight: '0,2 l', name: 'Juice Granini ananas', price: 42 },
-      { weight: '0,2 l', name: 'Juice Granini jahoda', price: 42 },
-      { weight: '0,33 l', name: 'Jupík (dětský nápoj)', price: 35 },
-    ],
-  },
-  {
-    id: 'tocene', title: 'Točené & energie', sub: 'Draft sodas & energy drinks', icon: 'glass',
-    note: 'Alergeny v závorce.',
-    items: [
-      { weight: '0,3 l', name: 'Kofola točená', price: 29 },
-      { weight: '0,5 l', name: 'Kofola točená', price: 40 },
-      { weight: '0,3 l', name: 'Malinovka točená', allergens: '1', price: 29 },
-      { weight: '0,5 l', name: 'Malinovka točená', allergens: '1', price: 40 },
-      { weight: '0,4 l', name: 'Domácí limonáda kiwi / ananas', price: 65 },
-      { weight: '0,4 l', name: 'Domácí limonáda mango / meruňka', price: 65 },
-      { weight: '0,4 l', name: 'Domácí okurková limonáda', price: 65 },
-      { weight: '0,4 l', name: 'Domácí citronáda', price: 65 },
-      { weight: '0,25 l', name: 'Red Bull', allergens: '10', price: 75 },
-      { weight: '0,5 l',  name: 'Ice Tea', price: 35 },
-    ],
-  },
-  {
-    id: 'alkohol', title: 'Alkoholické nápoje', sub: 'Spirits · 0,05 l', icon: 'shot', compact: true,
-    note: 'Alergeny v závorce.',
-    items: [
-      { name: 'Vodka, Griotka, Tuzemák, Zelená', price: 45 },
-      { name: 'Fernet Stock / Citrus', price: 50 },
-      { name: 'Becherovka', price: 50 },
-      { name: 'Jägermeister', price: 70 },
-      { name: 'Slivovice, hruškovice, meruňkovice (Fleret)', price: 75 },
-      { name: 'Gin Gordon', allergens: '1', price: 65 },
-      { name: 'Gin Bombay', allergens: '1', price: 75 },
-      { name: 'Campari Bitter', desc: '0,1 l', price: 60 },
-      { name: 'Cinzano Bianco', desc: '0,1 l', allergens: '12', price: 40 },
-      { name: 'Havana Rum 3 y.o.', price: 65 },
-      { name: 'Captain Morgan Spiced Rum', price: 65 },
-      { name: 'Ron Zacapa Rum Centenario Años 23', price: 160 },
-      { name: 'Diplomatico Rum', price: 160 },
-      { name: 'Rum Bumbu', price: 160 },
-      { name: 'Rum La Hechira', price: 160 },
-      { name: 'Rum Abuelo', price: 99 },
-      { name: 'Rum Pyrat', price: 120 },
-      { name: 'Rum Republica', price: 70 },
-      { name: 'Metaxa *****', price: 65 },
-      { name: 'Metaxa *******', price: 95 },
-      { name: 'Tequila Olmeca Gold / Silver', price: 75 },
-      { name: "Jack Daniel's / Jack Daniel's Honey", price: 85 },
-      { name: 'Jameson', price: 70 },
-      { name: 'Tullamore Dew', price: 75 },
-      { name: 'Chivas Regal 12 y.o.', price: 95 },
-      { name: 'Glenfiddich Single Malt Whisky 15 y.o.', price: 150 },
-      { name: 'Hennessy Cognac', price: 150 },
-    ],
-  },
-  {
-    id: 'kava', title: 'Italská káva Moak', sub: 'Coffee', icon: 'coffee',
-    items: [
-      { name: 'Espresso malé / velké', price: 39 },
-      { name: 'Cappuccino', allergens: '7', price: 50 },
-      { name: 'Latté macchiato', allergens: '7', price: 60 },
-      { name: 'Vídeňská', allergens: '7', price: 45 },
-      { name: 'Turecká', price: 35 },
-    ],
-  },
-  {
-    id: 'caje', title: 'Čaje', sub: 'Tea · konvička', icon: 'tea',
-    items: [
-      { name: 'Černý, ovocný, zelený', price: 50 },
-      { name: 'Z čerstvého zázvoru', price: 60 },
-    ],
-  },
-  {
-    id: 'teple', title: 'Teplé nápoje', sub: 'Hot drinks', icon: 'hot',
-    items: [
-      { name: 'Grog tuzemák', price: 55 },
-      { name: 'Grog griotka', price: 55 },
-      { weight: '0,2 l', name: 'Svařené víno', allergens: '12', price: 60 },
-      { name: 'Horká čokoláda', allergens: '1,7', price: 35 },
-    ],
-  },
-  {
-    id: 'drinky', title: 'Míchané drinky', sub: 'Cocktails', icon: 'cocktail', feature: true,
-    items: [
-      { weight: '0,2 l', name: 'Aperol Spritz', allergens: '12', price: 120 },
-      { weight: '0,2 l', name: 'Moscow Mule', price: 120 },
-      { weight: '0,2 l', name: 'Skinny Bitch', allergens: '12', price: 120 },
-      { weight: '0,3 l', name: 'Gin + Tonic + okurka', allergens: '12', price: 107 },
-      { weight: '0,4 l', name: 'Cuba Libre', price: 114 },
-    ],
-  },
-  {
-    id: 'vino', title: 'Vinný list', sub: 'Wine list', icon: 'wine',
-    note: 'Další nabídka kvalitních vín Vinařství Baloun dle vinné karty.',
-    items: [
-      { weight: '0,2 l', name: 'Bílé víno — Pinot, Chardonnay, Tramín červený', allergens: '12', price: 60 },
-      { weight: '0,2 l', name: 'Červené víno Merlot', allergens: '12', price: 44 },
-      { weight: '0,7 l', name: 'Bílé víno', allergens: '12', price: 240 },
-      { weight: '0,7 l', name: 'Červené víno', allergens: '12', price: 240 },
-      { weight: '0,1 l', name: 'Prosecco rozlévané', price: 40 },
-      { weight: '0,7 l', name: 'Prosecco Mioneto Brut', price: 390 },
-      { weight: '0,7 l', name: 'Sekt Bohemia', price: 280 },
-    ],
-  },
-  {
-    id: 'delikatesy', title: 'Drobné delikatesy', sub: 'Snacks', icon: 'snack', compact: true,
-    items: [
-      { name: 'Brambůrky slané, česnekové', price: 35 },
-      { name: 'Arašídy', price: 35 },
-      { name: 'Kešu oříšky', price: 30 },
-      { name: 'Tyčinky velké slané', price: 35 },
-      { name: 'Žvýkačky', price: 20 },
-    ],
-  },
-];
+const MENU_JSON = 'data/napojovy-listek.json';
 
 /* ─────────────────────────────────────────
    ICONS
@@ -508,15 +370,18 @@ function DrinkSection({ section, idx }) {
    APP
    ───────────────────────────────────────── */
 function App() {
+  const menu = useMenuData(MENU_JSON);
+
   return (
     <>
       <SiteNav activePage="Nápojový lístek" />
       <div style={{ height: 72 }} />
       <MenuHero />
       <DeliveryStrip />
-      {SECTIONS.map((s, i) => (
+      {menu.sections.map((s, i) => (
         <DrinkSection key={s.id} section={s} idx={i} />
       ))}
+      <MenuDataNotice status={menu.status} />
       <SiteFooter />
     </>
   );

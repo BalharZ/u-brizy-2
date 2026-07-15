@@ -13,6 +13,7 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel" src="nav.js"></script>
 <script type="text/babel" src="footer.js"></script>
+<script type="text/babel" src="menu-data.js"></script>
 
 <link rel="stylesheet" href="menu.css">
 </head>
@@ -20,137 +21,11 @@
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState } = React;
-
 /* ─────────────────────────────────────────
-   MENU DATA
+   DATA LÍSTKU
+   Obsah edituje klient ve /vstup, viz menu-data.js.
    ───────────────────────────────────────── */
-const SECTIONS = [
-  {
-    id: 'polevky', title: 'Polévky', sub: 'Soups', icon: 'soup',
-    items: [
-      { name: 'Hovězí vývar s játrovými knedlíčky, zeleninou a nudlemi', allergens: '1,3,7,9', price: 89 },
-      { name: 'Dle denní nabídky', price: 75 },
-    ],
-  },
-  {
-    id: 'studene', title: 'Studené předkrmy', sub: 'Cold starters', icon: 'snowflake',
-    items: [
-      { weight: '150 g', name: 'Tataráček z hovězí roštěné', desc: '5 ks topinek, česnek', allergens: '1,3,7', price: 249 },
-      { weight: '100 g', name: 'Tlačenka s cibulkou a octem', desc: 'čerstvý chléb', allergens: '1,3,7', price: 95 },
-      { weight: '120 g', name: 'Naložený hermelín s cibulkou, feferonky', desc: '4 ks topinek / chléb', allergens: '1,3,7', price: 149 },
-      { weight: '200 g', name: 'Tortilla nachos s chedarovou sýrovou omáčkou a tomatovou salsou', allergens: '1,3,7', price: 110 },
-    ],
-  },
-  {
-    id: 'teple', title: 'Teplé předkrmy', sub: 'Hot starters', icon: 'fire',
-    items: [
-      { weight: '120 g', name: 'Grilované krevety s česnekovou rozpečenou bagetkou', price: 215 },
-      { weight: '150 g', name: 'Ďábelská topinka s masovou směsí sypaná sýrem', desc: 'salátek z polníčku', allergens: '1,3,7', price: 175 },
-      { weight: '200 g', name: 'Čertovská klobása na grilu', desc: 'hořčice, křen, čerstvý chléb', price: 150 },
-      { weight: '150 g', name: 'Buřty na černém pivu s pikantní zeleninou', desc: 'čerstvý chléb', allergens: '1,3,6,7', price: 145 },
-      { weight: '3 ks', name: 'Smažené jalapeňos papričky v sýrové krustě', desc: 'rukolový salátek, zakysaná smetana', allergens: '1,3,7', price: 150 },
-    ],
-  },
-  {
-    id: 'hlavni', title: 'Hlavní jídla', sub: 'Main courses', icon: 'plate',
-    items: [
-      { weight: '150 g', name: 'CMUNDA PO KAPLICKU', desc: 'domácí bramborák, uzená vepřová plec, bílé zelí, smažená cibulka', allergens: '1,3,7,9', price: 240 },
-      { weight: '180 g', name: 'Svíčková na smetaně s hovězím masem', desc: 'brusinkový terč, houskové knedlíky', allergens: '1,3,7,9', price: 265 },
-      { weight: '200 g', name: 'Kuřecí / vepřový smažený řízek', desc: 'vařené brambory, kyselá okurka, citrón', allergens: '1,3,7', price: 260 },
-      { weight: '500 g', name: 'Kuřecí pečená BBQ křídla', desc: 'salát, coleslaw, zeleninové špalíčky, rozpečená bageta, česnekový dip', allergens: '1,3,7', price: 245 },
-      { weight: '150 g', name: 'Anglický hovězí ROASTBEEF s tatarskou omáčkou', desc: 'domácí hranolky', allergens: '1,3,7,10', price: 250 },
-      { weight: '800 g', name: 'Marinovaná vepřová žebírka', desc: 'hořčice, křen, okurka, zelný salát, beraní rohy, čerstvý chléb', allergens: '1,3,7', price: 330 },
-      { weight: '1000 g', name: 'Pečené vepřové koleno na plzeňském pivu', desc: 'hořčice, křen, nakládané cibulky, okurka, zelný salát, čerstvý chléb', allergens: '1,3,7', price: 370 },
-      { weight: '120 g', name: 'Smažený sýr eidam', desc: 'vařené brambory, domácí tatarská omáčka', allergens: '1,3,7,10', price: 240 },
-      { weight: '250 g', name: 'Kuřecí stripsy smažené v kukuřičných lupínkách', desc: 'tatarská omáčka', allergens: '1,3,7', price: 290 },
-    ],
-  },
-  {
-    id: 'steaky', title: 'Steaky', sub: 'Steaks', icon: 'steak', feature: true,
-    items: [
-      { weight: '350 g', name: 'Vepřový steak TOMAHAWK', desc: 'fazolové lusky se slaninou', allergens: '1,3,7', price: 295 },
-      { weight: '250 g', name: 'Argentinská hovězí roštěná s pepřovou omáčkou', desc: 'lanýžové hranolky s parmazánem', allergens: '1,7,9', price: 450 },
-      { weight: '250 g', name: 'Krůtí prsíčko s hráškovým krémovým RISOTTEM', desc: 'parmazán', allergens: '1,7', price: 270 },
-    ],
-  },
-  {
-    id: 'burgery', title: 'Burgery', sub: 'Burgers', icon: 'burger',
-    items: [
-      { weight: '200 g', name: 'Hovězí SMASH BURGER s chedarem a karamelizovanou cibulkou', desc: 'coleslaw, domácí hranolky', allergens: '1,3,7,10', price: 330 },
-    ],
-    addons: [
-      { name: 'Zauzená majonéza', price: 45 },
-      { name: 'Anglický chedar', price: 25 },
-      { name: 'Opečený slaninový chips', price: 25 },
-      { name: 'Jalapeňos papričky', price: 20 },
-    ],
-  },
-  {
-    id: 'bezmasa', title: 'Bezmasá jídla', sub: 'Vegetarian', icon: 'sprout',
-    items: [
-      { weight: '150 g', name: 'Smažený CHEDAR v rozpečené bulce', desc: 'polníček, rajče, coleslaw, tatarská omáčka', price: 220 },
-      { weight: '250 g', name: 'Hráškové RISOTTO s grilovanou zeleninou', allergens: '7', price: 220 },
-    ],
-  },
-  {
-    id: 'salaty', title: 'Saláty', sub: 'Salads', icon: 'salad',
-    items: [
-      { weight: '120 g', name: 'Caesar salát s grilovaným kuřecím prsíčkem', desc: 'římský salát, slanina, parmazán, opečené krutony, ančovičkový dresink', allergens: '1,3,4,7', price: 250 },
-      { weight: '100 g', name: 'MIX salátů s hovězím ROASTBEEFEM', desc: 'zauzená majonéza, cherry rajčata, červená cibulka, rozpečená bagetka', allergens: '1,3,7', price: 250 },
-      { name: 'Šopský salát z čerstvé zeleniny', desc: 'paprika, rajče, okurka · malý / velký', allergens: '1,3,7', price: '80 / 140' },
-      { name: 'Řecký salát z čerstvé zeleniny', desc: 'paprika, rajče, okurka, olivy, balkánský sýr, olivový olej · malý / velký', allergens: '1,3,7', price: '80 / 140' },
-      { name: 'Zelný salát', price: 69 },
-      { name: 'Coleslaw', allergens: '7', price: 69 },
-    ],
-  },
-  {
-    id: 'dezerty', title: 'Dezerty', sub: 'Desserts', icon: 'cake',
-    items: [
-      { name: 'Čokoládové suflé s mangovým sorbetem a malinovou redukcí', allergens: '1,3,7', price: 130 },
-      { name: 'Wafle s kit-kat čokoládovým krémem a banánem', desc: 'šlehačka', allergens: '1,3,7', price: 130 },
-      { name: 'Wafle s lesním ovocem a zakysanou smetanou', allergens: '1,3,7', price: 130 },
-      { name: 'Kopeček zmrzliny', allergens: '1,3,7', price: 35 },
-    ],
-  },
-  {
-    id: 'prilohy', title: 'Přílohy', sub: 'Sides', icon: 'potato', compact: true,
-    items: [
-      { name: 'Domácí hranolky', price: 55 },
-      { name: 'Krokety', price: 60 },
-      { name: 'Bramborový salát', price: 65 },
-      { name: 'Porce knedlíků', price: 45 },
-      { name: 'Vařené brambory', price: 45 },
-      { name: 'Rozpečená česneková bageta', price: 45 },
-    ],
-  },
-  {
-    id: 'omacky', title: 'Omáčky', sub: 'Sauces', icon: 'bottle', compact: true,
-    items: [
-      { name: 'Tatarská omáčka', price: 35 },
-      { name: 'Zauzená majonéza', price: 35 },
-      { name: 'Omáčka z modrého sýra', price: 35 },
-      { name: 'Chedar sýrový dip', price: 30 },
-      { name: 'Pepřová omáčka', price: 25 },
-      { name: 'Česnekový dip', price: 25 },
-      { name: 'Jalapeňos omáčka', price: 25 },
-      { name: 'BBQ omáčka', price: 30 },
-      { name: 'HOT BOX set pálivých omáček', price: 35 },
-      { name: 'Spiraca pálivá omáčka', price: 30 },
-      { name: 'Kečup', price: 20 },
-      { name: 'Hořčice', price: 15 },
-    ],
-  },
-  {
-    id: 'pecivo', title: 'Pečivo', sub: 'Bread', icon: 'bread', compact: true,
-    items: [
-      { name: 'Rozpečená česneková bageta', price: 45 },
-      { name: 'Opečený toast', desc: '1 ks', price: 8 },
-      { name: 'Malý košík chleba', desc: '5 ks', price: 20 },
-      { name: 'Velký košík pečiva', desc: '10 ks', price: 30 },
-    ],
-  },
-];
+const MENU_JSON = 'data/stale-menu.json';
 
 /* ─────────────────────────────────────────
    ICONS
@@ -530,15 +405,18 @@ function MenuSection({ section, idx }) {
    APP
    ───────────────────────────────────────── */
 function App() {
+  const menu = useMenuData(MENU_JSON);
+
   return (
     <>
       <SiteNav activePage="Stálé menu" />
       <div style={{ height: 72 }} />
       <MenuHero />
       <DeliveryStrip />
-      {SECTIONS.map((s, i) => (
+      {menu.sections.map((s, i) => (
         <MenuSection key={s.id} section={s} idx={i} />
       ))}
+      <MenuDataNotice status={menu.status} />
       <SiteFooter />
     </>
   );

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Úprava lístků — U Břízy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Lato:wght@400;700&subset=latin,latin-ext&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --wood: #0F2C1F; --wood-lt: #234A35; --gold: #C8960C; --gold-lt: #D4A828;
+  --cream: #F4F1E8; --sand: #E2DDC9; --mid: #406954; --ink: #0B2318;
+  --line: rgba(15,44,31,0.14); --red: #A32B12;
+}
+body { font-family: 'Lato', 'Segoe UI', Arial, sans-serif; background: var(--cream); color: var(--ink); }
+.cg { font-family: 'Lora', serif; }
+
+input, select, textarea, button { font-family: inherit; font-size: 15px; color: inherit; }
+input, select, textarea {
+  width: 100%; padding: 9px 11px; background: #fff;
+  border: 1px solid var(--line); border-radius: 3px;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,150,12,0.15); }
+textarea { resize: vertical; min-height: 62px; line-height: 1.45; }
+label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 5px; }
+
+.btn {
+  padding: 11px 20px; border: 0; border-radius: 3px; cursor: pointer;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  background: var(--gold); color: var(--wood); transition: background 0.15s, opacity 0.15s;
+}
+.btn:hover:not(:disabled) { background: var(--gold-lt); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-ghost { background: transparent; color: var(--mid); border: 1px solid var(--line); }
+.btn-ghost:hover:not(:disabled) { background: rgba(15,44,31,0.05); }
+.btn-sm { padding: 7px 12px; font-size: 10px; letter-spacing: 0.1em; }
+.btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(163,43,18,0.3); }
+.btn-danger:hover:not(:disabled) { background: rgba(163,43,18,0.07); }
+
+.card { background: #fff; border: 1px solid var(--line); border-radius: 4px; }
+.item-grid { display: grid; gap: 10px 12px; }
+.muted { color: var(--mid); font-size: 13px; line-height: 1.5; }
+.pill { display: inline-block; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+/* ─────────────────────────────────────────
+   KOMUNIKACE SE SERVEREM
+   ───────────────────────────────────────── */
+async function api(path, options) {
+  const res = await fetch(path, Object.assign({
+    headers: { 'Content-Type': 'application/json' },
+  }, options));
+  let data = {};
+  try { data = await res.json(); } catch (e) { /* prázdná odpověď */ }
+  if (!res.ok) throw new Error(data.error || ('Chyba serveru (' + res.status + ')'));
+  return data;
+}
+
+/* Klíč pro React, který přežije přejmenování i přesun položky. */
+let uidCounter = 0;
+const uid = () => ++uidCounter;
+
+/* 1 položka, 2–4 položky, 5+ položek */
+function plural(n, one, few, many) {
+  if (n === 1) return n + ' ' + one;
+  if (n >= 2 && n <= 4) return n + ' ' + few;
+  return n + ' ' + many;
+}
+
+/* Data ze serveru nemají klíče pro React, tak si je přidáme jen do paměti
+   a před odesláním zase odstraníme. */
+function addKeys(sections) {
+  return sections.map(function (s) {
+    return Object.assign({}, s, {
+      _k: uid(),
+      items: (s.items || []).map(function (i) { return Object.assign({}, i, { _k: uid() }); }),
+      addons: s.addons ? s.addons.map(function (i) { return Object.assign({}, i, { _k: uid() }); }) : undefined,
+    });
+  });
+}
+
+function stripKeys(sections) {
+  return sections.map(function (s) {
+    const out = Object.assign({}, s);
+    delete out._k;
+    out.items = (s.items || []).map(function (i) { const o = Object.assign({}, i); delete o._k; return o; });
+    if (s.addons) out.addons = s.addons.map(function (i) { const o = Object.assign({}, i); delete o._k; return o; });
+    else delete out.addons;
+    return out;
+  });
+}
+
+/* ─────────────────────────────────────────
+   PŘIHLÁŠENÍ
+   ───────────────────────────────────────── */
+function Login({ onDone }) {
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    try {
+      await api('/api/login', { method: 'POST', body: JSON.stringify({ password: password }) });
+      onDone();
+    } catch (err) {
+      setError(err.message);
+      setPassword('');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <form onSubmit={submit} className="card" style={{ width: '100%', maxWidth: 380, padding: 32 }}>
+        <h1 className="cg" style={{ fontSize: 26, fontWeight: 600, color: 'var(--wood)', marginBottom: 6 }}>
+          Úprava lístků
+        </h1>
+        <p className="muted" style={{ marginBottom: 24 }}>Balounova Restaurace U Břízy</p>
+
+        <label htmlFor="pw">Heslo</label>
+        <input
+          id="pw" type="password" value={password} autoFocus autoComplete="current-password"
+          onChange={function (e) { setPassword(e.target.value); }}
+        />
+
+        {error && (
+          <p style={{ marginTop: 14, color: 'var(--red)', fontSize: 13 }}>{error}</p>
+        )}
+
+        <button className="btn" style={{ width: '100%', marginTop: 20 }} disabled={busy || !password}>
+          {busy ? 'Přihlašuji…' : 'Přihlásit'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   POLE PRO CENU
+   Pivní lístek má dvě sklenice (0,5 / 0,3) a ukládá je jako dvojici.
+   Ostatní lístky mají jedno pole, kam jde napsat i "80 / 140".
+   ───────────────────────────────────────── */
+function PriceInput({ menuKey, value, onChange }) {
+  if (menuKey === 'pivni-listek') {
+    const dual = Array.isArray(value);
+    const big = dual ? value[0] : (value === undefined || value === null ? '' : value);
+    const small = dual ? value[1] : '';
+
+    const set = function (nextBig, nextSmall) {
+      const b = String(nextBig).trim();
+      const s = String(nextSmall).trim();
+      if (!b && !s) return onChange(undefined);
+      if (!s) return onChange(Number(b));
+      // Prázdné 0,5 l při vyplněném 0,3 l neumlčíme na nulu — ať to radši
+      // spadne na kontrole s hláškou, než aby se pivo tiše prodávalo za 0.
+      onChange([b === '' ? '' : Number(b), Number(s)]);
+    };
+
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        <div>
+          <label style={{ fontSize: 10 }}>0,5 l</label>
+          <input inputMode="numeric" value={big}
+            onChange={function (e) { set(e.target.value, small); }} />
+        </div>
+        <div>
+          <label style={{ fontSize: 10 }}>0,3 l</label>
+          <input inputMode="numeric" value={small} placeholder="—"
+            onChange={function (e) { set(big, e.target.value); }} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <label>Cena</label>
+      <input
+        value={value === undefined || value === null ? '' : value}
+        placeholder="např. 149"
+        onChange={function (e) {
+          const raw = e.target.value.trim();
+          if (!raw) return onChange(undefined);
+          onChange(/^\d+$/.test(raw) ? Number(raw) : raw);
+        }} />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   POLOŽKA
+   ───────────────────────────────────────── */
+function ItemRow({ menuKey, item, onChange, onRemove, onMove, first, last, isAddon }) {
+  const set = function (key, val) {
+    const next = Object.assign({}, item);
+    if (val === undefined || val === '') delete next[key];
+    else next[key] = val;
+    onChange(next);
+  };
+
+  const wide = { gridTemplateColumns: 'minmax(0, 1fr)' };
+
+  return (
+    <div style={{ padding: '16px 0', borderTop: '1px solid var(--line)' }}>
+      <div className="item-grid" style={wide}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, alignItems: 'end' }}>
+          <div>
+            <label>Název</label>
+            <input value={item.name || ''} onChange={function (e) { set('name', e.target.value); }} />
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="btn btn-ghost btn-sm" disabled={first}
+              onClick={function () { onMove(-1); }} title="Posunout nahoru">↑</button>
+            <button type="button" className="btn btn-ghost btn-sm" disabled={last}
+              onClick={function () { onMove(1); }} title="Posunout dolů">↓</button>
+            <button type="button" className="btn btn-danger btn-sm"
+              onClick={onRemove} title="Smazat položku">×</button>
+          </div>
+        </div>
+
+        {!isAddon && (
+          <div>
+            <label>Popis / suroviny</label>
+            <input value={item.desc || ''} placeholder="nepovinné"
+              onChange={function (e) { set('desc', e.target.value); }} />
+          </div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, alignItems: 'end' }}>
+          {menuKey === 'pivni-listek' ? (
+            <div>
+              <label>Stupně</label>
+              <input value={item.degree || ''} placeholder="12°"
+                onChange={function (e) { set('degree', e.target.value); }} />
+            </div>
+          ) : !isAddon && (
+            <div>
+              <label>Množství</label>
+              <input value={item.weight || ''} placeholder="150 g"
+                onChange={function (e) { set('weight', e.target.value); }} />
+            </div>
+          )}
+
+          {menuKey !== 'pivni-listek' && (
+            <div>
+              <label>Alergeny</label>
+              <input value={item.allergens || ''} placeholder="1,3,7"
+                onChange={function (e) { set('allergens', e.target.value); }} />
+            </div>
+          )}
+
+          <PriceInput menuKey={menuKey} value={item.price}
+            onChange={function (v) { set('price', v); }} />
+        </div>
+
+        {menuKey === 'pivni-listek' && (
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, textTransform: 'none', letterSpacing: 0, fontSize: 13, fontWeight: 400, color: 'var(--ink)' }}>
+            <input type="checkbox" style={{ width: 16, height: 16 }} checked={!!item.nonalcoholic}
+              onChange={function (e) { set('nonalcoholic', e.target.checked ? true : undefined); }} />
+            Nealkoholické
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   SEKCE
+   ───────────────────────────────────────── */
+function SectionCard({ menuKey, icons, section, onChange, onRemove, onMove, first, last }) {
+  const [open, setOpen] = useState(false);
+
+  const set = function (key, val) {
+    const next = Object.assign({}, section);
+    if (val === undefined || val === '') delete next[key];
+    else next[key] = val;
+    onChange(next);
+  };
+
+  const listOps = function (listKey) {
+    const list = section[listKey] || [];
+    return {
+      change: function (idx, item) {
+        const next = list.slice();
+        next[idx] = item;
+        set(listKey, next);
+      },
+      remove: function (idx) {
+        const item = list[idx];
+        if (!window.confirm('Opravdu smazat „' + (item.name || 'položku') + '“?')) return;
+        const next = list.slice();
+        next.splice(idx, 1);
+        set(listKey, next.length ? next : (listKey === 'addons' ? undefined : next));
+      },
+      move: function (idx, dir) {
+        const to = idx + dir;
+        if (to < 0 || to >= list.length) return;
+        const next = list.slice();
+        const tmp = next[idx]; next[idx] = next[to]; next[to] = tmp;
+        set(listKey, next);
+      },
+      add: function () {
+        set(listKey, (list).concat([{ _k: uid(), name: '' }]));
+        setOpen(true);
+      },
+    };
+  };
+
+  const items = listOps('items');
+  const addons = listOps('addons');
+
+  return (
+    <div className="card" style={{ marginBottom: 14 }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px',
+        background: 'var(--sand)', borderRadius: '3px 3px 0 0', cursor: 'pointer',
+      }} onClick={function () { setOpen(!open); }}>
+        <span style={{ color: 'var(--mid)', fontSize: 12, width: 12 }}>{open ? '▾' : '▸'}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="cg" style={{ fontSize: 19, fontWeight: 600, color: 'var(--wood)' }}>
+            {section.title || 'Bez názvu'}
+          </div>
+          <div className="muted" style={{ fontSize: 12 }}>
+            {plural((section.items || []).length, 'položka', 'položky', 'položek')}
+            {section.addons ? ' + ' + plural(section.addons.length, 'příplatek', 'příplatky', 'příplatků') : ''}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }} onClick={function (e) { e.stopPropagation(); }}>
+          <button type="button" className="btn btn-ghost btn-sm" disabled={first} onClick={function () { onMove(-1); }}>↑</button>
+          <button type="button" className="btn btn-ghost btn-sm" disabled={last} onClick={function () { onMove(1); }}>↓</button>
+        </div>
+      </div>
+
+      {open && (
+        <div style={{ padding: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+            <div>
+              <label>Název sekce</label>
+              <input value={section.title || ''} onChange={function (e) { set('title', e.target.value); }} />
+            </div>
+            <div>
+              <label>Anglicky (podtitul)</label>
+              <input value={section.sub || ''} placeholder="nepovinné"
+                onChange={function (e) { set('sub', e.target.value); }} />
+            </div>
+            <div>
+              <label>Ikona</label>
+              <select value={section.icon || ''} onChange={function (e) { set('icon', e.target.value); }}>
+                <option value="">— bez ikony —</option>
+                {icons.map(function (ic) { return <option key={ic} value={ic}>{ic}</option>; })}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ marginTop: 12 }}>
+            <label>Poznámka pod sekcí</label>
+            <input value={section.note || ''} placeholder="nepovinné"
+              onChange={function (e) { set('note', e.target.value); }} />
+          </div>
+
+          <div style={{ marginTop: 20 }}>
+            {(section.items || []).map(function (item, i) {
+              return (
+                <ItemRow
+                  key={item._k} menuKey={menuKey} item={item}
+                  first={i === 0} last={i === section.items.length - 1}
+                  onChange={function (v) { items.change(i, v); }}
+                  onRemove={function () { items.remove(i); }}
+                  onMove={function (d) { items.move(i, d); }}
+                />
+              );
+            })}
+          </div>
+
+          <button type="button" className="btn btn-ghost btn-sm" style={{ marginTop: 14 }} onClick={items.add}>
+            + Přidat položku
+          </button>
+
+          {section.addons && (
+            <div style={{ marginTop: 28 }}>
+              <div className="pill" style={{ background: 'var(--sand)', color: 'var(--mid)' }}>Příplatky</div>
+              {section.addons.map(function (item, i) {
+                return (
+                  <ItemRow
+                    key={item._k} menuKey={menuKey} item={item} isAddon
+                    first={i === 0} last={i === section.addons.length - 1}
+                    onChange={function (v) { addons.change(i, v); }}
+                    onRemove={function () { addons.remove(i); }}
+                    onMove={function (d) { addons.move(i, d); }}
+                  />
+                );
+              })}
+              <button type="button" className="btn btn-ghost btn-sm" style={{ marginTop: 14 }} onClick={addons.add}>
+                + Přidat příplatek
+              </button>
+            </div>
+          )}
+
+          <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
+            <button type="button" className="btn btn-danger btn-sm" onClick={onRemove}>
+              Smazat celou sekci
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   EDITOR JEDNOHO LÍSTKU
+   ───────────────────────────────────────── */
+function MenuEditor({ menu, onDirtyChange }) {
+  const [sections, setSections] = useState(null);
+  const [saved, setSaved] = useState(null);   // poslední uložený stav pro porovnání
+  const [status, setStatus] = useState({ kind: 'loading', text: 'Načítám…' });
+
+  useEffect(function () {
+    let alive = true;
+    setSections(null);
+    setStatus({ kind: 'loading', text: 'Načítám…' });
+    // cache-busting: po uložení běží přenasazení a CDN může chvíli držet starou verzi
+    fetch('/' + menu.file + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (data) {
+        if (!alive) return;
+        setSections(addKeys(data));
+        setSaved(JSON.stringify(data));
+        setStatus({ kind: 'idle', text: '' });
+      })
+      .catch(function (e) {
+        if (alive) setStatus({ kind: 'error', text: 'Nepodařilo se načíst lístek: ' + e.message });
+      });
+    return function () { alive = false; };
+  }, [menu.key, menu.file]);
+
+  const dirty = sections !== null && saved !== null &&
+    JSON.stringify(stripKeys(sections)) !== saved;
+
+  useEffect(function () { onDirtyChange(dirty); }, [dirty, onDirtyChange]);
+
+  async function save() {
+    setStatus({ kind: 'saving', text: 'Ukládám…' });
+    try {
+      const payload = stripKeys(sections);
+      const res = await api('/api/save', {
+        method: 'POST',
+        body: JSON.stringify({ menu: menu.key, sections: payload }),
+      });
+      setSections(addKeys(res.sections));
+      setSaved(JSON.stringify(res.sections));
+      setStatus({
+        kind: 'ok',
+        text: res.unchanged
+          ? 'Beze změny — nebylo co uložit.'
+          : 'Uloženo. Na webu se změna projeví zhruba do minuty.',
+      });
+    } catch (e) {
+      setStatus({ kind: 'error', text: e.message });
+    }
+  }
+
+  const move = function (idx, dir) {
+    const to = idx + dir;
+    if (to < 0 || to >= sections.length) return;
+    const next = sections.slice();
+    const tmp = next[idx]; next[idx] = next[to]; next[to] = tmp;
+    setSections(next);
+  };
+
+  const removeSection = function (idx) {
+    const s = sections[idx];
+    if (!window.confirm('Opravdu smazat celou sekci „' + (s.title || '') + '“ i s položkami?')) return;
+    const next = sections.slice();
+    next.splice(idx, 1);
+    setSections(next);
+  };
+
+  const addSection = function () {
+    // id se v adminu needituje, takže si volné musíme najít sami — jinak by
+    // po smazání a přidání sekce vzniklo duplicitní a uložení by spadlo.
+    const used = {};
+    sections.forEach(function (s) { used[s.id] = true; });
+    let n = sections.length + 1;
+    while (used['nova-sekce-' + n]) n++;
+
+    setSections(sections.concat([{
+      _k: uid(), id: 'nova-sekce-' + n, title: 'Nová sekce',
+      items: [{ _k: uid(), name: '' }],
+    }]));
+  };
+
+  if (status.kind === 'loading') return <p className="muted" style={{ padding: 24 }}>Načítám…</p>;
+  if (!sections) return <p style={{ padding: 24, color: 'var(--red)' }}>{status.text}</p>;
+
+  return (
+    <div>
+      {sections.map(function (s, i) {
+        return (
+          <SectionCard
+            key={s._k} menuKey={menu.key} icons={menu.icons} section={s}
+            first={i === 0} last={i === sections.length - 1}
+            onChange={function (v) { const n = sections.slice(); n[i] = v; setSections(n); }}
+            onRemove={function () { removeSection(i); }}
+            onMove={function (d) { move(i, d); }}
+          />
+        );
+      })}
+
+      <button type="button" className="btn btn-ghost" onClick={addSection}>+ Přidat sekci</button>
+
+      {/* Ukládací lišta */}
+      <div style={{
+        position: 'sticky', bottom: 0, marginTop: 24, padding: '14px 16px',
+        background: 'var(--wood)', borderRadius: 4,
+        display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+      }}>
+        <div style={{ flex: 1, minWidth: 180, fontSize: 13, color: '#EFE8D5' }}>
+          {status.kind === 'error' && <span style={{ color: '#F0A58C' }}>{status.text}</span>}
+          {status.kind === 'ok' && <span style={{ color: '#A8D5B5' }}>{status.text}</span>}
+          {status.kind === 'saving' && <span>{status.text}</span>}
+          {(status.kind === 'idle' || !status.text) && (
+            <span style={{ opacity: 0.75 }}>
+              {dirty ? 'Máte neuložené změny.' : 'Vše uloženo.'}
+            </span>
+          )}
+        </div>
+        <button className="btn" onClick={save} disabled={!dirty || status.kind === 'saving'}>
+          {status.kind === 'saving' ? 'Ukládám…' : 'Uložit změny'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   APLIKACE
+   ───────────────────────────────────────── */
+function Admin() {
+  const [menus, setMenus] = useState(null);
+  const [active, setActive] = useState(null);
+  const [dirty, setDirty] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(function () {
+    api('/api/config')
+      .then(function (cfg) {
+        setMenus(cfg.menus);
+        setActive(cfg.menus[0].key);
+      })
+      .catch(function (e) { setError(e.message); });
+  }, []);
+
+  /* Varování před zavřením s neuloženými změnami. */
+  useEffect(function () {
+    if (!dirty) return;
+    const warn = function (e) { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', warn);
+    return function () { window.removeEventListener('beforeunload', warn); };
+  }, [dirty]);
+
+  const onDirtyChange = useCallback(function (v) { setDirty(v); }, []);
+
+  async function logout() {
+    if (dirty && !window.confirm('Máte neuložené změny. Přesto se odhlásit?')) return;
+    await api('/api/logout', { method: 'POST' });
+    window.location.reload();
+  }
+
+  function switchTo(key) {
+    if (dirty && !window.confirm('Máte neuložené změny. Přepnout a zahodit je?')) return;
+    setDirty(false);
+    setActive(key);
+  }
+
+  if (error) return <p style={{ padding: 40, color: 'var(--red)' }}>{error}</p>;
+  if (!menus) return <p className="muted" style={{ padding: 40 }}>Načítám…</p>;
+
+  const menu = menus.find(function (m) { return m.key === active; });
+
+  return (
+    <div style={{ maxWidth: 880, margin: '0 auto', padding: '24px 16px 60px' }}>
+      <header style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 24 }}>
+        <div style={{ flex: 1 }}>
+          <h1 className="cg" style={{ fontSize: 26, fontWeight: 600, color: 'var(--wood)' }}>Úprava lístků</h1>
+          <p className="muted">Změny se na webu projeví zhruba do minuty po uložení.</p>
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={logout}>Odhlásit</button>
+      </header>
+
+      <nav style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+        {menus.map(function (m) {
+          const on = m.key === active;
+          return (
+            <button
+              key={m.key} type="button"
+              className={'btn ' + (on ? '' : 'btn-ghost')}
+              onClick={function () { switchTo(m.key); }}
+            >
+              {m.label}
+            </button>
+          );
+        })}
+      </nav>
+
+      <p className="muted" style={{ marginBottom: 16 }}>
+        Denní a týdenní menu se sem needituje — to zůstává v menubotu.
+      </p>
+
+      {menu && <MenuEditor key={menu.key} menu={menu} onDirtyChange={onDirtyChange} />}
+    </div>
+  );
+}
+
+function App() {
+  const [state, setState] = useState('checking');
+
+  useEffect(function () {
+    fetch('/api/session', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { setState(d.loggedIn ? 'in' : 'out'); })
+      .catch(function () { setState('out'); });
+  }, []);
+
+  if (state === 'checking') return null;
+  if (state === 'out') return <Login onDone={function () { setState('in'); }} />;
+  return <Admin />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

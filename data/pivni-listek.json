@@ -1,0 +1,66 @@
+[
+  {
+    "id": "cepovana",
+    "title": "Čepovaná piva",
+    "sub": "Draft beer · 0,5 l / 0,3 l",
+    "icon": "beer",
+    "note": "Ceny za 0,5 l / 0,3 l. Šnyt: 0,4 l.",
+    "items": [
+      {
+        "degree": "12°",
+        "name": "Plzeňský Prazdroj z tanku",
+        "desc": "ležák",
+        "price": [
+          68,
+          46
+        ]
+      },
+      {
+        "degree": "12°",
+        "name": "Plzeňský Prazdroj šnyt",
+        "desc": "ležák · 0,4 l",
+        "price": 47
+      },
+      {
+        "degree": "11°",
+        "name": "Velkopopovický Kozel",
+        "price": [
+          51,
+          36
+        ]
+      },
+      {
+        "degree": "10°",
+        "name": "Velkopopovický Kozel černý",
+        "price": [
+          51,
+          36
+        ]
+      },
+      {
+        "degree": "12°",
+        "name": "Plzeňský Prazdroj řezaný",
+        "price": [
+          68,
+          46
+        ]
+      },
+      {
+        "name": "Birell",
+        "price": [
+          51,
+          37
+        ],
+        "nonalcoholic": true
+      },
+      {
+        "name": "Birell pomelo",
+        "price": [
+          51,
+          37
+        ],
+        "nonalcoholic": true
+      }
+    ]
+  }
+]

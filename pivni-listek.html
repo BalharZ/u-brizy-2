@@ -14,31 +14,17 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel" src="nav.js"></script>
 <script type="text/babel" src="footer.js"></script>
+<script type="text/babel" src="menu-data.js"></script>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState } = React;
-
 /* ─────────────────────────────────────────
-   SECTIONS DATA
+   DATA LÍSTKU
+   Obsah edituje klient ve /vstup, viz menu-data.js.
    ───────────────────────────────────────── */
-const SECTIONS = [
-  {
-    id: 'cepovana', title: 'Čepovaná piva', sub: 'Draft beer · 0,5 l / 0,3 l', icon: 'beer',
-    note: 'Ceny za 0,5 l / 0,3 l. Šnyt: 0,4 l.',
-    items: [
-      { degree: '12°', name: 'Plzeňský Prazdroj z tanku', desc: 'ležák', price: [68, 46] },
-      { degree: '12°', name: 'Plzeňský Prazdroj šnyt', desc: 'ležák · 0,4 l', price: 47 },
-      { degree: '11°', name: 'Velkopopovický Kozel', price: [51, 36] },
-      { degree: '10°', name: 'Velkopopovický Kozel černý', price: [51, 36] },
-      { degree: '12°', name: 'Plzeňský Prazdroj řezaný', price: [68, 46] },
-      { name: 'Birell', nonalcoholic: true, price: [51, 37] },
-      { name: 'Birell pomelo', nonalcoholic: true, price: [51, 37] },
-    ],
-  },
-];
+const MENU_JSON = 'data/pivni-listek.json';
 
 /* ─────────────────────────────────────────
    ICONS
@@ -395,15 +381,18 @@ function BeerSection({ section, idx }) {
    APP
    ───────────────────────────────────────── */
 function App() {
+  const menu = useMenuData(MENU_JSON);
+
   return (
     <>
       <SiteNav activePage="Pivní lístek" />
       <div style={{ height: 72 }} />
       <MenuHero />
       <DeliveryStrip />
-      {SECTIONS.map((s, i) => (
+      {menu.sections.map((s, i) => (
         <BeerSection key={s.id} section={s} idx={i} />
       ))}
+      <MenuDataNotice status={menu.status} />
       <SiteFooter />
     </>
   );
