@@ -1,17 +1,5 @@
 {
   "cleanUrls": true,
-  "redirects": [
-    {
-      "source": "/fotogalerie",
-      "destination": "/galerie",
-      "permanent": true
-    },
-    {
-      "source": "/fotogalerie/",
-      "destination": "/galerie",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/vstup",

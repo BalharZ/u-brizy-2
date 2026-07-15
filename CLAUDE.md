@@ -27,7 +27,7 @@ Tohle je nejdůležitější věc celého repozitáře — každý lístek má j
 |---|---|
 | `stale-menu.html`, `pivni-listek.html`, `napojovy-listek.html` | `data/*.json`, edituje klient na `/vstup` |
 | `denni-menu.html`, `tydenni-nabidka.html` | živě z **menubot.cz** (`menubot.js`), klient edituje tam |
-| `index.html`, `galerie.html`, `voucher.html`, `seznam-alergenu.html` | natvrdo v souboru |
+| `index.html`, `fotogalerie.html`, `voucher.html`, `seznam-alergenu.html` | natvrdo v souboru |
 
 **Nikdy neupravuj ceny ve třech lístcích přímo v HTML** — obsah je v `data/*.json`
 a stránka si ho načte přes `useMenuData()` z `menu-data.js`.

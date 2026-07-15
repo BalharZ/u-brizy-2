@@ -64,7 +64,7 @@ function SiteNav({ isHome = false, activePage = null }) {
         { l: 'Pivní lístek',   h: '/pivni-listek' },
       ],
     },
-    { l: 'Galerie', h: '/galerie' },
+    { l: 'Galerie', h: '/fotogalerie' },
     { l: 'Voucher', h: '/voucher' },
     { l: 'O nás',   h: `${base}#o-nas` },
     { l: 'Kontakt', h: `${base}#kontakt` },

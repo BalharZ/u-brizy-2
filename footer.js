@@ -11,7 +11,7 @@ function SiteFooter({ isHome = false }) {
     { l: 'Domů',       h: isHome ? '#' : '/' },
     { l: 'Menu',       h: `${base}#menu` },
     { l: 'O nás',      h: `${base}#o-nas` },
-    { l: 'Fotogalerie',h: '/galerie' },
+    { l: 'Fotogalerie',h: '/fotogalerie' },
     { l: 'Kontakt',    h: `${base}#kontakt` },
     { l: 'Rezervace',  h: `${base}#rezervace` },
   ];
