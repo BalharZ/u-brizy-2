@@ -12,10 +12,15 @@ const t = (name, fn) => {
   catch (e) { console.log('  FAIL ' + name + ' — vyjímka: ' + e.message); bad++; }
 };
 
+/* Na Windows si git při checkoutu přepíše konce řádků na CRLF (core.autocrlf),
+   zatímco server ukládá s LF. Do repozitáře i na web jde vždy LF, takže tenhle
+   rozdíl nic neznamená — porovnáváme obsah, ne konce řádků. */
+const lf = (s) => s.replace(/\r\n/g, '\n');
+
 console.log('Round-trip skutečných dat (validace nesmí nic změnit):');
 for (const key of ['stale-menu', 'pivni-listek', 'napojovy-listek']) {
   t(key, () => {
-    const raw = readFileSync(ROOT + 'data/' + key + '.json', 'utf8');
+    const raw = lf(readFileSync(ROOT + 'data/' + key + '.json', 'utf8'));
     const parsed = JSON.parse(raw);
     const r = validateMenu(key, parsed);
     if (!r.ok) return 'validace odmítla: ' + r.error;
