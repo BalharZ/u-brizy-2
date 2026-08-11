@@ -155,18 +155,15 @@ function SiteFooter({ isHome = false }) {
             <span style={{ fontFamily: 'Lato', fontSize: 12, color: 'rgba(191,201,184,0.3)' }}>
               © {new Date().getFullYear()} Balounova Restaurace U Břízy — Praha 4, Starý Spořilov
             </span>
-            <span style={{ fontFamily: 'Lato', fontSize: 12, color: 'rgba(191,201,184,0.3)' }}>
-              Web pro restaurace:{' '}
-              <a href="https://www.dreamitcompany.cz/web-a-system-pro-restauraci"
-                target="_blank" rel="noopener noreferrer" style={{
-                  color: 'rgba(191,201,184,0.5)', textDecoration: 'none',
-                  fontWeight: 700, transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => e.target.style.color = '#fff'}
-                onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.5)'}>
-                Dream IT Company
-              </a>
-            </span>
+            <a href="https://www.dreamitcompany.cz/web-a-system-pro-restauraci"
+              target="_blank" rel="noopener" style={{
+                fontFamily: 'Lato', fontSize: 12, color: 'rgba(191,201,184,0.3)',
+                textDecoration: 'none', transition: 'color 0.2s',
+              }}
+              onMouseEnter={e => e.target.style.color = '#fff'}
+              onMouseLeave={e => e.target.style.color = 'rgba(191,201,184,0.3)'}>
+              Web pro restaurace: Dream IT Company
+            </a>
           </div>
           <div style={{ display: 'flex', gap: 20 }}>
             {[
