@@ -156,21 +156,21 @@
       },
       {
         "name": "Espresso macchiato",
-        "price": 65
+        "price": 60
       },
       {
         "name": "Latté macchiato",
         "allergens": "7",
-        "price": 80
+        "price": 70
       },
       {
         "name": "Cappuccino",
         "allergens": "7",
-        "price": 70
+        "price": 60
       },
       {
         "name": "Turecká",
-        "price": 50
+        "price": 45
       },
       {
         "name": "Vídeňská",
@@ -221,7 +221,7 @@
         "weight": "0,2 l",
         "name": "Svařené víno",
         "allergens": "12",
-        "price": 75
+        "price": 65
       },
       {
         "weight": "0,2 l",

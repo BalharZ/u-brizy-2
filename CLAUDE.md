@@ -64,7 +64,7 @@ nesnažil buildit, takže žádné závislosti, jen `node:crypto` a globální `
 - `58` — číslo, funguje všude
 - `[68, 46]` — dvojice 0,5 / 0,3 l, vykreslit ji umí **jen pivní lístek**
   (`BeerItem` má `Array.isArray`); jinde by se zobrazila jako „6846"
-- `"80 / 140"` — text pro malou/velkou porci (dva saláty ve stálém menu)
+- `"80 / 140"` — text pro malou/velkou porci (teď ho nepoužívá žádná položka)
 
 `api/_validate.js` tohle hlídá a povolí každý tvar jen tam, kde ho stránka umí.
 
@@ -114,7 +114,10 @@ nebo vlastní harness, který `api/*.js` obslouží.
   místo „Teplé alkoholické nápoje" podle tisku.
 - Alergeny u položek přidaných z nového ceníku jsou prázdné — v ceníku nejsou
   a zdravotní údaj si nelze vymýšlet.
-- Jídelní a pivní lístek na nový ceník teprve čekají.
+- Ve stálém menu zůstaly se starou cenou položky, které v tisku chybí:
+  bramborový salát, BBQ omáčka, hořčice. Čeká se na klienta.
+- Nový ceník jídel nepíše u Caesar salátu alergen 4 (ryby), přestože má
+  ančovičkový dresink. Na webu 4 zůstává, ověřit u klienta.
 
 ## Psaní
 

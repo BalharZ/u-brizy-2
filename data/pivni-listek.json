@@ -11,55 +11,60 @@
         "name": "Plzeňský Prazdroj z tanku",
         "desc": "ležák",
         "price": [
-          68,
-          46
+          73,
+          50
         ]
       },
       {
         "degree": "12°",
         "name": "Plzeňský Prazdroj šnyt",
         "desc": "ležák · 0,4 l",
-        "price": 47
+        "price": 52
       },
       {
         "degree": "11°",
         "name": "Velkopopovický Kozel",
         "price": [
-          51,
-          36
+          55,
+          39
         ]
       },
       {
         "degree": "10°",
         "name": "Velkopopovický Kozel černý",
         "price": [
-          51,
-          36
+          55,
+          39
         ]
       },
       {
         "degree": "12°",
         "name": "Plzeňský Prazdroj řezaný",
         "price": [
-          68,
-          46
+          73,
+          50
         ]
       },
       {
         "name": "Birell",
         "price": [
-          51,
-          37
+          58,
+          41
         ],
         "nonalcoholic": true
       },
       {
         "name": "Birell pomelo",
         "price": [
-          51,
-          37
+          58,
+          41
         ],
         "nonalcoholic": true
+      },
+      {
+        "name": "Cider Frisco jablečný s ledem",
+        "desc": "0,4 l",
+        "price": 62
       }
     ]
   }
