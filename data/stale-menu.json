@@ -1,36 +1,49 @@
 [
   {
-    "id": "studene",
-    "title": "Studené předkrmy",
-    "sub": "Cold starters",
-    "icon": "snowflake",
+    "id": "predkrmy",
+    "title": "Předkrmy",
+    "sub": "Starters",
+    "icon": "chef",
     "items": [
       {
-        "weight": "150 g",
-        "name": "Míchaný tatarský biftek z hovězí roštěné",
-        "desc": "5 ks topinek, česnek",
-        "allergens": "1,3,6,7,10",
-        "price": 260
+        "name": "Šunka od kosti s křenovou šlehačkou",
+        "desc": "cornichons, chléb",
+        "price": 120
       },
       {
-        "weight": "120 g",
-        "name": "Domácí nakládaný hermelín",
-        "desc": "cibule, feferonky, čerstvý chléb",
-        "allergens": "1,3,7",
-        "price": 149
+        "name": "Trhané vepřové maso ve vlastní šťávě",
+        "desc": "cibule, cornichons, chléb",
+        "price": 130
       },
       {
-        "weight": "100 g",
-        "name": "Tlačenka s cibulkou a octem",
-        "desc": "čerstvý chléb",
+        "name": "Masová tlačenka",
+        "desc": "cibule, ocet, chléb",
         "allergens": "1,3,7",
         "price": 95
       },
       {
-        "weight": "200 g",
-        "name": "Tortilla nachos s chedarovou sýrovou omáčkou a tomatovou salsou",
-        "allergens": "1,7",
-        "price": 120
+        "name": "Míchaný hovězí tatarák",
+        "desc": "topinky, česnek",
+        "allergens": "1,3,6,7,10",
+        "price": 260
+      },
+      {
+        "name": "Smažené jalapeños papričky v sýrovém těstíčku",
+        "desc": "salát s cherry rajčaty, zakysaná smetana",
+        "allergens": "1,3,7",
+        "price": 185
+      },
+      {
+        "name": "Ďábelská topinka",
+        "desc": "masová směs, zelenina, sýr",
+        "allergens": "1,3,7,9",
+        "price": 185
+      },
+      {
+        "name": "Nakládaný sedlčanský hermelín",
+        "desc": "cibule, feferonky, chléb",
+        "allergens": "1,3,7",
+        "price": 150
       }
     ]
   },
@@ -41,7 +54,8 @@
     "icon": "soup",
     "items": [
       {
-        "name": "Kulajda s lesními hříbky – zastřené vejce, čerstvý kopr",
+        "name": "Kulajda s lesními hříbky",
+        "desc": "zastřené vejce, čerstvý kopr",
         "allergens": "1,3,7,9",
         "price": 110
       },
@@ -52,236 +66,74 @@
     ]
   },
   {
-    "id": "teple",
-    "title": "Teplé předkrmy",
-    "sub": "Hot starters",
-    "icon": "fire",
-    "items": [
-      {
-        "weight": "120 g",
-        "name": "Grilované krevety s česnekovou rozpečenou bagetkou",
-        "price": 230
-      },
-      {
-        "weight": "200 g",
-        "name": "Čertovská klobása na grilu",
-        "desc": "hořčice, křen, čerstvý chléb",
-        "price": 150
-      },
-      {
-        "weight": "150 g",
-        "name": "Ďábelská topinka s masovou směsí sypaná sýrem",
-        "desc": "salátek z polníčku",
-        "allergens": "1,3,7,9",
-        "price": 185
-      },
-      {
-        "weight": "200 g",
-        "name": "Buřty na pivu s pikantní zeleninou",
-        "desc": "čerstvý chléb",
-        "allergens": "1,3,6,7",
-        "price": 149
-      },
-      {
-        "weight": "3 ks",
-        "name": "Smažené jalapeňos papričky v sýrové krustě",
-        "desc": "rukolový salátek s cherry rajčátky, zakysaná smetana",
-        "allergens": "1,3,7",
-        "price": 185
-      }
-    ]
-  },
-  {
     "id": "hlavni",
     "title": "Hlavní jídla",
     "sub": "Main courses",
     "icon": "plate",
     "items": [
       {
-        "weight": "150 g",
-        "name": "CMUNDA PO KAPLICKU",
-        "desc": "domácí bramborák, uzená vepřová plec, bílé zelí, smažená cibulka",
-        "allergens": "1,3,7,9",
-        "price": 250
-      },
-      {
-        "weight": "180 g",
-        "name": "Svíčková na smetaně s hovězím masem",
-        "desc": "brusinkový terč, houskové knedlíky",
-        "allergens": "1,3,7,9,10",
-        "price": 269
-      },
-      {
-        "weight": "500 g",
-        "name": "Kuřecí pečená BBQ křídla",
-        "desc": "česnekový dip, řapíkatý celer, mrkev, rozpečená bagetka",
-        "allergens": "1,3,7,9",
-        "price": 250
-      },
-      {
-        "weight": "150 g",
-        "name": "Anglický hovězí ROASTBEEF s tatarskou omáčkou",
-        "desc": "domácí hranolky",
-        "allergens": "1,3,7,10",
+        "name": "Vepřová líčka na červeném víně",
+        "desc": "bramborovo-celerové pyré, žampiony, cibulka",
         "price": 260
       },
       {
-        "weight": "1,4 kg",
-        "name": "Pečené vepřové koleno na plzeňském pivu",
-        "desc": "hořčice, křen, beraní rohy, feferonka, okurka, zelný salát, čerstvý chléb",
+        "name": "Konfitované kachní stehno",
+        "desc": "červené zelí, variace knedlíků, bramborová lokše, smažená cibulka",
+        "price": 330
+      },
+      {
+        "name": "Telecí holandský řízek se sýrem cheddar",
+        "desc": "máslové brambory, okurkový salát",
+        "price": 250
+      },
+      {
+        "name": "Hovězí Bacon Cheese Burger 180 g / 360 g",
+        "desc": "slanina, cheddar, zauzená mayo, karamelizovaná cibulka, coleslaw, hranolky",
+        "price": "330 / 450"
+      },
+      {
+        "weight": "250 g",
+        "name": "Hovězí Flank steak",
+        "desc": "lanýžové hranolky, pepřová omáčka",
+        "price": 490
+      },
+      {
+        "name": "Hovězí roastbeef",
+        "desc": "wasabi mayo, rukola, rozpečená ciabatta",
+        "price": 270
+      },
+      {
+        "name": "Vepřové koleno",
+        "desc": "okurka, hořčice, křen, chléb",
         "allergens": "1,3,7,10,12",
-        "price": 370
+        "price": 380
       },
       {
-        "weight": "1000 g",
-        "name": "Marinovaná vepřová žebírka",
-        "desc": "zelný salát, beraní rohy, hořčice, křen, okurka, chléb",
-        "allergens": "1,3,6,7,10",
-        "price": 330
+        "name": "Kuřecí křídla BBQ / Buffalo",
+        "desc": "zeleninové hranolky, coleslaw, česnekový dip, rozpečená ciabatta",
+        "price": 250
       },
       {
-        "weight": "120 g",
         "name": "Smažený sýr gouda",
-        "desc": "vařené brambory, domácí tatarská omáčka",
+        "desc": "máslové brambory, tatarská omáčka",
         "allergens": "1,3,7",
         "price": 250
       },
       {
-        "weight": "250 g",
-        "name": "Kuřecí stripsy smažené v kukuřičných lupínkách",
-        "desc": "tatarská omáčka",
+        "name": "Smažené kuřecí stripsy 200 g / 400 g",
         "allergens": "1,3,7",
-        "price": 290
+        "price": "240 / 480"
       },
       {
-        "weight": "200 g",
-        "name": "Kuřecí / vepřový smažený řízek",
-        "desc": "vařené brambory, kyselá okurka, citrón",
-        "allergens": "1,3,7",
-        "price": 260
-      }
-    ]
-  },
-  {
-    "id": "steaky",
-    "title": "Steaky",
-    "sub": "Steaks",
-    "icon": "steak",
-    "feature": true,
-    "items": [
-      {
-        "weight": "250 g",
-        "name": "URUGUAY hovězí FLANK STEAK s pepřovou omáčkou",
-        "price": 330
-      },
-      {
-        "weight": "350 g",
-        "name": "Vepřový steak TOMAHAWK",
-        "desc": "fazolové lusky se slaninou",
-        "allergens": "1,3,7",
-        "price": 295
-      },
-      {
-        "weight": "250 g",
-        "name": "Krůtí prsíčko s hráškovým krémovým RISOTTEM",
-        "desc": "parmazán, dýňová semínka",
-        "allergens": "1,7",
-        "price": 280
-      }
-    ]
-  },
-  {
-    "id": "burgery",
-    "title": "Burgery",
-    "sub": "Burgers",
-    "icon": "burger",
-    "items": [
-      {
-        "weight": "200 g",
-        "name": "Hovězí SMASH BURGER s chedarem a karamelizovanou cibulkou",
-        "desc": "coleslaw, domácí hranolky",
-        "allergens": "1,3,7,10",
-        "price": 330
-      }
-    ],
-    "addons": [
-      {
-        "name": "Zauzená majonéza",
-        "price": 45
-      },
-      {
-        "name": "Anglický chedar",
-        "allergens": "7",
-        "price": 25
-      },
-      {
-        "name": "Opečený slaninový chips",
-        "price": 20
-      },
-      {
-        "name": "Jalapeňos papričky",
-        "price": 25
-      }
-    ]
-  },
-  {
-    "id": "bezmasa",
-    "title": "Bezmasá jídla",
-    "sub": "Vegetarian",
-    "icon": "sprout",
-    "items": [
-      {
-        "weight": "150 g",
-        "name": "Smažený CHEDAR v rozpečené bulce",
-        "desc": "polníček, rajče, coleslaw, tatarská omáčka",
-        "allergens": "1,3,7,9",
-        "price": 220
-      },
-      {
-        "weight": "250 g",
-        "name": "Hráškové RISOTTO s grilovanou zeleninou",
-        "desc": "bylinkové pesto",
-        "allergens": "7",
-        "price": 220
-      }
-    ]
-  },
-  {
-    "id": "salaty",
-    "title": "Saláty",
-    "sub": "Salads",
-    "icon": "salad",
-    "items": [
-      {
-        "weight": "100 g",
-        "name": "MIX salátů s hovězím ROASTBEEFEM",
-        "desc": "zauzená majonéza, cherry rajčata, červená cibulka, rozpečená bagetka",
-        "allergens": "1,3,7,9",
-        "price": 250
-      },
-      {
-        "weight": "120 g",
-        "name": "Caesar salát s grilovaným kuřecím prsíčkem",
-        "desc": "římský salát, slanina, ančovičkový dresink, parmazán, opečené krutony",
+        "name": "Salát Caesar",
+        "desc": "kuřecí maso, slanina, krutony, parmazán",
         "allergens": "1,3,4,7",
         "price": 250
       },
       {
-        "name": "Šopský salát",
-        "desc": "paprika, rajče, okurka, balkánský sýr, olivový olej",
-        "allergens": "7",
-        "price": 95
-      },
-      {
-        "name": "Řecký salát",
-        "desc": "paprika, rajče, okurka, olivy, červená cibule, balkánský sýr",
-        "allergens": "7",
-        "price": 95
-      },
-      {
-        "name": "Coleslaw / zelný salát",
-        "allergens": "7,9",
-        "price": 69
+        "name": "Salát s kozím sýrem",
+        "desc": "červená řepa, vlašské ořechy, medovo-hořčičný dip",
+        "price": 270
       }
     ]
   },
@@ -292,27 +144,20 @@
     "icon": "cake",
     "items": [
       {
-        "weight": "3 ks",
-        "name": "Domácí lívance s čerstvými jahodami a sladkou zakysanou smetanou",
-        "allergens": "1,3,7",
-        "price": 140
+        "name": "Čokoládový fondán",
+        "desc": "rybízový sorbet",
+        "price": 150
       },
       {
-        "weight": "3 ks",
-        "name": "Domácí lívance s Nutellou a banánem",
-        "desc": "šlehačka",
-        "allergens": "1,3,7",
-        "price": 140
+        "name": "Domácí perník s čokoládou",
+        "desc": "glazované švestky",
+        "price": 90
       },
       {
-        "name": "Čokoládové suflé s rybízovým sorbetem",
+        "name": "Zmrzlina",
+        "desc": "kopečková (dle aktuálního výběru), cena za kopeček",
         "allergens": "1,3,7",
-        "price": 140
-      },
-      {
-        "name": "Kopeček zmrzliny",
-        "allergens": "1,3,7",
-        "price": 35
+        "price": 40
       }
     ]
   },
@@ -365,56 +210,20 @@
     "compact": true,
     "items": [
       {
+        "name": "BBQ omáčka",
+        "price": 35
+      },
+      {
         "name": "Tatarská omáčka",
-        "price": 30
+        "price": 35
+      },
+      {
+        "name": "Omáčka z modrého sýra",
+        "price": 35
       },
       {
         "name": "Zauzená majonéza",
         "price": 35
-      },
-      {
-        "name": "Česnekový dip",
-        "price": 25
-      },
-      {
-        "name": "Chedar sýrový dip",
-        "price": 30
-      },
-      {
-        "name": "Jalapeňos omáčka",
-        "price": 25
-      },
-      {
-        "name": "Chorizo majonéza",
-        "price": 30
-      },
-      {
-        "name": "Sriracha pálivá omáčka",
-        "price": 35
-      },
-      {
-        "name": "Kečup",
-        "price": 20
-      },
-      {
-        "name": "HOT BOX set pálivých omáček",
-        "price": 35
-      },
-      {
-        "name": "Pepřová omáčka",
-        "price": 30
-      },
-      {
-        "name": "Omáčka z modrého sýra",
-        "price": 40
-      },
-      {
-        "name": "BBQ omáčka",
-        "price": 30
-      },
-      {
-        "name": "Hořčice",
-        "price": 15
       }
     ]
   },

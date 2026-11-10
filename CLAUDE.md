@@ -76,7 +76,7 @@ jinak ji server při ukládání odmítne. Admin si seznam bere z `/api/config`.
 seznamů čte zleva doprava místo shora dolů. Smysl to dává jen u krátkých položek —
 teď to mají `prilohy`, `omacky` a `pecivo` ve stálém menu. Nápojový lístek to měl
 u destilátů a četlo se to špatně, proto tam už není. `feature: true` sekci zvýrazní
-(`steaky`, `drinky`).
+(teď jen `drinky`).
 
 **Položka bez ceny se vykreslí jako osamocené „Kč".** Validace ji propustí, stránka
 ji ale neošetřuje — nepoužívat pro věci „dle denní nabídky", dokud se to nespraví.
@@ -114,10 +114,16 @@ nebo vlastní harness, který `api/*.js` obslouží.
   místo „Teplé alkoholické nápoje" podle tisku.
 - Alergeny u položek přidaných z nového ceníku jsou prázdné — v ceníku nejsou
   a zdravotní údaj si nelze vymýšlet.
-- Ve stálém menu zůstaly se starou cenou položky, které v tisku chybí:
-  bramborový salát, BBQ omáčka, hořčice. Čeká se na klienta.
-- Nový ceník jídel nepíše u Caesar salátu alergen 4 (ryby), přestože má
-  ančovičkový dresink. Na webu 4 zůstává, ověřit u klienta.
+- Stálé menu je od listopadu 2026 podle nového dvoustránkového tisku (předkrmy,
+  polévky, hlavní jídla, dezerty, omáčky). Přílohy a pečivo v tisku nejsou —
+  zůstaly beze změny, čeká se na klienta, jestli je ještě nabízí.
+- „Dezert dle denní nabídky" v tisku nemá cenu, na webu proto chybí
+  (viz past s položkou bez ceny výše).
+- Alergeny mají jen kulajda (zadal klient) a jídla převzatá ze starého lístku (tatarák, tlačenka,
+  hermelín, jalapeños, topinka, koleno, smažený sýr, stripsy, Caesar,
+  zmrzlina). Nová a výrazně změněná jídla je mají prázdné — doplnit od klienta.
+- Caesar salát drží alergen 4 (ryby) kvůli ančovičkovému dresinku ze starého
+  lístku. Ověřit u klienta, jestli ho ještě má.
 
 ## Psaní
 
